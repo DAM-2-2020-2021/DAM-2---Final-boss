@@ -4,7 +4,6 @@
 
 ## Requisits
 - Java 1.8
-- Prueba
 
 ## Instal·lació i ús
 
