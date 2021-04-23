@@ -3,7 +3,7 @@ package eu.cifpfbmoll.network;
 import java.io.IOException;
 
 /**
- * Socket interface which defines methods for reading and writing
+ * Socket interface which defines basic methods for reading and writing
  * to a socket using InputStream and OutputStream.
  */
 public interface SocketInterface {
