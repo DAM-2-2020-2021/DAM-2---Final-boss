@@ -1,4 +1,4 @@
 package eu.cifpfbmoll.network;
 
-public class MessageHandler {
+public class PacketHandler {
 }

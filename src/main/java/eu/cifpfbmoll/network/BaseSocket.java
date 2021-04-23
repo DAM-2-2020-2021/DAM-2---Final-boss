@@ -6,6 +6,7 @@ import java.io.OutputStream;
 import java.net.Socket;
 
 /**
+ * Basic SocketInterface implementation.
  */
 public class BaseSocket implements SocketInterface {
     private final Socket socket;
