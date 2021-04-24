@@ -1,4 +1,4 @@
-package eu.cifpfbmoll.network;
+package eu.cifpfbmoll.net.packet;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -6,6 +6,7 @@ import java.util.Arrays;
 
 /**
  * Structure of a packet/message.
+ * Instances of this object must be created using the Constructor Factory Method.
  */
 public class Packet {
     private static final Charset CHARSET_ENCODING = StandardCharsets.UTF_8;
@@ -34,7 +35,7 @@ public class Packet {
      * @return New Packet instance
      */
     public static Packet create(String type, Integer ttl, Integer src, Integer dst, Integer resender, byte[] data) {
-        return new Packet(type, ttl.byteValue(), src.byteValue(), dst.byteValue(), resender.byteValue(), data);
+        return new Packet(Packet.formatType(type), ttl.byteValue(), src.byteValue(), dst.byteValue(), resender.byteValue(), data);
     }
 
     /**
@@ -80,6 +81,20 @@ public class Packet {
         byte resender = bytes[index++];
         byte[] data = Arrays.copyOfRange(bytes, index, bytes.length);
         return new Packet(type, ttl, src, dst, resender, data);
+    }
+
+    /**
+     * Get the correct format of type header field.
+     * Checks for correct length and appends default values if needed.
+     *
+     * @return Corrected Packet type format
+     */
+    public static String formatType(String type) {
+        byte[] bytes = new byte[PACKET_TYPE_SIZE];
+        byte[] str = type.getBytes(CHARSET_ENCODING);
+        for (int i = 0; i < PACKET_TYPE_SIZE; i++)
+            bytes[i] = (i < str.length) ? str[i] : DEFAULT_TYPE_VALUE;
+        return new String(bytes, CHARSET_ENCODING);
     }
 
     /**

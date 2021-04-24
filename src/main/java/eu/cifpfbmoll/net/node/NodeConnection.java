@@ -1,4 +1,4 @@
-package eu.cifpfbmoll.network;
+package eu.cifpfbmoll.net.node;
 
 public class NodeConnection {
 }

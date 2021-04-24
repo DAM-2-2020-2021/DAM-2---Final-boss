@@ -1,4 +1,4 @@
-package eu.cifpfbmoll.network;
+package eu.cifpfbmoll.net.socket;
 
 import java.io.IOException;
 import java.io.InputStream;
