@@ -10,16 +10,59 @@ import java.util.Arrays;
 public class Packet {
     private static final Charset CHARSET_ENCODING = StandardCharsets.UTF_8;
     private static final byte DEFAULT_TYPE_VALUE = 0;
+    private static final int DEFAULT_TTL_VALUE = 32;
     private static final int PACKET_TYPE_SIZE = 4;
     private static final int PACKET_TTL_SIZE = 1;
     private static final int PACKET_ID_SIZE = 1;
 
-    public String type = "";
-    public byte ttl = 32;
-    public byte src = 0;
-    public byte dst = 0;
-    public byte resender = 0;
+    public String type;
+    public byte ttl;
+    public byte src;
+    public byte dst;
+    public byte resender;
     public byte[] data;
+
+    /**
+     * Create a new Packet using the constructor factory method.
+     *
+     * @param type Packet type
+     * @param ttl Time to live
+     * @param src Source node id
+     * @param dst Destination node id
+     * @param resender Resender node id
+     * @param data Packet data
+     * @return New Packet instance
+     */
+    public static Packet create(String type, Integer ttl, Integer src, Integer dst, Integer resender, byte[] data) {
+        return new Packet(type, ttl.byteValue(), src.byteValue(), dst.byteValue(), resender.byteValue(), data);
+    }
+
+    /**
+     * Create a new Packet using the constructor factory method.
+     *
+     * @param type Packet type
+     * @param src Source node id
+     * @param dst Destination node id
+     * @param resender Resender node id
+     * @param data Packet data
+     * @return New Packet instance
+     */
+    public static Packet create(String type, Integer src, Integer dst, Integer resender, byte[] data) {
+        return Packet.create(type, DEFAULT_TTL_VALUE, src, dst, resender, data);
+    }
+
+    /**
+     * Create a new Packet using the constructor factory method.
+     *
+     * @param type Packet type
+     * @param src Source node id
+     * @param dst Destination node id
+     * @param data Packet data
+     * @return New Packet instance
+     */
+    public static Packet create(String type, Integer src, Integer dst, byte[] data) {
+        return Packet.create(type, DEFAULT_TTL_VALUE, src, dst, src, data);
+    }
 
     /**
      * Decode Packet from byte array.
@@ -36,20 +79,34 @@ public class Packet {
         byte dst = bytes[index++];
         byte resender = bytes[index++];
         byte[] data = Arrays.copyOfRange(bytes, index, bytes.length);
-        return new Packet(type, src, dst, resender, data);
+        return new Packet(type, ttl, src, dst, resender, data);
     }
 
-    public Packet(String type, byte src, byte dst, byte resender, byte[] data) {
+    /**
+     * Packet constructor with all attributes. This is the only constructor available,
+     * in order to create new Packets the constructor factory method must be used.
+     *
+     * @param type Packet type
+     * @param ttl Time to live
+     * @param src Source node id
+     * @param dst Destination node id
+     * @param resender Resender node id
+     * @param data Packet data
+     */
+    private Packet(String type, byte ttl, byte src, byte dst, byte resender, byte[] data) {
         this.type = type;
+        this.ttl = ttl;
         this.src = src;
         this.dst = dst;
         this.resender = resender;
         this.data = data;
     }
 
-    public Packet(byte[] data) {
-    }
-
+    /**
+     * Get packet size.
+     *
+     * @return Packet size
+     */
     public int size() {
         return PACKET_TYPE_SIZE + PACKET_TTL_SIZE + PACKET_ID_SIZE * 3 + this.data.length;
     }
@@ -75,6 +132,6 @@ public class Packet {
 
     @Override
     public String toString() {
-        return String.format("[%s][%d][%d][%d][%d]", this.type, this.ttl, this.src, this.dst, this.resender);
+        return String.format("type: [%s]; ttl: [%d]; src: [%d]; dst: [%d]; resender: [%d]", this.type, this.ttl, this.src, this.dst, this.resender);
     }
 }
