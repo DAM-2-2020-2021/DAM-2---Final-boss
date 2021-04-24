@@ -1,5 +1,7 @@
 package eu.cifpfbmoll.net.packet;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
@@ -26,12 +28,12 @@ public class Packet {
     /**
      * Create a new Packet using the constructor factory method.
      *
-     * @param type Packet type
-     * @param ttl Time to live
-     * @param src Source node id
-     * @param dst Destination node id
+     * @param type     Packet type
+     * @param ttl      Time to live
+     * @param src      Source node id
+     * @param dst      Destination node id
      * @param resender Resender node id
-     * @param data Packet data
+     * @param data     Packet data
      * @return New Packet instance
      */
     public static Packet create(String type, Integer ttl, Integer src, Integer dst, Integer resender, byte[] data) {
@@ -41,11 +43,11 @@ public class Packet {
     /**
      * Create a new Packet using the constructor factory method.
      *
-     * @param type Packet type
-     * @param src Source node id
-     * @param dst Destination node id
+     * @param type     Packet type
+     * @param src      Source node id
+     * @param dst      Destination node id
      * @param resender Resender node id
-     * @param data Packet data
+     * @param data     Packet data
      * @return New Packet instance
      */
     public static Packet create(String type, Integer src, Integer dst, Integer resender, byte[] data) {
@@ -56,8 +58,8 @@ public class Packet {
      * Create a new Packet using the constructor factory method.
      *
      * @param type Packet type
-     * @param src Source node id
-     * @param dst Destination node id
+     * @param src  Source node id
+     * @param dst  Destination node id
      * @param data Packet data
      * @return New Packet instance
      */
@@ -90,6 +92,7 @@ public class Packet {
      * @return Corrected Packet type format
      */
     public static String formatType(String type) {
+        if (type == null) type = StringUtils.EMPTY;
         byte[] bytes = new byte[PACKET_TYPE_SIZE];
         byte[] str = type.getBytes(CHARSET_ENCODING);
         for (int i = 0; i < PACKET_TYPE_SIZE; i++)
@@ -101,12 +104,12 @@ public class Packet {
      * Packet constructor with all attributes. This is the only constructor available,
      * in order to create new Packets the constructor factory method must be used.
      *
-     * @param type Packet type
-     * @param ttl Time to live
-     * @param src Source node id
-     * @param dst Destination node id
+     * @param type     Packet type
+     * @param ttl      Time to live
+     * @param src      Source node id
+     * @param dst      Destination node id
      * @param resender Resender node id
-     * @param data Packet data
+     * @param data     Packet data
      */
     private Packet(String type, byte ttl, byte src, byte dst, byte resender, byte[] data) {
         this.type = type;
