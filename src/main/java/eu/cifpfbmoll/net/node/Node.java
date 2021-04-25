@@ -1,7 +1,9 @@
 package eu.cifpfbmoll.net.node;
 
 /**
- * Node information.
+ * A Node is another device running the same code in the same network.
+ *
+ * <p>The Node Class holds information about a specific Node.</p>
  */
 public class Node {
     private int id;
@@ -23,6 +25,12 @@ public class Node {
         this.ip = ip;
     }
 
+    /**
+     * Create a new Node with a specific ID and IP.
+     *
+     * @param id node ID
+     * @param ip node IP
+     */
     public Node(int id, String ip) {
         this.id = id;
         this.ip = ip;

@@ -1,7 +1,12 @@
 package eu.cifpfbmoll.net.node;
 
 /**
- * Handle a connection with another Node.
+ * The NodeConnection Class manages a single connection with another node on the network.
+ *
+ * <p>Uses NodeSocket to send/receive data from a node.</p>
+ *
+ * @see Node
+ * @see NodeSocket
  */
 public class NodeConnection {
     private Node node;
