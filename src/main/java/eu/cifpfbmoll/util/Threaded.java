@@ -65,7 +65,7 @@ public abstract class Threaded implements Runnable {
     /**
      * Wait for the thread to end with a timeout.
      *
-     * @param millis Timeout in milliseconds
+     * @param millis timeout in milliseconds
      * @return true if there were no errors, false otherwise
      */
     public boolean join(int millis) {

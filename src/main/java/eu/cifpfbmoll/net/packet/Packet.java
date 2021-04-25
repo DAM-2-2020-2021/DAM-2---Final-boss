@@ -7,8 +7,9 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 /**
- * Structure of a packet/message.
- * Instances of this object must be created using the Constructor Factory Method.
+ * Defines the structure of a packet to be sent to other nodes on the network.
+ *
+ * <p>Instances of this Class must be created using the Constructor Factory Method</p>
  */
 public class Packet {
     private static final Charset CHARSET_ENCODING = StandardCharsets.UTF_8;
@@ -22,46 +23,52 @@ public class Packet {
     public byte ttl;
     public byte src;
     public byte dst;
-    public byte resender;
+    public byte resend;
     public byte[] data;
 
     /**
-     * Create a new Packet using the constructor factory method.
+     * Create a new Packet with all parameters.
      *
-     * @param type     Packet type
-     * @param ttl      Time to live
-     * @param src      Source node id
-     * @param dst      Destination node id
-     * @param resender Resender node id
-     * @param data     Packet data
-     * @return New Packet instance
+     * @param type   packet type
+     * @param ttl    time to live
+     * @param src    source node id
+     * @param dst    destination node id
+     * @param resend resend node id
+     * @param data   packet data
+     * @return new Packet instance
      */
-    public static Packet create(String type, Integer ttl, Integer src, Integer dst, Integer resender, byte[] data) {
-        return new Packet(Packet.formatType(type), ttl.byteValue(), src.byteValue(), dst.byteValue(), resender.byteValue(), data);
+    public static Packet create(String type, Integer ttl, Integer src, Integer dst, Integer resend, byte[] data) {
+        return new Packet(Packet.formatType(type), ttl.byteValue(), src.byteValue(), dst.byteValue(), resend.byteValue(), data);
     }
 
     /**
-     * Create a new Packet using the constructor factory method.
+     * Create a new Packet without specifying the Time to Live field.
      *
-     * @param type     Packet type
-     * @param src      Source node id
-     * @param dst      Destination node id
-     * @param resender Resender node id
-     * @param data     Packet data
-     * @return New Packet instance
+     * <p>Time to Live will have its default value.</p>
+     *
+     * @param type   packet type
+     * @param src    source node id
+     * @param dst    destination node id
+     * @param resend resend node id
+     * @param data   packet data
+     * @return new Packet instance
      */
-    public static Packet create(String type, Integer src, Integer dst, Integer resender, byte[] data) {
-        return Packet.create(type, DEFAULT_TTL_VALUE, src, dst, resender, data);
+    public static Packet create(String type, Integer src, Integer dst, Integer resend, byte[] data) {
+        return Packet.create(type, DEFAULT_TTL_VALUE, src, dst, resend, data);
     }
 
     /**
-     * Create a new Packet using the constructor factory method.
+     * Create a new Packet without specifying the Time to Live field
+     * and the resend ID.
      *
-     * @param type Packet type
-     * @param src  Source node id
-     * @param dst  Destination node id
-     * @param data Packet data
-     * @return New Packet instance
+     * <p>Time to Live will have its default value.
+     * The resend ID will be the same as the source ID.</p>
+     *
+     * @param type packet type
+     * @param src  source node id
+     * @param dst  destination node id
+     * @param data packet data
+     * @return new Packet instance
      */
     public static Packet create(String type, Integer src, Integer dst, byte[] data) {
         return Packet.create(type, DEFAULT_TTL_VALUE, src, dst, src, data);
@@ -70,8 +77,8 @@ public class Packet {
     /**
      * Decode Packet from byte array.
      *
-     * @param bytes Byte array
-     * @return Decoded Packet object
+     * @param bytes raw byte array.
+     * @return decoded Packet object
      */
     public static Packet fromBytes(byte[] bytes) {
         byte[] ptype = Arrays.copyOfRange(bytes, 0, PACKET_TYPE_SIZE);
@@ -80,16 +87,17 @@ public class Packet {
         byte ttl = bytes[index++];
         byte src = bytes[index++];
         byte dst = bytes[index++];
-        byte resender = bytes[index++];
+        byte resend = bytes[index++];
         byte[] data = Arrays.copyOfRange(bytes, index, bytes.length);
-        return new Packet(type, ttl, src, dst, resender, data);
+        return new Packet(type, ttl, src, dst, resend, data);
     }
 
     /**
      * Get the correct format of type header field.
-     * Checks for correct length and appends default values if needed.
      *
-     * @return Corrected Packet type format
+     * <p>Checks for correct length and appends default values if needed.</p>
+     *
+     * @return corrected Packet type format
      */
     public static String formatType(String type) {
         if (type == null) type = StringUtils.EMPTY;
@@ -104,26 +112,26 @@ public class Packet {
      * Packet constructor with all attributes. This is the only constructor available,
      * in order to create new Packets the constructor factory method must be used.
      *
-     * @param type     Packet type
-     * @param ttl      Time to live
-     * @param src      Source node id
-     * @param dst      Destination node id
-     * @param resender Resender node id
-     * @param data     Packet data
+     * @param type   packet type
+     * @param ttl    time to live
+     * @param src    source node id
+     * @param dst    destination node id
+     * @param resend resend node id
+     * @param data   packet data
      */
-    private Packet(String type, byte ttl, byte src, byte dst, byte resender, byte[] data) {
+    private Packet(String type, byte ttl, byte src, byte dst, byte resend, byte[] data) {
         this.type = type;
         this.ttl = ttl;
         this.src = src;
         this.dst = dst;
-        this.resender = resender;
+        this.resend = resend;
         this.data = data;
     }
 
     /**
      * Get packet size.
      *
-     * @return Packet size
+     * @return packet size
      */
     public int size() {
         return PACKET_TYPE_SIZE + PACKET_TTL_SIZE + PACKET_ID_SIZE * 3 + this.data.length;
@@ -132,7 +140,7 @@ public class Packet {
     /**
      * Convert Packet data to byte array.
      *
-     * @return Byte array
+     * @return raw byte array
      */
     public byte[] bytes() {
         byte[] bytes = new byte[this.size()];
@@ -143,13 +151,13 @@ public class Packet {
         bytes[index++] = this.ttl;
         bytes[index++] = this.src;
         bytes[index++] = this.dst;
-        bytes[index++] = this.resender;
+        bytes[index++] = this.resend;
         System.arraycopy(this.data, 0, bytes, index, this.data.length);
         return bytes;
     }
 
     @Override
     public String toString() {
-        return String.format("type: [%s]; ttl: [%d]; src: [%d]; dst: [%d]; resender: [%d]", this.type, this.ttl, this.src, this.dst, this.resender);
+        return String.format("type: [%s]; ttl: [%d]; src: [%d]; dst: [%d]; resend: [%d]", this.type, this.ttl, this.src, this.dst, this.resend);
     }
 }
