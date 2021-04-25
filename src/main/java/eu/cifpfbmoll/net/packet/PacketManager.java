@@ -1,32 +1,42 @@
 package eu.cifpfbmoll.net.packet;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Hashtable;
 
 /**
- * Manages incoming Packets and processes them using PacketHandler.
- * For every Packet type a PacketHandler must be specified in order to process it.
+ * Manage incoming Packets and process them using PacketHandler.
+ *
+ * <p>PacketManager associates Packet type (4B string) with a PacketHandler.
+ * Only one PacketHandler can be specified for a certain Packet type.</p>
+ *
+ * @see PacketHandler
  */
 public class PacketManager {
+    private static final Logger log = LoggerFactory.getLogger(PacketManager.class);
     private final Hashtable<String, PacketHandler> handlerTable = new Hashtable<>();
 
     /**
      * Add a new Packet Handler for Packet type.
      *
-     * @param type Packet type to handle
-     * @param packetHandler Packet Handler
+     * @param type packet type to handle
+     * @param handler packet handler to handle a Packet type
+     * @see PacketHandler
      */
-    public void addHandler(String type, PacketHandler packetHandler) {
+    public void add(String type, PacketHandler handler) {
+        if (handler == null) return;
         String packetType = Packet.formatType(type);
         if (!this.handlerTable.containsKey(packetType))
-            this.handlerTable.put(packetType, packetHandler);
+            this.handlerTable.put(packetType, handler);
     }
 
     /**
      * Removed Packet Handler for Packet type.
      *
-     * @param type Packet type to remove
+     * @param type packet type to remove
      */
-    public void removeHandler(String type) {
+    public void remove(String type) {
         String packetType = Packet.formatType(type);
         this.handlerTable.remove(packetType);
     }
@@ -34,9 +44,10 @@ public class PacketManager {
     /**
      * Process a packet using its Packet type handler.
      *
-     * @param packet Packet to process
+     * @param packet packet to process
      */
     public void process(Packet packet) {
+        if (packet == null) return;
         PacketHandler handler = this.handlerTable.get(packet.type);
         if (handler != null)
             handler.handle(packet);
