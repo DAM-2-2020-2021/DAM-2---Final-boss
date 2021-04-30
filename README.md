@@ -7,6 +7,9 @@
 
 ## Instal·lació i ús
 
+## Dependències
+Aquest projecte utilitza el projecte [netlib](https://github.com/DAM-2-2020-2021/netlib) per a poder comunicar dispositius a dins d'una xarxa Peer to Peer. Netlib es pot utilitzar com a dependència de Maven. Per mes informació sobre la instal·lació de netlib es pot trobar al RAEDME.md del projecte.
+
 ## Com contribuir
 Per tal de mantenir un projecte ben organitzat cal establir unes normes:
 - Les braques `master` i `dev` estàn protegides. Significa que no es pot pujar codi a elles directament.
