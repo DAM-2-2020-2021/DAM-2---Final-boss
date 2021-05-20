@@ -1,4 +1,6 @@
-package eu.netlib.graphic.sprite;
+package eu.cifpfbmoll.graphic.sprite;
+
+import eu.cifpfbmoll.main;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -8,15 +10,7 @@ import javax.imageio.ImageIO;
 
 public class Sprite {
 
-    private static String spriteSheetFile;
-    private static int imgWidth;
-    private static int imgHeight;
-    private static BufferedImage spriteSheet;
-
-    public Sprite(String spriteSheetFile, int imgWidth, int imgHeight){
-        this.spriteSheetFile = spriteSheetFile;
-        this.imgWidth = imgWidth;
-        this.imgHeight = imgHeight;
+    public Sprite(){
     }
 
     /**
@@ -43,13 +37,63 @@ public class Sprite {
      * @param yGrid
      * @return
      */
-    public static BufferedImage getSprite(int xGrid, int yGrid) {
-
-        if (spriteSheet == null) {
-            spriteSheet = loadSprite(spriteSheetFile);
+    public static BufferedImage getSprite(BufferedImage spriteSheetFile,int imgWidth, int imgHeight, int xGrid, int yGrid) {
+        try {
+            return spriteSheetFile.getSubimage(xGrid * imgWidth, yGrid * imgHeight, imgWidth, imgHeight);
+        }catch(Exception e){
+                System.out.println(e+" Coord invalid: "+xGrid+ " " + yGrid);
         }
-
-        return spriteSheet.getSubimage(xGrid * imgWidth, yGrid * imgHeight, imgWidth, imgHeight);
+        return null;
     }
 
+    private static BufferedImage getSheet(String file){
+        String url = Sprite.class.getClassLoader().getResource(file).getPath();
+        BufferedImage spriteSheet = loadSprite(url);
+        return spriteSheet;
+    }
+
+    public static BufferedImage getShip1(int x, int y){
+        BufferedImage spriteSheet = getSheet("img/ship/shipsheet50x50.png");
+        return getSprite(spriteSheet, 50, 50, x, y);
+    }
+
+    public static BufferedImage getShip2(int x, int y){
+        BufferedImage spriteSheet = getSheet("img/ship/shipsheetswift50x50.png");
+        return getSprite(spriteSheet, 50, 50, x, y);
+    }
+
+    public static BufferedImage getExplosion(int x, int y){
+        BufferedImage spriteSheet = getSheet("img/sfx/explosionsheet100x100.png");
+        return getSprite(spriteSheet, 100, 100, x, y);
+    }
+
+    public static BufferedImage getPowerup(int x, int y){
+        BufferedImage spriteSheet = getSheet("img/powerups/powerupsheet60x90.png");
+        return getSprite(spriteSheet, 60, 90, x, y);
+    }
+
+    public static BufferedImage getMothership(int x, int y){
+        BufferedImage spriteSheet = getSheet("img/mothership/mothershipsheet300x800.png");
+        return getSprite(spriteSheet, 300, 800, x, y);
+    }
+
+    public static BufferedImage getBlackhole(int x, int y){
+        BufferedImage spriteSheet = getSheet("img/blackhole/blackholesheet100x100.png");
+        return getSprite(spriteSheet, 100, 100, x, y);
+    }
+
+    public static BufferedImage getAsteroid(int x, int y){
+        BufferedImage spriteSheet = getSheet("img/asteroid/asteroidsheet70x70.png");
+        return getSprite(spriteSheet, 70, 70, x, y);
+    }
+
+    public static BufferedImage getAsteroidSmall(int x, int y){
+        BufferedImage spriteSheet = getSheet("img/asteroid/asteroidsmallsheet40x40.png");
+        return getSprite(spriteSheet, 40, 40, x, y);
+    }
+
+    public static BufferedImage getAsteroidSmallest(int x, int y){
+        BufferedImage spriteSheet = getSheet("img/asteroid/asteroidsmallestsheet20x20.png");
+        return getSprite(spriteSheet, 20, 20, x, y);
+    }
 }
