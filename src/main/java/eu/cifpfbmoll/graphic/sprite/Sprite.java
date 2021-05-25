@@ -1,6 +1,6 @@
 package eu.cifpfbmoll.graphic.sprite;
 
-import eu.cifpfbmoll.main;
+import eu.cifpfbmoll.*;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
