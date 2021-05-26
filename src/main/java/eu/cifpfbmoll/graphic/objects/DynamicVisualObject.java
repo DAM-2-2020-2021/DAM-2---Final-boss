@@ -1,4 +1,4 @@
-package eu.cifpfbmoll.graphics.objects;
+package eu.cifpfbmoll.graphic.objects;
 
 
 import eu.cifpfbmoll.logic.TheaterMode;

@@ -1,6 +1,7 @@
 package eu.cifpfbmoll.logic;
 
-import eu.cifpfbmoll.graphics.objects.*;
+import eu.cifpfbmoll.graphic.canvas.*;
+import eu.cifpfbmoll.graphic.objects.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -14,11 +15,10 @@ public class TheaterMode extends JFrame {
 
     //Attributes
     private ControlPanel controlPanel;
-    private Viewer viewer;
     private ArrayList<Spacecraft> redTeam = new ArrayList<>();
     private ArrayList<Spacecraft> blueTeam = new ArrayList<>();
     private boolean isAdmin;
-    private Configuration configurations;
+    public Configuration configurations;
 
 
     //Getters & Setters
@@ -46,19 +46,25 @@ public class TheaterMode extends JFrame {
         isAdmin = admin;
     }
 
-    //Constructor
+   /* //Constructor
     public TheaterMode(){
-        this.viewer = new Viewer();
         this.controlPanel = new ControlPanel(this);
 
         this.createFrame();
-    }
+    }*/
 
 
     //Methods
     public static void main(String[] args) {
         TheaterMode theaterMode = new TheaterMode();
-        theaterMode.setVisible(true);
+        theaterMode.configurations = new Configuration();
+        MainScreen mainScreen = new MainScreen(theaterMode);
+        mainScreen.showFrame();
+
+
+
+
+        /*theaterMode.setVisible(true);
 
         for (int i = 0; i < 10; i++) {
             theaterMode.addSpacecraft(theaterMode ,i);
@@ -123,10 +129,10 @@ public class TheaterMode extends JFrame {
             }else {
                 theaterMode.controlPanel.hidePlayButton();
             }
-        }
+        }*/
     }
 
-    private void addControlPanelToPane(Container panel){
+    /*private void addControlPanelToPane(Container panel){
         GridBagConstraints gbc = new GridBagConstraints();
 
         gbc.anchor = GridBagConstraints.NORTHWEST;
@@ -139,17 +145,7 @@ public class TheaterMode extends JFrame {
         panel.add(this.controlPanel, gbc);
     }
 
-    private void addViewerToPane(Container panel){
-        GridBagConstraints gbc = new GridBagConstraints();
 
-        gbc.fill = GridBagConstraints.BOTH;
-        gbc.gridx = 3;
-        gbc.gridy = 0;
-        gbc.weighty = 2;
-        gbc.weightx = 2;
-        gbc.gridheight = 2;
-        panel.add(this.viewer, gbc);
-    }
 
     private void createFrame() {
         Container panel;
@@ -161,11 +157,11 @@ public class TheaterMode extends JFrame {
 
         panel = this.getContentPane();
 
-        this.addViewerToPane(panel);
+
         this.addControlPanelToPane(panel);
 
         this.setVisible(true);
-    }
+    }*/
 
     public void addSpacecraft(TheaterMode theaterMode, int IP){
         Random rd = new Random();
