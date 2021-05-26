@@ -61,6 +61,11 @@ public class Sprite {
         BufferedImage spriteSheet = getSheet("img/ship/shipsheetswift50x50.png");
         return getSprite(spriteSheet, 50, 50, x, y);
     }
+    
+    public static BufferedImage getBullet(int x, int y){
+        BufferedImage spriteSheet = getSheet("img/bullet/bulletsheet10x35.png");
+        return getSprite(spriteSheet, 10, 35, x, y);
+    }
 
     public static BufferedImage getExplosion(int x, int y){
         BufferedImage spriteSheet = getSheet("img/sfx/explosionsheet100x100.png");
@@ -68,8 +73,8 @@ public class Sprite {
     }
 
     public static BufferedImage getPowerup(int x, int y){
-        BufferedImage spriteSheet = getSheet("img/powerups/powerupsheet60x90.png");
-        return getSprite(spriteSheet, 60, 90, x, y);
+        BufferedImage spriteSheet = getSheet("img/powerups/powerupsheet30x45.png");
+        return getSprite(spriteSheet, 30, 45, x, y);
     }
 
     public static BufferedImage getMothership(int x, int y){
