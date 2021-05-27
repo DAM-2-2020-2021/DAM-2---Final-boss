@@ -9,7 +9,6 @@ public class MainScreen extends JFrame implements Runnable{
     //VARS
     private StartPanel startPanel;
     private AdminPanel adminPanel;
-    private GameViewer gameViewer;
     private ClientPanel clientPanel;
     private OptionsPanel optionsPanel;
 
@@ -30,7 +29,7 @@ public class MainScreen extends JFrame implements Runnable{
             switch(newScreenName){
                 case "GAME":
                     cleanScreen();
-                    this.add(gameViewer, BorderLayout.CENTER);
+                    //this.add(gameViewer, BorderLayout.CENTER);
                     break;
                 case "CLIENT_PANEL":
                     cleanScreen();
@@ -48,13 +47,13 @@ public class MainScreen extends JFrame implements Runnable{
                     throw new Exception("There is no screen called " + newScreenName);   // The screen Name does not exist. Throws error
             }
         }catch(Exception e){
-            System.out.println("e " + e.getMessage());
+            System.out.println(e.getMessage());
         }
     }
 
     private void cleanScreen(){
         this.remove(adminPanel);
-        this.remove(gameViewer);
+        //this.remove(gameViewer);
         this.remove(clientPanel);
         this.remove(startPanel);
         this.remove(optionsPanel);
@@ -70,7 +69,7 @@ public class MainScreen extends JFrame implements Runnable{
 
     private void initComponents(){
         adminPanel = new AdminPanel(this);
-        gameViewer = new GameViewer(this);  // Default game viewer (pink background)
+        //gameViewer = new GameViewer(this);  // Default game viewer (pink background)
         startPanel = new StartPanel(this);
         clientPanel = new ClientPanel(this);
         optionsPanel = new OptionsPanel(this);
@@ -93,6 +92,7 @@ public class MainScreen extends JFrame implements Runnable{
     public void run() {
         while(true){
             this.validate();
+            this.repaint();     // CHANGED
         }
     }
 }

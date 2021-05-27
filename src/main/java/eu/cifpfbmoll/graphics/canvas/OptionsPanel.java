@@ -17,6 +17,7 @@ public class OptionsPanel extends JPanel implements ActionListener {
     private JLabel meteorCountLabel;
     private JButton previousMeteor;
     private JButton nextMeteor;
+    private JButton saveChanges;
 
     public OptionsPanel(MainScreen mainScreen){
         this.mainScreen = mainScreen;
@@ -62,8 +63,13 @@ public class OptionsPanel extends JPanel implements ActionListener {
         leftPanel.add(leftBotPanel);
 
         this.add(leftPanel);
-        this.add(rightPanel = new JPanel());
+        rightPanel = new JPanel();
 
+
+        saveChanges = new JButton("SAVE CHANGES");
+        saveChanges.addActionListener(this);
+        rightPanel.add(saveChanges);
+        this.add(rightPanel);
 
     }
 
@@ -74,7 +80,6 @@ public class OptionsPanel extends JPanel implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         Object sourceButton = e.getSource();
-        System.out.println("eeee");
         //
         if (sourceButton.equals(previousMeteor)){
             meteorCount--;
@@ -82,6 +87,10 @@ public class OptionsPanel extends JPanel implements ActionListener {
         }else if(sourceButton.equals(nextMeteor)){
             meteorCount++;
             meteorCountLabel.setText(String.valueOf(meteorCount));
+        }
+        if(sourceButton.equals(saveChanges)){
+            //mainScreen.theaterMode.configurations.setMeteoriteQuantity(meteorCount);
+            mainScreen.changeScreen("ADMIN_PANEL");
         }
     }
 }
