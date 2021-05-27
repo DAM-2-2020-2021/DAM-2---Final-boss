@@ -107,8 +107,8 @@ public class ClientPanel extends CustomPanel implements Runnable{
     }
 
     private void addLogPanel(){
-        JTextArea textArea = new JTextArea (10,30);
-        logPanel = new JScrollPane(textArea);
+        textLog = new JTextArea (10,30);
+        logPanel = new JScrollPane(textLog);
         logPanel.setBorder(new EmptyBorder(SUBPANEL_PADDING_HEIGHT, SUBPANEL_PADDING_WIDTH, SUBPANEL_PADDING_HEIGHT, SUBPANEL_PADDING_WIDTH));
 
         // Set the font, background and font color
