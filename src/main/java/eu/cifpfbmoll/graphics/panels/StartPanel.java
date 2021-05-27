@@ -1,24 +1,36 @@
-package eu.cifpfbmoll.graphics.canvas;
+package eu.cifpfbmoll.graphics.panels;
+
+import eu.cifpfbmoll.graphics.window.MainScreen;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class StartPanel extends JPanel implements ActionListener {
+public class StartPanel extends CustomPanel {
     // CONS
+    private LayoutManager mainLayout = new BoxLayout(this, BoxLayout.Y_AXIS);
     private String ADMIN_TEXT = "Admin screen", CLIENT_TEXT = "Client screen";
     private String MAIN_PANEL_TEXT = "Main Panel";
     private String CHECKBOX_ADMIN_TEXT = "Admin";
 
     // VARS
-    private MainScreen mainScreen;
     private JButton adminButton, clientButton;
-    private  JCheckBox checkBoxAdmin;
+    private JCheckBox checkBoxAdmin;
 
     public StartPanel(MainScreen mainScreen){
-        this.mainScreen = mainScreen;
-        setLayoutMainPanel();
+        super(mainScreen);
+        initPanel();
+    }
+
+    @Override
+    protected void initPanel() {
+        this.setLayout(mainLayout);
+        addMainElements();
+    }
+
+    @Override
+    protected void addMainElements() {
         addMainPanel();
     }
 
@@ -49,11 +61,6 @@ public class StartPanel extends JPanel implements ActionListener {
         this.add(adminButton);
         //buttonsPanel.add(clientButton);
         //this.add(buttonsPanel, BorderLayout.CENTER);
-    }
-
-    private void setLayoutMainPanel(){
-        //this.setLayout(new GridLayout(rows, cols));
-        this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
     }
 
     @Override

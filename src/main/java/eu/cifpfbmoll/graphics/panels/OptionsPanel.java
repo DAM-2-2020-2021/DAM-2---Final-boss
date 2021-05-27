@@ -1,13 +1,16 @@
-package eu.cifpfbmoll.graphics.canvas;
+package eu.cifpfbmoll.graphics.panels;
+
+import eu.cifpfbmoll.graphics.window.MainScreen;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class OptionsPanel extends JPanel implements ActionListener {
+public class OptionsPanel extends CustomPanel {
     // CONS
-
+    private final int PANEL_ROWS = 1, PANEL_COLUMNS = 3;
+    private final LayoutManager mainLayout = new GridLayout(PANEL_ROWS, PANEL_COLUMNS);
     // VARS
     private MainScreen mainScreen;
     private JPanel leftPanel, rightPanel;
@@ -20,8 +23,18 @@ public class OptionsPanel extends JPanel implements ActionListener {
     private JButton saveChanges;
 
     public OptionsPanel(MainScreen mainScreen){
-        this.mainScreen = mainScreen;
-        setLayoutMainPanel(1, 3);
+        super(mainScreen);
+        initPanel();
+    }
+
+    @Override
+    protected void initPanel() {
+        this.setLayout(mainLayout);
+        addMainElements();
+    }
+
+    @Override
+    protected void addMainElements() {
         addLeftPanel();
     }
 
@@ -71,10 +84,6 @@ public class OptionsPanel extends JPanel implements ActionListener {
         rightPanel.add(saveChanges);
         this.add(rightPanel);
 
-    }
-
-    private void setLayoutMainPanel(int rows, int cols){
-        this.setLayout(new GridLayout(rows, cols));
     }
 
     @Override

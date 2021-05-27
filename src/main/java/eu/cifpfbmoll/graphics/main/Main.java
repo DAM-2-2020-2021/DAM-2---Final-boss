@@ -1,7 +1,7 @@
 package eu.cifpfbmoll.graphics.main;
 
 
-import eu.cifpfbmoll.graphics.canvas.MainScreen;
+import eu.cifpfbmoll.graphics.window.MainScreen;
 
 public class Main {
 
