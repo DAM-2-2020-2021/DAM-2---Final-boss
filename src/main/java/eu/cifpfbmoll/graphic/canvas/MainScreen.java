@@ -1,5 +1,6 @@
 package eu.cifpfbmoll.graphic.canvas;
 
+import eu.cifpfbmoll.logic.Configuration;
 import eu.cifpfbmoll.logic.TheaterMode;
 
 import javax.swing.*;
@@ -7,20 +8,21 @@ import java.awt.*;
 
 public class MainScreen extends JFrame implements Runnable{
     // CONST
+    private final int FRAME_MINIMUM_HEIGHT = 600, FRAME_MINIMUM_WIDTH = 600;
 
     //VARS
     private StartPanel startPanel;
-    private AdminPanel adminPanel;
+    public AdminPanel adminPanel;
     private ClientPanel clientPanel;
     private OptionsPanel optionsPanel;
+    private PlayersPanel playersPanel;
     public TheaterMode theaterMode;
+    public Configuration configuration;
 
-    public MainScreen(TheaterMode theaterMode){
+    public MainScreen(TheaterMode theaterMode, Configuration configuration){
         this.theaterMode = theaterMode;
-        initComponents();       // First initialize the components (JPanels)
-        setFrame();     // Setup and show the frame
-        addInitComponents();    // Add the initial component (adminPanel)
-        new Thread(this).start();   // Start the thread
+        this.configuration = configuration;
+        initScreen();
     }
 
     /**
@@ -32,7 +34,7 @@ public class MainScreen extends JFrame implements Runnable{
         try{
             switch(newScreenName){
                 case "GAME":
-                    cleanScreen();
+                    //cleanScreen();
                     //this.add(gameViewer, BorderLayout.CENTER);
                     break;
                 case "CLIENT_PANEL":
@@ -47,6 +49,11 @@ public class MainScreen extends JFrame implements Runnable{
                     cleanScreen();
                     this.add(optionsPanel, BorderLayout.CENTER);
                     break;
+                case "PLAYERS_PANEL":
+                    cleanScreen();
+                    this.add(playersPanel, BorderLayout.CENTER);
+                    break;
+
                 default:
                     throw new Exception("There is no screen called " + newScreenName);   // The screen Name does not exist. Throws error
             }
@@ -55,12 +62,24 @@ public class MainScreen extends JFrame implements Runnable{
         }
     }
 
+    private void initScreen(){
+        initComponents();       // First initialize the components (JPanels)
+        initFrame();     // Setup and show the frame
+        addInitComponents();    // Add the initial component (adminPanel)
+        new Thread(this).start();   // Start the thread
+    }
+
+    private void initFrame() {
+        // Add frame config and show
+        this.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setLayout(new BorderLayout());
+        this.setMinimumSize(new Dimension(FRAME_MINIMUM_WIDTH, FRAME_MINIMUM_HEIGHT));
+        this.revalidate();
+    }
+
     private void cleanScreen(){
-        this.remove(adminPanel);
-        //this.remove(gameViewer);
-        this.remove(clientPanel);
-        this.remove(startPanel);
-        this.remove(optionsPanel);
+        this.getContentPane().removeAll();
     }
 
     public void showFrame(){
@@ -73,10 +92,11 @@ public class MainScreen extends JFrame implements Runnable{
 
     private void initComponents(){
         adminPanel = new AdminPanel(this);
+        playersPanel = new PlayersPanel(this, this.theaterMode.getBlueTeam(), this.theaterMode.getRedTeam());
         //gameViewer = new GameViewer(this);  // Default game viewer (pink background)
         startPanel = new StartPanel(this);
         clientPanel = new ClientPanel(this);
-        optionsPanel = new OptionsPanel(this);
+        optionsPanel = new OptionsPanel(this,this.configuration);
     }
 
     private void setFrame() {
@@ -96,6 +116,7 @@ public class MainScreen extends JFrame implements Runnable{
     public void run() {
         while(true){
             this.validate();
+            this.repaint();
         }
     }
 }

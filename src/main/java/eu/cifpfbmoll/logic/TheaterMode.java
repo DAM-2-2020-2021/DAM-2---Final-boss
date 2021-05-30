@@ -2,23 +2,28 @@ package eu.cifpfbmoll.logic;
 
 import eu.cifpfbmoll.graphic.canvas.*;
 import eu.cifpfbmoll.graphic.objects.*;
+import eu.cifpfbmoll.netlib.node.NodeManager;
+import eu.cifpfbmoll.sound.Sound;
 
+import javax.sound.sampled.Clip;
 import javax.swing.*;
-import java.awt.*;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
 
 
-public class TheaterMode extends JFrame {
+public class TheaterMode extends JFrame implements Runnable{
 
 
     //Attributes
-    private ControlPanel controlPanel;
     private ArrayList<Spacecraft> redTeam = new ArrayList<>();
     private ArrayList<Spacecraft> blueTeam = new ArrayList<>();
     private boolean isAdmin;
-    public Configuration configurations;
+    public Configuration configuration;
+    private MainScreen mainScreen;
+    private Thread logicThread;
+    private Clip sound;
 
 
     //Getters & Setters
@@ -46,122 +51,49 @@ public class TheaterMode extends JFrame {
         isAdmin = admin;
     }
 
-   /* //Constructor
     public TheaterMode(){
-        this.controlPanel = new ControlPanel(this);
-
-        this.createFrame();
-    }*/
-
+        this.configuration = new Configuration();
+        this.mainScreen = new MainScreen(this, this.configuration);
+        mainScreen.showFrame();
+        logicThread = new Thread(this);
+        logicThread.start();
+    }
 
     //Methods
     public static void main(String[] args) {
         TheaterMode theaterMode = new TheaterMode();
-        theaterMode.configurations = new Configuration();
-        MainScreen mainScreen = new MainScreen(theaterMode);
-        mainScreen.showFrame();
+        NodeManager nodeManager = new NodeManager("192.168.1.1");
+        List<String> ips = nodeManager.getIpsForSubnet("192.168.1");
 
 
+        theaterMode.sound = Sound.clipSoundMenu();
+        theaterMode.sound.start();
+        //nodeManager.startScan(ips);
+        //nodeManager.stopScan();
 
 
-        /*theaterMode.setVisible(true);
+        /* RECEIVE MESSAGE
+        nodeManager.register(Configuration.class, (id, user) ->{
+            //code when recieve message with this packet
+        });
 
-        for (int i = 0; i < 10; i++) {
-            theaterMode.addSpacecraft(theaterMode ,i);
-        }
+        //DEJAR DE ESCUCHAR
+        nodeManager.unregister(Configuration.class);
+        */
 
-        theaterMode.showSpacecrafts();
+        //FOR TESTING
+        //nodeManager.addNode(35,"192.168.1.35");
 
-        boolean exit = false;
-        Scanner input = new Scanner(System.in);
-        while (!exit){
-            System.out.print("Select Action: ");
-            String action = input.nextLine();
 
-            switch (action.toLowerCase()){
-                case "exit":
-                    exit = true;
-                    break;
-                case "addblue":
-                    System.out.print("Insert IP to change: ");
-                    action = input.nextLine();
-                    for (int i = 0; i < theaterMode.redTeam.size(); i++) {
-                        if(theaterMode.redTeam.get(i).getIP().equals(action)){
-                            theaterMode.addBlueTeam(theaterMode.getRedTeam().get(i));
-                        }
-                    }
-                    theaterMode.showSpacecrafts();
-                    break;
-                case "addred":
-                    System.out.print("Insert IP to change: ");
-                    action = input.nextLine();
-                    for (int i = 0; i < theaterMode.blueTeam.size(); i++) {
-                        if(theaterMode.blueTeam.get(i).getIP() == action){
-                            theaterMode.addRedTeam(theaterMode.getBlueTeam().get(i));
-                        }
-                    }
-                    theaterMode.showSpacecrafts();
-                    break;
-                case "allready":
-                    for (int i = 0; i < theaterMode.redTeam.size(); i++) {
-                        theaterMode.redTeam.get(i).setReady(true);
-                    }
+        //SEND MESSAGE
+        /*
+        nodeManager.send(ID,OBJECT WITH PACKET);
+        nodeManager.send(35,theaterMode.configuration);
+        */
 
-                    for (int i = 0; i < theaterMode.blueTeam.size(); i++) {
-                        theaterMode.blueTeam.get(i).setReady(true);
-                    }
-                    theaterMode.showSpacecrafts();
-                    break;
-
-                case "allfalse":
-                    for (int i = 0; i < theaterMode.redTeam.size(); i++) {
-                        theaterMode.redTeam.get(i).setReady(false);
-                    }
-
-                    for (int i = 0; i < theaterMode.blueTeam.size(); i++) {
-                        theaterMode.blueTeam.get(i).setReady(false);
-                    }
-                    theaterMode.showSpacecrafts();
-                    break;
-            }
-            if(theaterMode.allReady()){
-                theaterMode.controlPanel.addPlayButton();
-            }else {
-                theaterMode.controlPanel.hidePlayButton();
-            }
-        }*/
-    }
-
-    /*private void addControlPanelToPane(Container panel){
-        GridBagConstraints gbc = new GridBagConstraints();
-
-        gbc.anchor = GridBagConstraints.NORTHWEST;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.weighty = 1;
-        gbc.weightx = 1;
-        gbc.gridheight = 2;
-        panel.add(this.controlPanel, gbc);
     }
 
 
-
-    private void createFrame() {
-        Container panel;
-        Dimension screeSize = Toolkit.getDefaultToolkit().getScreenSize();
-
-        this.setSize(screeSize.width, screeSize.height);
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setLayout(new GridBagLayout());
-
-        panel = this.getContentPane();
-
-
-        this.addControlPanelToPane(panel);
-
-        this.setVisible(true);
-    }*/
 
     public void addSpacecraft(TheaterMode theaterMode, int IP){
         Random rd = new Random();
@@ -234,10 +166,82 @@ public class TheaterMode extends JFrame {
 
     public void startGame(){
         //pass viewer,arrays a juan
+        //pass nodemanager
         //call GameMode de Juan
         System.out.println("Let the games begin");
     }
 
 
+    @Override
+    public void run() {
+        for (int i = 0; i < 10; i++) {
+            this.addSpacecraft(this ,i);
+        }
+
+        this.showSpacecrafts();
+
+        boolean exit = false;
+        Scanner input = new Scanner(System.in);
+        while (!exit){
+            System.out.print("Select Action: ");
+            String action = input.nextLine();
+
+            switch (action.toLowerCase()){
+                case "exit":
+                    exit = true;
+                    break;
+                case "addblue":
+                    System.out.print("Insert IP to change: ");
+                    action = input.nextLine();
+                    for (int i = 0; i < this.redTeam.size(); i++) {
+                        if(this.redTeam.get(i).getIP().equals(action)){
+                            this.addBlueTeam(this.getRedTeam().get(i));
+                        }
+                    }
+                    showSpacecrafts();
+                    break;
+                case "addred":
+                    System.out.print("Insert IP to change: ");
+                    action = input.nextLine();
+                    for (int i = 0; i < this.blueTeam.size(); i++) {
+                        if(this.blueTeam.get(i).getIP().equals(action)){
+                            this.addRedTeam(this.getBlueTeam().get(i));
+                        }
+                    }
+                    showSpacecrafts();
+                    break;
+                case "allready":
+                    for (int i = 0; i < this.redTeam.size(); i++) {
+                        this.redTeam.get(i).setReady(true);
+                    }
+
+                    for (int i = 0; i < this.blueTeam.size(); i++) {
+                        this.blueTeam.get(i).setReady(true);
+                    }
+                    showSpacecrafts();
+                    break;
+
+                case "allfalse":
+                    for (int i = 0; i < this.redTeam.size(); i++) {
+                        this.redTeam.get(i).setReady(false);
+                    }
+
+                    for (int i = 0; i < this.blueTeam.size(); i++) {
+                        this.blueTeam.get(i).setReady(false);
+                    }
+                    showSpacecrafts();
+                    break;
+                case "start":
+                    this.sound.start();break;
+                case "stop":
+                    this.sound.stop();break;
+            }
+            if(this.allReady()){
+                this.mainScreen.adminPanel.buttonPlay.setEnabled(true);
+            }else {
+                this.mainScreen.adminPanel.buttonPlay.setEnabled(false);
+            }
+        }
+    }
 }
 

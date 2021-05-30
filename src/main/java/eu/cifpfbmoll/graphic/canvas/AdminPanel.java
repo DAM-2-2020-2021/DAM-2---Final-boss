@@ -1,31 +1,30 @@
 package eu.cifpfbmoll.graphic.canvas;
 
 import eu.cifpfbmoll.graphic.component.ScreenComponent;
+import eu.cifpfbmoll.sound.Sound;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-public class AdminPanel extends JPanel implements ActionListener, Runnable{
+public class AdminPanel extends CustomPanel{
     // CONST
-    private final String PLAY_TEXT = "JUGAR", OPTIONS_TEXT = "OPCIONES", PLAYERS_TEXT = "JUGADORES",
-            ADD_ROW_TEXT = "AÑADIR FILA", RMV_ROW_TEXT = "ELIMINAR FILA",
-            ADD_COL_TEXT = "AÑADIR COLUMNA", RMV_COL_TEXT = "ELIMINAR COLUMNA",
-            SCREEN_TEXT = "SELECCIONAR PANTALLAS";
+    private final int PANEL_ROWS = 0, PANEL_COLUMN = 2;
+    private LayoutManager mainLayout = new GridLayout(PANEL_ROWS, PANEL_COLUMN);
+    private final String PLAY_TEXT = "PLAY", OPTIONS_TEXT = "OPTIONS", PLAYERS_TEXT = "PLAYERS",
+            ADD_ROW_TEXT = "ADD ROW", RMV_ROW_TEXT = "DELETE ROW",
+            ADD_COL_TEXT = "ADD COLUMN", RMV_COL_TEXT = "DELETE COLUMN",
+            SCREEN_TEXT = "SELECT SCREEN";
     private final int SCREEN_QUANTITY = 3;
     private final int SCREEN_ROWS = 3, SCREEN_COLUMNS = 2;
 
     // VARS
-    // Main objects
-    private MainScreen mainScreen;
     //Components
-    private JButton buttonPlay;
+    public JButton buttonPlay;
     private JButton buttonOptions;
     private JButton buttonPlayers;
     // Panels
@@ -41,18 +40,24 @@ public class AdminPanel extends JPanel implements ActionListener, Runnable{
     private int screenSelectionColumns = SCREEN_COLUMNS;
 
     public AdminPanel(MainScreen mainScreen){
-        this.mainScreen = mainScreen;
-        setLayoutMainPanel(0, 2);
-        addElementsToMain();
+        super(mainScreen);
+        initPanel();    // Init the panel
     }
 
-    //<editor-fold desc="ADDERS">
-    private void addElementsToMain(){
+    @Override
+    protected void initPanel() {
+        this.setLayout(mainLayout);
+        addMainElements();
+    }
+
+    @Override
+    protected void addMainElements() {
         addButtonsPanel();
         addScreenPanel(screenSelectionRows, screenSelectionColumns);
         addLogPanel();
     }
 
+    //<editor-fold desc="ADDERS">
     private void addButtonsPanel() {
         // Create a new nested panel
         buttonsPanel = new JPanel();
@@ -61,10 +66,12 @@ public class AdminPanel extends JPanel implements ActionListener, Runnable{
         buttonsPanel.setLayout(new GridLayout(3, 0));
 
         // Create the buttons
-        JButton buttonPlay = new JButton(PLAY_TEXT);
-        JButton buttonOptions = new JButton(OPTIONS_TEXT);
-        JButton buttonPlayers = new JButton(PLAYERS_TEXT);
+        buttonPlay = new JButton(PLAY_TEXT);
+        buttonPlay.setEnabled(false);
+        buttonOptions = new JButton(OPTIONS_TEXT);
+        buttonPlayers = new JButton(PLAYERS_TEXT);
         // Add action listeners to the buttons
+
         buttonPlay.addActionListener(this);
         buttonOptions.addActionListener(this);
         buttonPlayers.addActionListener(this);
@@ -156,10 +163,6 @@ public class AdminPanel extends JPanel implements ActionListener, Runnable{
     //</editor-fold>
 
     //<editor-fold desc="SETTERS">
-    private void setLayoutMainPanel(int rows, int cols){
-        this.setLayout(new GridLayout(rows, cols));
-    }
-
     private void setBackgroundColor(Color backgroundColor){
         setBackground(backgroundColor);
     }
@@ -169,6 +172,7 @@ public class AdminPanel extends JPanel implements ActionListener, Runnable{
      * Checks the screenComponents grid and returns a list containing the position of the selected ones.
      */
     private List<Integer> getScreenComponentPositions(){
+        // Todo return array containing screens positions on click "SELECCIONAR PANTALLAS"
         // Get all components from the screenControlPanel
         Component[] components = screenSelectionPanel.getComponents();
         List<Integer> componentPositions = new ArrayList();
@@ -182,51 +186,9 @@ public class AdminPanel extends JPanel implements ActionListener, Runnable{
         return componentPositions;
     }
 
-    private void getFixedComponentPositions(){
-        // Get all components from the screenControlPanel
-        List<Component> components = new ArrayList<>(Arrays.asList(screenSelectionPanel.getComponents()));
-        System.out.println(components.size());
-//        int screenSelectionRows = this.screenSelectionRows;
-//        int screenSelectionColumns = this.screenSelectionColumns;
-        // First delete arrows
-        for (int row = 0; row < screenSelectionRows; row++) {
-            System.out.println("new row");
-            boolean busyRow = false;
-            for (int column = 0; column < screenSelectionColumns; column++) {
-                System.out.println("Fila "+ row +"  Columna " + column + " " + (row * screenSelectionColumns + column));
-                if(( (ScreenComponent) components.get(row * screenSelectionColumns + column)).isSelected()){
-                    busyRow = true;
-                }
-            }
-            if(!busyRow){
-                // Delete the row
-                System.out.println("buse deleted");
-                components.subList(row * screenSelectionColumns,
-                        row * screenSelectionColumns + screenSelectionColumns ).clear();
-//                components.remove(0);
-                row--;
-//                rowOffset++;
-            }
-        }
-        System.out.println(components.size());
-        // Delete columns
-//        for (int i = 0; i < screenSelectionRows; i++) {
-//            int emptyRow = 0;
-//            for (int j = 0; j < screenSelectionColumns; j++) {
-//                int pos = screenSelectionColumns * i + j;
-//                if(( (ScreenComponent) components[pos]).isSelected()){
-//                    emptyRow++;
-//                }
-//            }
-//            if(emptyRow == screenSelectionColumns){
-//                // The row is empty
-//            }
-//        }
-//        return (Component[]) fixedComponents.toArray();
-    }
-
     @Override
     public void actionPerformed(ActionEvent e) {
+        Sound.soundInteractueMenu();
         final String actionCommand = e.getActionCommand();
         switch (actionCommand) {
             case PLAY_TEXT: {
@@ -241,13 +203,13 @@ public class AdminPanel extends JPanel implements ActionListener, Runnable{
             }
             case PLAYERS_TEXT: {
                 // Todo on click "JUGADORES"
-                mainScreen.changeScreen("PLAYERS");
+                mainScreen.changeScreen("PLAYERS_PANEL");
                 break;
             }
             case SCREEN_TEXT:
                 // Todo on click "SELECCIONAR PANTALLAS"
                 //List<Integer> screenPositions = getScreenComponentPositions();
-                getFixedComponentPositions();
+//                getFixedComponentPositions();
 //                for (int i = 0; i < screenPositions.size(); i++) {
 //                    System.out.println(screenPositions.get(i));
 //                }
@@ -275,15 +237,47 @@ public class AdminPanel extends JPanel implements ActionListener, Runnable{
         }
     }
 
-    @Override
-    public void run() {
-        while(true){
-            this.validate();
+    /*private void getFixedComponentPositions(){
+        // Get all components from the screenControlPanel
+        List<Component> components = new ArrayList<>(Arrays.asList(screenSelectionPanel.getComponents()));
+        System.out.println(components.size());
+        int screenSelectionRows = this.screenSelectionRows;
+        int screenSelectionColumns = this.screenSelectionColumns;
+        // First delete arrows
+        for (int row = 0; row < screenSelectionRows; row++) {
+            System.out.println("new row");
+            boolean busyRow = false;
+            for (int column = 0; column < screenSelectionColumns; column++) {
+                System.out.println("Fila "+ row +"  Columna " + column + " " + (row * screenSelectionColumns + column));
+                if(( (ScreenComponent) components.get(row * screenSelectionColumns + column)).isSelected()){
+                    busyRow = true;
+                }
+            }
+            if(!busyRow){
+                // Delete the row
+                System.out.println("buse deleted");
+                components.subList(row * screenSelectionColumns,
+                        row * screenSelectionColumns + screenSelectionColumns ).clear();
+//                components.remove(0);
+                row--;
+//                rowOffset++;
+            }
         }
-    }
-
-    public void start(){
-        new Thread(this).start();
-    }
+        System.out.println(components.size());
+        // Delete columns
+        for (int i = 0; i < screenSelectionRows; i++) {
+            int emptyRow = 0;
+            for (int j = 0; j < screenSelectionColumns; j++) {
+                int pos = screenSelectionColumns * i + j;
+                if(( (ScreenComponent) components[pos]).isSelected()){
+                    emptyRow++;
+                }
+            }
+            if(emptyRow == screenSelectionColumns){
+                // The row is empty
+            }
+        }
+        return (Component[]) fixedComponents.toArray();*//*
+    }*/
 
 }

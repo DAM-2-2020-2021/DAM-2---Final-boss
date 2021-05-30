@@ -1,29 +1,35 @@
 package eu.cifpfbmoll.logic;
 
+
+import eu.cifpfbmoll.netlib.annotation.PacketAttribute;
+import eu.cifpfbmoll.netlib.annotation.PacketType;
+
+@PacketType("CONF")
 public class Configuration {
 
-    private int meteoriteQuantity = 5;
-
+    @PacketAttribute
+    private int meteorQuantity = 5;
+    @PacketAttribute
     private int blackHoleQuantity = 2;
-
-    private String objectGeneration = "Medium";
-
+    @PacketAttribute
+    private String objectGeneration = "MEDIUM";
+    @PacketAttribute
     private String mode = "Equipos";
+    @PacketAttribute
+    private int up = 0;
+    @PacketAttribute
+    private int down = 0;
+    @PacketAttribute
+    private int right = 0;
+    @PacketAttribute
+    private int left = 0;
 
-    private int up;
-
-    private int down;
-
-    private int right;
-
-    private int left;
-
-    public int getMeteoriteQuantity() {
-        return meteoriteQuantity;
+    public int getMeteorQuantity() {
+        return meteorQuantity;
     }
 
-    public void setMeteoriteQuantity(int meteoriteQuantity) {
-        this.meteoriteQuantity = meteoriteQuantity;
+    public void setMeteorQuantity(int meteorQuantity) {
+        this.meteorQuantity = meteorQuantity;
     }
 
     public int getBlackHoleQuantity() {
