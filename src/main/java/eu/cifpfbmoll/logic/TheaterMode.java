@@ -7,10 +7,7 @@ import eu.cifpfbmoll.sound.Sound;
 
 import javax.sound.sampled.Clip;
 import javax.swing.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.Scanner;
+import java.util.*;
 
 
 public class TheaterMode extends JFrame implements Runnable{
@@ -19,11 +16,11 @@ public class TheaterMode extends JFrame implements Runnable{
     //Attributes
     private ArrayList<Spacecraft> redTeam = new ArrayList<>();
     private ArrayList<Spacecraft> blueTeam = new ArrayList<>();
-    private boolean isAdmin;
     public Configuration configuration;
     private MainScreen mainScreen;
     private Thread logicThread;
     private Clip sound;
+    private Map<Integer, String> nodes;
 
 
     //Getters & Setters
@@ -43,16 +40,38 @@ public class TheaterMode extends JFrame implements Runnable{
         this.blueTeam = blueTeam;
     }
 
-    public boolean isAdmin() {
-        return isAdmin;
+    public Configuration getConfiguration() {
+        return configuration;
     }
 
-    public void setAdmin(boolean admin) {
-        isAdmin = admin;
+    public void setConfiguration(Configuration configuration) {
+        this.configuration = configuration;
+    }
+
+    public Map<Integer, String> getNodes() {
+        return nodes;
+    }
+
+    public void setNodes(Map<Integer, String> nodes) {
+        this.nodes = nodes;
     }
 
     public TheaterMode(){
         this.configuration = new Configuration();
+        this.sound = Sound.clipSoundMenu();
+        this.sound.start();
+
+
+        NodeManager nodeManager = new NodeManager("192.168.1.1");
+        List<String> ips = nodeManager.getIpsForSubnet("192.168.1");
+        nodeManager.startScan(ips);
+
+
+        for (int i = 0; i < 15; i++) {
+            nodeManager.addNode(i,"192.168.1."+i);
+        }
+
+        this.nodes = nodeManager.getNodes();
         this.mainScreen = new MainScreen(this, this.configuration);
         mainScreen.showFrame();
         logicThread = new Thread(this);
@@ -62,14 +81,11 @@ public class TheaterMode extends JFrame implements Runnable{
     //Methods
     public static void main(String[] args) {
         TheaterMode theaterMode = new TheaterMode();
-        NodeManager nodeManager = new NodeManager("192.168.1.1");
-        List<String> ips = nodeManager.getIpsForSubnet("192.168.1");
 
-
-        theaterMode.sound = Sound.clipSoundMenu();
-        theaterMode.sound.start();
+        //List<String> ips = nodeManager.getIpsForSubnet("192.168.1");
         //nodeManager.startScan(ips);
         //nodeManager.stopScan();
+
 
 
         /* RECEIVE MESSAGE
@@ -168,6 +184,7 @@ public class TheaterMode extends JFrame implements Runnable{
         //pass viewer,arrays a juan
         //pass nodemanager
         //call GameMode de Juan
+        sound.stop();
         System.out.println("Let the games begin");
     }
 

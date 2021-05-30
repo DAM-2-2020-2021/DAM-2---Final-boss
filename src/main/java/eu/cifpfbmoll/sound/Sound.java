@@ -92,7 +92,6 @@ public class Sound extends Thread{
             clip.open(stream);
             clip.start();
             Thread.sleep(100);
-            System.out.println("hilo sonido hilo sonido");
             while (clip.isRunning()) { Thread.sleep(100); }
 
             clip.close();

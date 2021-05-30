@@ -2,14 +2,19 @@ package eu.cifpfbmoll.graphic.canvas;
 
 import eu.cifpfbmoll.graphic.component.ScreenComponent;
 import eu.cifpfbmoll.sound.Sound;
+import org.apache.commons.lang3.ArrayUtils;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.util.ArrayList;
+import java.awt.event.ActionListener;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
+import java.util.*;
 import java.util.List;
+
 
 public class AdminPanel extends CustomPanel{
     // CONST
@@ -31,16 +36,34 @@ public class AdminPanel extends CustomPanel{
     private JPanel buttonsPanel;
     private JPanel rightPanel;
     private JPanel screenSelectionPanel;
-    private JPanel screenControlPanel;
+    private static JPanel screenControlPanel;
     private JPanel screenOptionsPanel;
     private JScrollPane logPanel;
+    private JPopupMenu popupMenu;
+    private static Map<Integer, String> nodes;
+    private static String selectedNode = "Select a screen";
+    private static Vector<String> nodesToString;
+    private static JComboBox nodeList;
+
+    public static String getSelectedNode() {
+        return selectedNode;
+    }
+
+    public static void setSelectedNode(String selectedNode) {
+        AdminPanel.selectedNode = selectedNode;
+    }
+
+    public static Vector<String> getNodesToString() {
+        return nodesToString;
+    }
 
     // Test
     private int screenSelectionRows = SCREEN_ROWS;
     private int screenSelectionColumns = SCREEN_COLUMNS;
 
-    public AdminPanel(MainScreen mainScreen){
+    public AdminPanel(MainScreen mainScreen, Map<Integer, String> nodes){
         super(mainScreen);
+        this.nodes = nodes;
         initPanel();    // Init the panel
     }
 
@@ -114,20 +137,90 @@ public class AdminPanel extends CustomPanel{
         JButton screenControlRemoveRowButton = new JButton(RMV_ROW_TEXT);
         JButton screenControlAddColumnButton = new JButton(ADD_COL_TEXT);
         JButton screenControlRemoveColumnButton = new JButton(RMV_COL_TEXT);
-        JButton screenButton = new JButton(SCREEN_TEXT);
+
+
+
+        //aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+        nodesToString = new Vector<>();
+
+        nodesToString.add("Select a screen");
+
+        Set keys = this.nodes.keySet();
+        for (Object key: keys ) {
+            nodesToString.add(key.toString() + " - " + nodes.get(key));
+        }
+
+        nodeList = new JComboBox(nodesToString);
+        nodeList.setSelectedIndex(0);
+        nodeList.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Sound.soundInteractueMenu();
+                JComboBox cb = (JComboBox)e.getSource();
+                String myNode = (String)cb.getSelectedItem();
+                selectedNode = myNode;
+            }
+        });
+
+
+
+
         screenControlRemoveRowButton.addActionListener(this);
         screenControlAddColumnButton.addActionListener(this);
         screenControlAddRowButton.addActionListener(this);
         screenControlRemoveColumnButton.addActionListener(this);
-        screenButton.addActionListener(this);
         screenControlPanel.add(screenControlAddRowButton);
         screenControlPanel.add(screenControlRemoveRowButton);
         screenControlPanel.add(screenControlAddColumnButton);
         screenControlPanel.add(screenControlRemoveColumnButton);
-        screenControlPanel.add(screenButton);
+        screenControlPanel.add(nodeList);
 
         // Finally add both panels to the main one
         screenOptionsPanel.add(screenControlPanel, BorderLayout.PAGE_START);
+    }
+
+    public static void updateDropDown(){
+        screenControlPanel.remove(nodeList);
+
+        nodeList = new JComboBox(nodesToString);
+        nodeList.setSelectedIndex(0);
+        nodeList.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Sound.soundInteractueMenu();
+                JComboBox cb = (JComboBox)e.getSource();
+                String myNode = (String)cb.getSelectedItem();
+                selectedNode = myNode;
+            }
+        });
+
+        screenControlPanel.add(nodeList);
+    }
+
+    public void resetDropDown(){
+
+        screenControlPanel.remove(nodeList);
+        nodesToString.clear();
+
+        nodesToString.add("Select a screen");
+
+        Set keys = this.nodes.keySet();
+        for (Object key: keys ) {
+            nodesToString.add(key.toString() + " " + nodes.get(key));
+        }
+
+        nodeList = new JComboBox(nodesToString);
+        nodeList.setSelectedIndex(0);
+        nodeList.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Sound.soundInteractueMenu();
+                JComboBox cb = (JComboBox)e.getSource();
+                String myNode = (String)cb.getSelectedItem();
+                selectedNode = myNode;
+            }
+        });
+        screenControlPanel.add(nodeList);
     }
 
     private void addScreenSelectionPanel(int rows, int columns){
@@ -140,6 +233,7 @@ public class AdminPanel extends CustomPanel{
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++) {
                 ScreenComponent screenComponent = new ScreenComponent();
+
                 screenSelectionPanel.add(screenComponent);
             }
         }
@@ -217,21 +311,25 @@ public class AdminPanel extends CustomPanel{
             case ADD_ROW_TEXT:
                 screenSelectionRows++;
                 screenOptionsPanel.remove(screenSelectionPanel);
+                resetDropDown();
                 addScreenSelectionPanel(screenSelectionRows, screenSelectionColumns);
                 break;
             case RMV_ROW_TEXT:
                 screenSelectionRows--;
                 screenOptionsPanel.remove(screenSelectionPanel);
+                resetDropDown();
                 addScreenSelectionPanel(screenSelectionRows, screenSelectionColumns);
                 break;
             case ADD_COL_TEXT:
                 screenSelectionColumns++;
                 screenOptionsPanel.remove(screenSelectionPanel);
+                resetDropDown();
                 addScreenSelectionPanel(screenSelectionRows, screenSelectionColumns);
                 break;
             case RMV_COL_TEXT:
                 screenSelectionColumns--;
                 screenOptionsPanel.remove(screenSelectionPanel);
+                resetDropDown();
                 addScreenSelectionPanel(screenSelectionRows, screenSelectionColumns);
                 break;
         }

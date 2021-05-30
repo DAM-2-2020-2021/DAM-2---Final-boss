@@ -91,7 +91,7 @@ public class MainScreen extends JFrame implements Runnable{
     }
 
     private void initComponents(){
-        adminPanel = new AdminPanel(this);
+        adminPanel = new AdminPanel(this,this.theaterMode.getNodes());
         playersPanel = new PlayersPanel(this, this.theaterMode.getBlueTeam(), this.theaterMode.getRedTeam());
         //gameViewer = new GameViewer(this);  // Default game viewer (pink background)
         startPanel = new StartPanel(this);
