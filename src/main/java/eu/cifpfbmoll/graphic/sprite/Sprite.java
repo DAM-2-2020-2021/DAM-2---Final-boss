@@ -52,6 +52,11 @@ public class Sprite {
         return spriteSheet;
     }
 
+    public static BufferedImage getMenuBg(){
+        BufferedImage spriteSheet = getSheet("img/background/menu.png");
+        return spriteSheet;
+    }
+
     public static BufferedImage getShip1(int x, int y){
         BufferedImage spriteSheet = getSheet("img/ship/shipsheet50x50.png");
         return getSprite(spriteSheet, 50, 50, x, y);
@@ -59,6 +64,11 @@ public class Sprite {
 
     public static BufferedImage getShip2(int x, int y){
         BufferedImage spriteSheet = getSheet("img/ship/shipsheetswift50x50.png");
+        return getSprite(spriteSheet, 50, 50, x, y);
+    }
+
+    public static BufferedImage getShip3(int x, int y){
+        BufferedImage spriteSheet = getSheet("img/ship/shipsheetbig50x50.png");
         return getSprite(spriteSheet, 50, 50, x, y);
     }
     
