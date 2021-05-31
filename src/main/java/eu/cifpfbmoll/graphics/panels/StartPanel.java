@@ -69,9 +69,11 @@ public class StartPanel extends CustomPanel {
         //
         if (sourceButton.equals(adminButton)){
             if (checkBoxAdmin.isSelected()){
-                mainScreen.changeScreen("ADMIN_PANEL");
+                //mainScreen.changeScreen("ADMIN_PANEL");
+                mainScreen.changeScreen(mainScreen.getAdminPanel());
             }else{
-                mainScreen.changeScreen("CLIENT_PANEL");
+                //mainScreen.changeScreen("CLIENT_PANEL");
+                mainScreen.changeScreen(mainScreen.getClientPanel());
             }
         }
     }

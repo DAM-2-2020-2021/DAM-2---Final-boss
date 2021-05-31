@@ -1,39 +1,82 @@
 package eu.cifpfbmoll.graphics.customComponent;
 
+import eu.cifpfbmoll.graphics.panels.GraphicStyle;
+
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
-public class ScreenComponent extends JComponent implements MouseListener {
+public class ScreenComponent extends JLabel implements MouseListener {
     // CONST
-    private Color COLOR_SELECTED = Color.RED;
-    private Color COLOR_NOT_SELECTED = Color.GRAY;
+    private final Color COLOR_SELECTED = GraphicStyle.HELPER_COLOR;
+    private final Color COLOR_NOT_SELECTED = GraphicStyle.PRIMARY_COLOR;
+    private final Color COLOR_HOVER_SELECTED = GraphicStyle.DANGER_COLOR;
+    private final Color COLOR_HOVER_NOT_SELECTED = GraphicStyle.SECONDARY_COLOR;
+    private final Color COLOR_BORDER = GraphicStyle.WHITE_COLOR;
+
+    private final String TEXT_NOT_SELECTED = "Esta pantalla no está seleccionada";
+    private final String TEXT_UNSELECT = "Quitar esta pantalla";
+
     // VARS
-    private Color backgroundColor;
-    private Color borderColor;
     private boolean selected;
 
     public ScreenComponent(){
-        // Set a border
-        this.setBorder(new LineBorder(Color.ORANGE, 5, true));
-        // By default the component is not selected and therefore gray colored
-        this.setColor(COLOR_NOT_SELECTED);
-        this.setSelected(false);
+        // Set the properties
+        setDefaultProperties();
         // Add the mouse listeners
         addMouseListener(this);
+    }
+
+    public ScreenComponent(int id, String ip){
+        // Set the properties
+        setDefaultProperties();
+        // Add the mouse listeners
+        addMouseListener(this);
+        // Add the text to the label
+        showInfo(id, ip);
     }
 
     private void select(){
         if (selected){
             this.setSelected(false);
-            this.setColor(COLOR_NOT_SELECTED);
+            this.setBackground(COLOR_NOT_SELECTED);
+            deleteInfo();
         }else{
             this.setSelected(true);
-            this.setColor(COLOR_SELECTED);
+            this.setBackground(COLOR_SELECTED);
+            showInfo(0, "192.168.1.1");
         }
-        this.updateComponent();
+    }
+
+    private void showInfo(int id, String ip){
+        // The info must be wrapped in html in order to get a line break
+        this.setText("<html><body>Screen: " + id + "<br>IP: " + ip + "</body></html>");
+    }
+
+    private void showInfo(String message){
+        this.setText(message);
+    }
+
+    private void deleteInfo(){
+        this.setText(null);
+    }
+
+    private void setDefaultProperties(){
+        // Set a border
+        this.setBorder(new LineBorder(COLOR_BORDER, 5, false));
+        // Set visible background
+        this.setOpaque(true);
+        // By default the component is not selected and therefore gray colored
+        this.setBackground(COLOR_NOT_SELECTED);
+        this.setSelected(false);
+        // Set font style and color
+        this.setFont(GraphicStyle.ANY_LOG_FONT);
+        this.setForeground(Color.white);
+        // Set the text horizontally and vertically centered
+        this.setHorizontalAlignment(SwingConstants.CENTER);
+        this.setVerticalAlignment(SwingConstants.CENTER);
     }
 
     //<editor-fold desc="MOUSE EVENTS">
@@ -55,24 +98,28 @@ public class ScreenComponent extends JComponent implements MouseListener {
 
     @Override
     public void mouseEntered(MouseEvent e) {
-
+        //
+        if (selected){
+            this.setBackground(COLOR_HOVER_SELECTED);
+            showInfo(TEXT_UNSELECT);
+        }else{
+            this.setBackground(COLOR_HOVER_NOT_SELECTED);
+            showInfo(TEXT_NOT_SELECTED);
+        }
     }
 
     @Override
     public void mouseExited(MouseEvent e) {
-
+        //
+        if (selected){
+            this.setBackground(COLOR_SELECTED);
+            showInfo(0, "192.168.1.1");
+        }else{
+            this.setBackground(COLOR_NOT_SELECTED);
+            deleteInfo();
+        }
     }
     //</editor-fold>
-
-    public void paintComponent(Graphics g){
-        super.paintComponent(g);
-        g.setColor(backgroundColor);
-        g.fillRect(0, 0, this.getWidth(), this.getHeight());
-    }
-
-    private void updateComponent(){
-        this.repaint();
-    }
 
     //<editor-fold desc="GETTERS">
     public boolean isSelected(){
@@ -83,14 +130,6 @@ public class ScreenComponent extends JComponent implements MouseListener {
     //<editor-fold desc="SETTERS">
     public void setSelected(boolean selected){
         this.selected = selected;
-    }
-
-    public void setColor(Color color){
-        this.backgroundColor = color;
-    }
-
-    public void setBorderColor(Color color){
-        this.borderColor = color;
     }
     //</editor-fold>
 }

@@ -14,10 +14,6 @@ public class ClientPanel extends CustomPanel implements Runnable{
     private final LayoutManager MAIN_LAYOUT = new GridLayout(1, 3);
     private final int SUBPANEL_PADDING_HEIGHT = 20, SUBPANEL_PADDING_WIDTH = 20;
     private final String TEAM_RED_TEXT = "Equipo Rojo", TEAM_BLUE_TEXT = "Equipo azul", LOG_TEXT = "Historial del log";
-    private final Color TEAM_RED_PANEL_COLOR = new Color (207, 27, 27), TEAM_RED_TEXTPANEL_COLOR = Color.RED,
-            TEAM_BLUE_PANEL_COLOR = new Color (27, 92, 207), TEAM_BLUE_TEXTPANEL_COLOR = Color.BLUE;
-    private final Font TITLE_FONT = new Font("Verdana", Font.PLAIN, 34);
-    private final Font ANY_LOG_FONT = new Font("Verdana", Font.PLAIN, 20);
     private final int UPDATE_TIME_MILIS = 3000;
 
     // VARS
@@ -37,12 +33,12 @@ public class ClientPanel extends CustomPanel implements Runnable{
         // Panel
         redTeamPanel = new JPanel();
         redTeamPanel.setLayout(new BoxLayout(redTeamPanel, BoxLayout.Y_AXIS));
-        redTeamPanel.setBackground(TEAM_RED_PANEL_COLOR);
+        redTeamPanel.setBackground(GraphicStyle.TEAM_RED_PANEL_COLOR);
 
         // Label
         JLabel redTeamLabel = new JLabel(TEAM_RED_TEXT);
         redTeamLabel.setBorder(new EmptyBorder(30, 0, 0, 0));
-        redTeamLabel.setFont(TITLE_FONT);
+        redTeamLabel.setFont(GraphicStyle.TITLE_FONT);
         redTeamLabel.setForeground(Color.WHITE);
         redTeamLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         redTeamPanel.add(redTeamLabel);
@@ -51,10 +47,10 @@ public class ClientPanel extends CustomPanel implements Runnable{
         JPanel textPanelParent = new JPanel();
         textPanelParent.setOpaque(false);
         textPanelParent.setBorder(new EmptyBorder(SUBPANEL_PADDING_HEIGHT, 40, SUBPANEL_PADDING_HEIGHT, 40));
-        textLogRedTeam = new JTextArea (25,20);
-        textLogRedTeam.setFont(ANY_LOG_FONT);
+        textLogRedTeam = new JTextArea ();
+        textLogRedTeam.setFont(GraphicStyle.ANY_LOG_FONT);
         textLogRedTeam.setBorder(new EmptyBorder(SUBPANEL_PADDING_HEIGHT, SUBPANEL_PADDING_WIDTH, SUBPANEL_PADDING_HEIGHT, SUBPANEL_PADDING_WIDTH));
-        textLogRedTeam.setBackground(TEAM_RED_TEXTPANEL_COLOR);
+        textLogRedTeam.setBackground(GraphicStyle.TEAM_RED_TEXTPANEL_COLOR);
         textLogRedTeam.setForeground(Color.WHITE);
         textLogRedTeam.append("hola\nwow");
         // ScrollPanel
@@ -74,12 +70,12 @@ public class ClientPanel extends CustomPanel implements Runnable{
         // Panel
         blueTeamPanel = new JPanel();
         blueTeamPanel.setLayout(new BoxLayout(blueTeamPanel, BoxLayout.Y_AXIS));
-        blueTeamPanel.setBackground(TEAM_BLUE_PANEL_COLOR);
+        blueTeamPanel.setBackground(GraphicStyle.TEAM_BLUE_PANEL_COLOR);
 
         // Label
         JLabel blueTeamLabel = new JLabel(TEAM_BLUE_TEXT);
         blueTeamLabel.setBorder(new EmptyBorder(30, 0, 0, 0));
-        blueTeamLabel.setFont(TITLE_FONT);
+        blueTeamLabel.setFont(GraphicStyle.TITLE_FONT);
         blueTeamLabel.setForeground(Color.WHITE);
         blueTeamLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         blueTeamPanel.add(blueTeamLabel);
@@ -88,10 +84,10 @@ public class ClientPanel extends CustomPanel implements Runnable{
         JPanel textPanelParent = new JPanel();
         textPanelParent.setOpaque(false);
         textPanelParent.setBorder(new EmptyBorder(SUBPANEL_PADDING_HEIGHT, 40, SUBPANEL_PADDING_HEIGHT, 40));
-        textLogBlueTeam = new JTextArea (25,20);
-        textLogBlueTeam.setFont(ANY_LOG_FONT);
+        textLogBlueTeam = new JTextArea ();
+        textLogBlueTeam.setFont(GraphicStyle.ANY_LOG_FONT);
         textLogBlueTeam.setBorder(new EmptyBorder(SUBPANEL_PADDING_HEIGHT, SUBPANEL_PADDING_WIDTH, SUBPANEL_PADDING_HEIGHT, SUBPANEL_PADDING_WIDTH));
-        textLogBlueTeam.setBackground(TEAM_BLUE_TEXTPANEL_COLOR);
+        textLogBlueTeam.setBackground(GraphicStyle.TEAM_BLUE_TEXTPANEL_COLOR);
         textLogBlueTeam.setForeground(Color.WHITE);
         // ScrollPanel
         logBlueTeamPanel = new JScrollPane(textLogBlueTeam);
@@ -112,7 +108,7 @@ public class ClientPanel extends CustomPanel implements Runnable{
         logPanel.setBorder(new EmptyBorder(SUBPANEL_PADDING_HEIGHT, SUBPANEL_PADDING_WIDTH, SUBPANEL_PADDING_HEIGHT, SUBPANEL_PADDING_WIDTH));
 
         // Set the font, background and font color
-        logPanel.getViewport().getView().setFont(ANY_LOG_FONT);
+        logPanel.getViewport().getView().setFont(GraphicStyle.ANY_LOG_FONT);
         logPanel.getViewport().getView().setBackground(Color.black);
         logPanel.getViewport().getView().setForeground(Color.white);
 

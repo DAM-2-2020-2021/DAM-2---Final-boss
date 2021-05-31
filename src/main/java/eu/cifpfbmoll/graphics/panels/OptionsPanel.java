@@ -11,8 +11,8 @@ public class OptionsPanel extends CustomPanel {
     // CONS
     private final int PANEL_ROWS = 1, PANEL_COLUMNS = 3;
     private final LayoutManager mainLayout = new GridLayout(PANEL_ROWS, PANEL_COLUMNS);
+
     // VARS
-    private MainScreen mainScreen;
     private JPanel leftPanel, rightPanel;
 
     // TEST
@@ -99,7 +99,7 @@ public class OptionsPanel extends CustomPanel {
         }
         if(sourceButton.equals(saveChanges)){
             //mainScreen.theaterMode.configurations.setMeteoriteQuantity(meteorCount);
-            mainScreen.changeScreen("ADMIN_PANEL");
+            mainScreen.changeScreen(mainScreen.getAdminPanel());
         }
     }
 }
