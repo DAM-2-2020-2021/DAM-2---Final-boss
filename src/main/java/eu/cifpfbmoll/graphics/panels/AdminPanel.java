@@ -12,6 +12,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class AdminPanel extends CustomPanel implements Runnable{
@@ -26,6 +27,8 @@ public class AdminPanel extends CustomPanel implements Runnable{
     private final int UPDATE_TEAMS_LOGS_TIME_MILIS = 3000;
 
     // VARS
+    private List<ScreenComponent> clientComponentList = new ArrayList<>();  // Contains the clients components (ScreenComponent).
+    private List<ScreenComponent> screenComponentList = new ArrayList<>();  // Contains the screens components (ScreenComponent). The selected and not selected.
     //Components
     private JButton buttonPlay;
     private JButton buttonOptions;
@@ -37,6 +40,7 @@ public class AdminPanel extends CustomPanel implements Runnable{
     private JPanel screenControlPanel;
     private JPanel screenPanel;
     private JScrollPane logPanel;
+    private JPanel clientPanel;
 
     // Test
     private int screenSelectionRows = SCREEN_ROWS_DEFAULT;
@@ -66,13 +70,15 @@ public class AdminPanel extends CustomPanel implements Runnable{
 
     @Override
     protected void addMainElements() {
+        // TEST
+        testAddClients();
+
         // Add both left and right panels
         addTopPanel();
         addBottomPanel();
 
         // TEST
         testAddSpacecrafts();
-        testAddClients();
         testAddClientMessages();
     }
 
@@ -208,6 +214,32 @@ public class AdminPanel extends CustomPanel implements Runnable{
         return parentPanel;
     }
 
+    private JPanel getLogPanel(){
+        int padding = 20;
+        // Parent panel
+        JPanel parentPanel = new JPanel(new GridLayout(1, 1));
+        parentPanel.setOpaque(false);
+        parentPanel.setBorder(new EmptyBorder(padding, padding, padding, padding));
+
+        Font font = new Font("Dialog", Font.BOLD + Font.ITALIC, 14);    // Font to be used
+
+        // Textlog and logpanel
+        textLog = new JTextArea ();
+        textLog.setBorder(new EmptyBorder(padding, padding, padding, padding));
+        logPanel = new JScrollPane(textLog);
+        logPanel.setBorder(new LineBorder(GraphicStyle.WHITE_COLOR, 5, false));
+        logPanel.setOpaque(false);
+
+        // Set the font, background and font color
+        logPanel.getViewport().getView().setFont(font);
+        logPanel.getViewport().getView().setBackground(Color.black);
+        logPanel.getViewport().getView().setForeground(Color.white);
+
+        parentPanel.add(logPanel);
+
+        return parentPanel;
+    }
+
     private JPanel getScreenSelectionPanel(int rows, int columns){
         // Parent panel
         screenPanel = new JPanel(new BorderLayout());
@@ -221,8 +253,9 @@ public class AdminPanel extends CustomPanel implements Runnable{
         screenSelectionPanel.setBorder(new EmptyBorder(padding, padding, padding, padding));
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++) {
-                ScreenComponent screenComponent = new ScreenComponent();
+                ScreenComponent screenComponent = new ScreenComponent(this);
                 screenSelectionPanel.add(screenComponent);
+                screenComponentList.add(screenComponent);
             }
         }
 
@@ -232,21 +265,19 @@ public class AdminPanel extends CustomPanel implements Runnable{
     }
 
     private JTabbedPane getScreenDetailsPanel(){
-
         // Config tab
-        JTabbedPane configTab = new JTabbedPane();
+        JTabbedPane screenDetailsPanel = new JTabbedPane();
         JPanel configPanel = new JPanel();
         configPanel.setBackground(GraphicStyle.DANGER_COLOR);
         configPanel.add(getScreenControlPanel());
-        configTab.addTab("Configuration", getScreenControlPanel());
+        screenDetailsPanel.addTab("Configuration", getScreenControlPanel());
 
         // Client list tab
-        JTabbedPane clientListTab = new JTabbedPane();
-        JPanel clientListPanel = new JPanel();
-        clientListPanel.setBackground(GraphicStyle.HELPER_COLOR);
-        configTab.addTab("Client list", clientListPanel);
+        JScrollPane clientListPanel = getClientListPanel();
+        //clientListPanel.setBackground(GraphicStyle.HELPER_COLOR);
+        screenDetailsPanel.addTab("Client list", clientListPanel);
 
-        return configTab;
+        return screenDetailsPanel;
     }
 
     private JPanel getScreenControlPanel(){
@@ -277,41 +308,39 @@ public class AdminPanel extends CustomPanel implements Runnable{
         return screenControlPanel;
     }
 
-    private JPanel getLogPanel(){
-        int padding = 20;
-        // Parent panel
-        JPanel parentPanel = new JPanel(new GridLayout(1, 1));
-        parentPanel.setOpaque(false);
-        parentPanel.setBorder(new EmptyBorder(padding, padding, padding, padding));
-
-        Font font = new Font("Dialog", Font.BOLD + Font.ITALIC, 14);    // Font to be used
-
-        // Textlog and logpanel
-        textLog = new JTextArea ();
-        textLog.setBorder(new EmptyBorder(padding, padding, padding, padding));
-        logPanel = new JScrollPane(textLog);
-        logPanel.setBorder(new LineBorder(GraphicStyle.WHITE_COLOR, 5, false));
-        logPanel.setOpaque(false);
-
-        // Set the font, background and font color
-        logPanel.getViewport().getView().setFont(font);
-        logPanel.getViewport().getView().setBackground(Color.black);
-        logPanel.getViewport().getView().setForeground(Color.white);
-
-        parentPanel.add(logPanel);
-
-        return parentPanel;
-    }
-
-    private JPanel getClientListPanel(){
-        // TEST
+    private JScrollPane getClientListPanel(){
+        // Create a panel which will be inside the scroll panel
+        clientPanel = new JPanel();
+        clientPanel.setLayout(new BoxLayout(clientPanel, BoxLayout.Y_AXIS));
+        // Create the scroll panel and add the client panel
+        JScrollPane clientScrollPanel = new JScrollPane(clientPanel, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        // Set the client panel scroll speed
+        clientScrollPanel.getVerticalScrollBar().setUnitIncrement(7);
+        System.out.println("ee " + mainScreen.getAdminPanel());
+        // Create a label with its properties and add it to the client panel
         for (Map.Entry<Integer, String> client : clientMap.entrySet()) {
-            textLog.append("Client " + client.getKey() + ": " + "192.168.1." + client.getValue() + "joined the game.");
+            ScreenComponent clientLabel = new ScreenComponent(this, client.getKey(), client.getValue());
+            // Set a border
+            clientLabel.setBorder(new LineBorder(GraphicStyle.WHITE_COLOR, 5, false));
+            // Set visible background
+            clientLabel.setOpaque(true);
+            // By default the component is not selected and therefore gray colored
+            //clientLabel.setBackground(GraphicStyle.TERTIARY_COLOR);
+            // Set font style and color
+            clientLabel.setFont(GraphicStyle.ANY_LOG_FONT);
+            clientLabel.setForeground(Color.white);
+            // Set the height (the width does not change)
+            //clientLabel.setPreferredSize(new Dimension(300, 100));
+            clientLabel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 200));
+            // Add the label to the panel
+            clientPanel.add(clientLabel);
+            // Add a separator
+            clientPanel.add(new JSeparator());
+            clientComponentList.add(clientLabel);
         }
 
-        //
-        JScrollPane clientPanel = new JScrollPane();
-        return null;
+        return clientScrollPanel;
     }
 
     private void changeScreenSelectionPanel(){
@@ -370,6 +399,8 @@ public class AdminPanel extends CustomPanel implements Runnable{
             }
             case SCREEN_TEXT:
                 // Todo on click "SELECCIONAR PANTALLAS"
+                // TEST
+                testShowSelectedScreens();
                 break;
             case ADD_ROW_TEXT:
                 screenSelectionRows++;
@@ -404,6 +435,20 @@ public class AdminPanel extends CustomPanel implements Runnable{
         }
     }
 
+    //<editor-fold desc="GETTERS">
+    public List<ScreenComponent> getClientComponentList() {
+        return clientComponentList;
+    }
+
+    public JPanel getClientPanel() {
+        return clientPanel;
+    }
+
+    public List<ScreenComponent> getScreenComponentList() {
+        return screenComponentList;
+    }
+    //</editor-fold>
+
     // TEST
     private void testAddSpacecrafts(){
         for (int i = 0; i < 10; i++) {
@@ -420,7 +465,7 @@ public class AdminPanel extends CustomPanel implements Runnable{
     }
 
     private void testAddClients(){
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 10; i++) {
             clientMap.put(i, "192.168.2." + i);
         }
     }
@@ -435,5 +480,17 @@ public class AdminPanel extends CustomPanel implements Runnable{
         }
 
         addMessagesToGeneralLog(messages);
+    }
+
+    private void testShowSelectedScreens(){
+        int i = 0;
+        for (ScreenComponent screen: screenComponentList){
+            if (screen.hasClient()){
+                System.out.println("Pos " + i + ". Client: " + screen.getId() + " Id: " + screen.getIp());
+            }else{
+                System.out.println("Pos " + i + ". Not a selected screen");
+            }
+            i++;
+        }
     }
 }
