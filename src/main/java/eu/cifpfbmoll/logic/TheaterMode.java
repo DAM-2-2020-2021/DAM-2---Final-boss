@@ -7,6 +7,7 @@ import eu.cifpfbmoll.sound.Sound;
 
 import javax.sound.sampled.Clip;
 import javax.swing.*;
+import java.net.NetworkInterface;
 import java.util.*;
 
 
@@ -21,6 +22,7 @@ public class TheaterMode extends JFrame implements Runnable{
     private Thread logicThread;
     private Clip sound;
     private Map<Integer, String> nodes;
+    private String localhostIP;
 
 
     //Getters & Setters
@@ -60,12 +62,28 @@ public class TheaterMode extends JFrame implements Runnable{
         this.configuration = new Configuration();
         this.sound = Sound.clipSoundMenu();
         this.sound.start();
-
-
-        NodeManager nodeManager = new NodeManager("192.168.1.1");
-        List<String> ips = nodeManager.getIpsForSubnet("192.168.1");
+   /*Para ver las interfaces
+        try {
+            for (NetworkInterface netint : Collections.list(NetworkInterface.getNetworkInterfaces())) {
+                System.out.println(netint.getName());
+                System.out.println(netint.getDisplayName());
+                for (InetAddress addr : Collections.list(netint.getInetAddresses())) {
+                    System.out.println(addr);
+                }
+            }
+        } catch (SocketException e) {
+            e.printStackTrace();
+        }*/
+        NetworkInterface networkInterface = NodeManager.getInterfaceByName("eth6");
+        String ip = NodeManager.getIPForInterface(networkInterface);
+        NodeManager nodeManager = new NodeManager(ip);
+        String subnet = nodeManager.getSubnet(ip);
+        List<String> ips = nodeManager.getIpsForSubnet(subnet);
         nodeManager.startScan(ips);
 
+        try{
+            Thread.sleep(6000);
+        }catch (Exception e){}
 
         for (int i = 0; i < 15; i++) {
             nodeManager.addNode(i,"192.168.1."+i);
@@ -106,10 +124,7 @@ public class TheaterMode extends JFrame implements Runnable{
         nodeManager.send(ID,OBJECT WITH PACKET);
         nodeManager.send(35,theaterMode.configuration);
         */
-
     }
-
-
 
     public void addSpacecraft(TheaterMode theaterMode, int IP){
         Random rd = new Random();
@@ -184,6 +199,7 @@ public class TheaterMode extends JFrame implements Runnable{
         //pass viewer,arrays a juan
         //pass nodemanager
         //call GameMode de Juan
+        //pass localhost IP
         sound.stop();
         System.out.println("Let the games begin");
     }

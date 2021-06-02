@@ -72,6 +72,7 @@ public class StartPanel extends CustomPanel {
         //
         if (sourceButton.equals(adminButton)){
             if (checkBoxAdmin.isSelected()){
+                //parar scaner de ips
                 mainScreen.changeScreen("ADMIN_PANEL");
             }else{
                 mainScreen.changeScreen("CLIENT_PANEL");
