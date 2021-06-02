@@ -1,7 +1,7 @@
 package eu.cifpfbmoll.graphic.component;
 
-import eu.cifpfbmoll.graphic.canvas.AdminPanel;
-import eu.cifpfbmoll.sound.Sound;
+import eu.cifpfbmoll.graphic.panels.GraphicStyle;
+import eu.cifpfbmoll.graphic.panels.AdminPanel;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
@@ -9,57 +9,222 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
-public class ScreenComponent extends JComponent implements MouseListener {
+public class ScreenComponent extends JLabel implements MouseListener {
     // CONST
-    private Color COLOR_SELECTED = Color.RED;
-    private Color COLOR_NOT_SELECTED = Color.GRAY;
-    // VARS
-    private Color backgroundColor;
-    private Color borderColor;
-    private boolean selected;
-    private String myNode = "";
+    private final Color COLOR_SCREEN_SELECTED = GraphicStyle.HELPER_COLOR;
+    private final Color COLOR_SCREEN_NOT_SELECTED = GraphicStyle.PRIMARY_COLOR;
+    private final Color COLOR_HOVER_SELECTED = GraphicStyle.DANGER_COLOR;
+    private final Color COLOR_HOVER_NOT_SELECTED = GraphicStyle.SECONDARY_COLOR;
+    private final Color COLOR_BORDER = GraphicStyle.WHITE_COLOR;
+    private final Color COLOR_SCREEN_AND_CLIENT_SELECTED = Color.YELLOW;
 
-    public ScreenComponent(){
-        // Set a border
-        this.setBorder(new LineBorder(Color.ORANGE, 5, true));
-        // By default the component is not selected and therefore gray colored
-        this.setColor(COLOR_NOT_SELECTED);
-        this.setSelected(false);
+    private final String SCREEN_SELECTED_HOVER_CLIENT_SELECTED = "Quitar esta pantalla y cliente";
+    private final String SCREEN_HOVER_CLIENT_SELECTED = "Elegir esta pantalla para el cliente";
+    private final String SCREEN_SELECTED_HOVER_CLIENT_NOT_SELECTED = "Quitar esta pantalla";
+    private final String SCREEN_HOVER_CLIENT_NOT_SELECTED = "Elegir esta pantalla";
+
+    private final String SCREEN_SELECTED_CLIENT_UNSELECTED = "Pantalla seleccionada";
+
+    // VARS
+    private AdminPanel adminPanel;
+    private int type;   // 0 -> screen, 1-> client
+    private int id;
+    private String ip;
+    private Color currentColor;
+    private boolean selected;           // only for screens
+    private boolean hasClient = false;  // only for screens
+    private String info;
+
+    /**
+     * Constructor for a screen type.
+     * @param adminPanel
+     */
+    public ScreenComponent(AdminPanel adminPanel){
+        //this.mainScreen = mainScreen;
+        this.adminPanel = adminPanel;
+        // Set the properties
+        setDefaultProperties();
         // Add the mouse listeners
         addMouseListener(this);
-
+        //
+        this.type = 0;
+        //
+        this.id = -1;
+        this.ip = null;
     }
 
-    private void select(){
+    /**
+     * Constructor for a client type.
+     * @param adminPanel
+     * @param id
+     * @param ip
+     */
+    public ScreenComponent(AdminPanel adminPanel, int id, String ip){
+        this.adminPanel = adminPanel;
+        // Set the properties
+        setDefaultProperties();
+        // Add the mouse listeners
+        addMouseListener(this);
+        this.id = id;
+        this.ip = ip;
+        //
+        this.type = 1;
+        //
+        currentColor = COLOR_SCREEN_NOT_SELECTED;
+        // Add the text to the label
+        info = "<html><body>Cliente: " + id + "<br>IP: " + ip + "</body></html>";
+        //
+        updateClientState();
+    }
+
+    //<editor-fold desc="SCREEN">
+    private void selectScreen(){
         if (selected){
-            Sound.soundInteractueMenu();
-            this.setSelected(false);
-            this.setColor(COLOR_NOT_SELECTED);
-            AdminPanel.getNodesToString().add(this.myNode);
-            this.myNode = "";
-            AdminPanel.setSelectedNode("Select a screen");
-            AdminPanel.updateDropDown();
+            disableScreen(this);
         }else{
-            if(!AdminPanel.getSelectedNode().equals("Select a screen")){
-                Sound.soundInteractueMenu();
-                this.setSelected(true);
-                this.setColor(COLOR_SELECTED);
-                this.myNode = AdminPanel.getSelectedNode();
-                deleteSelectedNode();
-                AdminPanel.setSelectedNode("Select a screen");
-                AdminPanel.updateDropDown();
-            } else {
-                //sound.error()
+            enableScreen(this);
+        }
+    }
+
+    private void enableScreen(ScreenComponent currentScreen){
+        // Check if there is another client component selected
+        for (ScreenComponent screen: adminPanel.getScreenComponentList()){
+            if (screen.selected && !screen.hasClient && screen != currentScreen){
+                disableScreen(screen);
             }
         }
-        this.updateComponent();
+        currentScreen.setSelected(true);
+        currentScreen.updateScreenState();
+    }
+
+    private void disableScreen(ScreenComponent currentScreen){
+        // If it has a client delete it
+        this.id = -1;
+        this.ip = null;
+        // Unselect
+        currentScreen.setSelected(false);
+        // Remove the client
+        currentScreen.hasClient = false;
+        // Update the screen
+        currentScreen.updateScreenState();
+    }
+
+    private void hoverScreen(ScreenComponent currentScreen){
+        String hoverInfo;
+        if (selected){
+            currentScreen.setBackground(COLOR_HOVER_SELECTED);
+            if (currentScreen.hasClient){
+                hoverInfo = SCREEN_SELECTED_HOVER_CLIENT_SELECTED;
+            }else{
+                hoverInfo = SCREEN_SELECTED_HOVER_CLIENT_NOT_SELECTED;
+            }
+        }else{
+            currentScreen.setBackground(COLOR_HOVER_NOT_SELECTED);
+            if (currentScreen.hasClient){
+                hoverInfo = SCREEN_HOVER_CLIENT_SELECTED;
+            }else{
+                hoverInfo = SCREEN_HOVER_CLIENT_NOT_SELECTED;
+            }
+        }
+        currentScreen.setText(hoverInfo);
+    }
+
+    /**
+     * Updates the components (Color and font) of the screen.
+     */
+    private void updateScreenState(){
+        this.setForeground(Color.WHITE);
+        if (selected){
+            if (hasClient){
+                currentColor = COLOR_SCREEN_AND_CLIENT_SELECTED;
+                this.setForeground(Color.BLACK);
+                //info = "ID: " + id + "\n IP: " + ip;
+                info = "<html><body>Cliente: " + id + "<br>IP: " + ip + "</body></html>";
+            }else{
+                currentColor = COLOR_SCREEN_SELECTED;
+                info = SCREEN_SELECTED_CLIENT_UNSELECTED;
+            }
+        }else{
+            currentColor = COLOR_SCREEN_NOT_SELECTED;
+            info = null;
+        }
+        setBackground(currentColor);
+        this.setText(info);
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="CLIENT">
+    private void selectClient(){
+        // Check if there is a screen selected
+        boolean found = false;
+        int i = 0;
+        while(!found){
+            ScreenComponent screen = adminPanel.getScreenComponentList().get(i);
+            if (screen.selected && !screen.hasClient){
+                // Then the client moves to the screen
+                screen.setId(this.id);
+                screen.setIp(this.ip);
+                // The client is deleted from the list
+                adminPanel.getClientComponentList().remove(this);
+                adminPanel.getClientPanel().remove(this);
+                screen.hasClient = true;
+                // Set the data
+                found = true;
+            }else if (i == adminPanel.getScreenComponentList().size() - 1){
+                found = true;
+            }
+            i++;
+            // Update the screen
+            screen.updateScreenState();
+        }
+    }
+
+    private void hoverClient(){
+        currentColor = COLOR_HOVER_NOT_SELECTED;
+        //info = "Seleccionar este cliente";
+        updateClientState();
+    }
+
+    private void unhoverClient(){
+        currentColor = COLOR_SCREEN_NOT_SELECTED;
+        info = "<html><body>Cliente: " + id + "<br>IP: " + ip + "</body></html>";
+        updateClientState();
+    }
+
+    private void updateClientState(){
+        setBackground(currentColor);
+        this.setText(info);
+    }
+    //</editor-fold>
+
+    private void setDefaultProperties(){
+        // Set a border
+        this.setBorder(new LineBorder(COLOR_BORDER, 5, false));
+        // Set visible background
+        this.setOpaque(true);
+        // By default the component is not selected and therefore gray colored
+        this.setBackground(COLOR_SCREEN_NOT_SELECTED);
+        this.setSelected(false);
+        // Set font style and color
+        this.setFont(GraphicStyle.ANY_LOG_FONT);
+        this.setForeground(Color.white);
+        // Set the text horizontally and vertically centered
+        this.setHorizontalAlignment(SwingConstants.CENTER);
+        this.setVerticalAlignment(SwingConstants.CENTER);
     }
 
     //<editor-fold desc="MOUSE EVENTS">
     @Override
     public void mouseClicked(MouseEvent e) {
         // Select the component
-        select();
+        switch (type){
+            case 0:
+                selectScreen();
+                break;
+            case 1:
+                selectClient();
+                break;
+        }
     }
 
     @Override
@@ -74,38 +239,54 @@ public class ScreenComponent extends JComponent implements MouseListener {
 
     @Override
     public void mouseEntered(MouseEvent e) {
-
+        //
+        switch(type){
+            case 0:
+                hoverScreen(this);
+                break;
+            case 1:
+                hoverClient();
+                break;
+        }
     }
 
     @Override
     public void mouseExited(MouseEvent e) {
-
-    }
-    //</editor-fold>
-
-    public void paintComponent(Graphics g){
-        super.paintComponent(g);
-        g.setColor(backgroundColor);
-        g.fillRect(0, 0, this.getWidth(), this.getHeight());
-        g.setColor(Color.WHITE);
-        g.drawString(myNode, 25, 25);
-    }
-
-    private void updateComponent(){
-        this.repaint();
-    }
-
-    private void deleteSelectedNode(){
-        for (int i = 0; i < AdminPanel.getNodesToString().size(); i++) {
-            if(AdminPanel.getNodesToString().get(i).equals(this.myNode)){
-                AdminPanel.getNodesToString().remove(i);
-            }
+        //
+        switch(type){
+            case 0:
+                updateScreenState();
+                break;
+            case 1:
+                unhoverClient();
+                break;
         }
     }
+    //</editor-fold>
 
     //<editor-fold desc="GETTERS">
     public boolean isSelected(){
         return this.selected;
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public String getInfo() {
+        return info;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public String getIp() {
+        return ip;
+    }
+
+    public boolean hasClient() {
+        return hasClient;
     }
     //</editor-fold>
 
@@ -114,12 +295,19 @@ public class ScreenComponent extends JComponent implements MouseListener {
         this.selected = selected;
     }
 
-    public void setColor(Color color){
-        this.backgroundColor = color;
+    public void setType(int type) {
+        this.type = type;
     }
 
-    public void setBorderColor(Color color){
-        this.borderColor = color;
+    public void setInfo(String info) {
+        this.info = info;
     }
-//</editor-fold>
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setIp(String ip) {
+        this.ip = ip;
+    }
 }

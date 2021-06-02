@@ -1,15 +1,17 @@
-package eu.cifpfbmoll.graphic.canvas;
+package eu.cifpfbmoll.graphic.panels;
 
-import eu.cifpfbmoll.graphic.canvas.MainScreen;
+import eu.cifpfbmoll.graphic.objects.Spacecraft;
+import eu.cifpfbmoll.sound.Sound;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ClientPanel extends CustomPanel implements Runnable{
+public class PlayersPanel extends CustomPanel implements Runnable{
     // CONS
     private final LayoutManager MAIN_LAYOUT = new GridLayout(1, 3);
     private final int SUBPANEL_PADDING_HEIGHT = 20, SUBPANEL_PADDING_WIDTH = 20;
@@ -18,17 +20,21 @@ public class ClientPanel extends CustomPanel implements Runnable{
             TEAM_BLUE_PANEL_COLOR = new Color (27, 92, 207), TEAM_BLUE_TEXTPANEL_COLOR = Color.BLUE;
     private final Font TITLE_FONT = new Font("Verdana", Font.PLAIN, 34);
     private final Font ANY_LOG_FONT = new Font("Verdana", Font.PLAIN, 20);
-    private final int UPDATE_TIME_MILIS = 3000;
+    private final int UPDATE_TIME_MILIS = 1500;
 
     // VARS
     private Map<String, String> redTeamPlayers = new HashMap<>(), blueTeamPlayers = new HashMap<>();
+    private ArrayList<Spacecraft> redTeam,blueTeam;
     private int screenNumber;
     private JScrollPane logPanel, logRedTeamPanel, logBlueTeamPanel;
     private JTextArea textLog, textLogRedTeam, textLogBlueTeam;
     private JPanel redTeamPanel, blueTeamPanel;
+    private JButton goBack;
 
-    public ClientPanel(MainScreen mainScreen){
+    public PlayersPanel(MainScreen mainScreen, ArrayList<Spacecraft> blueTeam, ArrayList<Spacecraft> redTeam){
         super(mainScreen);
+        this.redTeam = redTeam;
+        this.blueTeam = blueTeam;
         initPanel();
     }
 
@@ -68,6 +74,16 @@ public class ClientPanel extends CustomPanel implements Runnable{
         extPanel.add(redTeamPanel);
 
         this.add(extPanel);
+
+
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
+        goBack = new JButton("GO BACK");
+        goBack.addActionListener(this);
+        buttonPanel.add(goBack);
+        this.add(buttonPanel,BorderLayout.SOUTH);
+
+
     }
 
     private void addBlueTeamPanel(){
@@ -104,6 +120,8 @@ public class ClientPanel extends CustomPanel implements Runnable{
         extPanel.add(blueTeamPanel);
 
         this.add(extPanel);
+
+
     }
 
     private void addLogPanel(){
@@ -115,6 +133,9 @@ public class ClientPanel extends CustomPanel implements Runnable{
         logPanel.getViewport().getView().setFont(ANY_LOG_FONT);
         logPanel.getViewport().getView().setBackground(Color.black);
         logPanel.getViewport().getView().setForeground(Color.white);
+
+
+
 
         this.add(logPanel);
     }
@@ -130,15 +151,21 @@ public class ClientPanel extends CustomPanel implements Runnable{
         if (currentLog.equals(textLog)){
             // Todo update common log
         }else{
-            Map<String, String> currentMap;
+            ArrayList<Spacecraft> currrentArray;
             if (currentLog.equals(textLogRedTeam)){
-                currentMap = redTeamPlayers;
+                currrentArray = redTeam;
             }else{
-                currentMap = blueTeamPlayers;
+                currrentArray = blueTeam;
             }
             currentLog.setText(""); // Clear the text
-            for (Map.Entry<String, String> client: currentMap.entrySet()){
-                currentLog.append(client.getKey()+ "\t" + client.getValue() + "\n");    // Concat player + id
+
+            for(Spacecraft spacecraft : currrentArray){
+                String isReady = "";
+                if(spacecraft.getReady()){
+                    isReady = "Ready";
+                }
+                currentLog.append(spacecraft.getID()+ "\t" + spacecraft.getTeam() + "\t" + isReady + "\n");    // Concat player + id
+
             }
         }
     }
@@ -156,8 +183,7 @@ public class ClientPanel extends CustomPanel implements Runnable{
         addMainElements();      // Add the top elements
         new Thread(this).start();   // Start a thread to fetch and update client list values
 
-        // TEST
-        testAddPlayers();
+
     }
 
     @Override
@@ -169,7 +195,11 @@ public class ClientPanel extends CustomPanel implements Runnable{
 
     @Override
     public void actionPerformed(ActionEvent e) {
-
+        Sound.soundInteractueMenu();
+        Object sourceButton = e.getSource();
+        if(sourceButton.equals(goBack)){
+            mainScreen.changeScreen(mainScreen.getAdminPanel());
+        }
     }
 
     @Override
@@ -186,14 +216,6 @@ public class ClientPanel extends CustomPanel implements Runnable{
         }
     }
 
-    // TEST
-    private void testAddPlayers(){
-        // Red team
-        redTeamPlayers.put("Pedro", "192.168.1.1");
-        redTeamPlayers.put("Tomas", "192.169.1.0");
 
-        // Blue team
-        blueTeamPlayers.put("Toni", "192.321.1.0");
-        blueTeamPlayers.put("Qliao", "192.200.1.0");
-    }
+
 }

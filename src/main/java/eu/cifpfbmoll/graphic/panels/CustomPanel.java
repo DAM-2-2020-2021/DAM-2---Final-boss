@@ -1,7 +1,4 @@
-package eu.cifpfbmoll.graphic.canvas;
-
-import eu.cifpfbmoll.graphic.canvas.MainScreen;
-import eu.cifpfbmoll.sound.Sound;
+package eu.cifpfbmoll.graphic.panels;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;

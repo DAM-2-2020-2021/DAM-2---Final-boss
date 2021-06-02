@@ -8,7 +8,7 @@ import java.awt.image.BufferedImage;
 public class Spacecraft extends MannedVisualObject{
 
     private String nickname;
-    private String IP;
+    private int ID;
     private String team;
     private Boolean ready;
     private int spacecraftType;
@@ -27,12 +27,12 @@ public class Spacecraft extends MannedVisualObject{
         this.nickname = nickname;
     }
 
-    public String getIP() {
-        return IP;
+    public int getID() {
+        return ID;
     }
 
-    public void setIP(String IP) {
-        this.IP = IP;
+    public void setID(int ID) {
+        this.ID = ID;
     }
 
     public String getTeam() {

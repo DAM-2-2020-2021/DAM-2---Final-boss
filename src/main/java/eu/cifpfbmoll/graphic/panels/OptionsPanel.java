@@ -1,4 +1,4 @@
-package eu.cifpfbmoll.graphic.canvas;
+package eu.cifpfbmoll.graphic.panels;
 
 import eu.cifpfbmoll.logic.Configuration;
 import eu.cifpfbmoll.sound.Sound;
@@ -187,7 +187,7 @@ public class OptionsPanel extends CustomPanel {
         if(sourceButton.equals(saveChanges)){
             this.configuration.setMeteorQuantity(meteorCount);
             this.configuration.setBlackHoleQuantity(blackHoleCount);
-            mainScreen.changeScreen("ADMIN_PANEL");
+            mainScreen.changeScreen(mainScreen.getAdminPanel());
         }
     }
 }
