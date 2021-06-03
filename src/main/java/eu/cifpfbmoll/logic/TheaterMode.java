@@ -24,11 +24,12 @@ public class TheaterMode extends JFrame implements Runnable{
     private Clip sound;
     private Map<Integer, String> nodes;
     private NodeManager nodeManager;
-    private String localhostIP;
     private int myID;
-    private int myAdminIs;
+    private int myAdminIs = 0;
+    private boolean imAdmin = false;
 
-    private final String NICKNAME = "NICKNAME",TEAM = "TEAM", READY = "READY", SPACECRAFT_TYPE = "SPACECRAFT TYPE", ADMIN = "ADMIN", BLUE = "BLUE", RED = "RED";
+    private final String NICKNAME = "NICKNAME",TEAM = "TEAM", READY = "READY", SPACECRAFT_TYPE = "SPACECRAFT TYPE",
+            ADMIN = "ADMIN", BLUE = "BLUE", RED = "RED", TRUE = "TRUE", FALSE = "FALSE";
 
 
     //Getters & Setters
@@ -64,12 +65,21 @@ public class TheaterMode extends JFrame implements Runnable{
         this.nodes = nodes;
     }
 
+    public boolean isImAdmin() {
+        return imAdmin;
+    }
+
+    public void setImAdmin(boolean imAdmin) {
+        this.imAdmin = imAdmin;
+    }
+
     public TheaterMode(){
         this.configuration = new Configuration();
-        this.sound = Sound.clipSoundMenu();
-        this.sound.start();
-   /*Para ver las interfaces
-        try {
+        /*this.sound = Sound.clipSoundMenu();
+        this.sound.start();*/
+
+        //Para ver las interfaces
+        /*try {
             for (NetworkInterface netint : Collections.list(NetworkInterface.getNetworkInterfaces())) {
                 System.out.println(netint.getName());
                 System.out.println(netint.getDisplayName());
@@ -80,9 +90,11 @@ public class TheaterMode extends JFrame implements Runnable{
         } catch (SocketException e) {
             e.printStackTrace();
         }*/
-        NetworkInterface networkInterface = NodeManager.getInterfaceByName("eth6");
+        NetworkInterface networkInterface = NodeManager.getInterfaceByName("eth0");
         String ip = NodeManager.getIPForInterface(networkInterface);
-        //recuperar y settear id propia
+        this.myID = NodeManager.getIdForIp(ip);
+
+
         nodeManager = new NodeManager(ip);
         String subnet = nodeManager.getSubnet(ip);
         List<String> ips = nodeManager.getIpsForSubnet(subnet);
@@ -91,28 +103,60 @@ public class TheaterMode extends JFrame implements Runnable{
         nodeManager.register(Message.class, (id, message) ->{
             switch (message.getMessageType()){
                 case NICKNAME:
-                    //create spacecraft
-                    //set id
-                    //set nickname
+                    Spacecraft spacecraft = new Spacecraft(this);
+                    spacecraft.setID(id);
+                    spacecraft.setNickname(message.getMessage());
+                    this.allSpacecrafts.add(spacecraft);
                     //??¿?¿?¿?¿?¿check if nickname exists
                     break;
                 case TEAM:
-                    //get spacecraft with same id as sender
-                    //set team
-                    //if team == red  addred else addblue
+                    for (int i = 0; i < allSpacecrafts.size(); i++) {
+                        if(allSpacecrafts.get(i).getID() == id){
+                            allSpacecrafts.get(i).setTeam(message.getMessage());
+                            if(message.getMessage().equals(RED)){
+                                addRedTeam(allSpacecrafts.get(i));
+                            }else if(message.getMessage().equals(BLUE)){
+                                addBlueTeam(allSpacecrafts.get(i));
+                            }
+                        }
+                    }
                     break;
                 case READY:
-                    //get spacecraft with same id as sender
-                    //set ready;
+                    for (int i = 0; i < allSpacecrafts.size(); i++) {
+                        if(allSpacecrafts.get(i).getID() == id){
+                            boolean ready = false;
+                            if(message.getMessage().equals(TRUE)){
+                                ready = true;
+                            }else if(message.getMessage().equals(FALSE)){
+                                ready = false;
+                            }
+                            allSpacecrafts.get(i).setReady(ready);
+                            String readyString;
+                            if(ready){
+                                readyString = "is ready";
+                            }else{
+                                readyString = "is not ready";
+                            }
+                            addNewMessage(allSpacecrafts.get(i).getID(), allSpacecrafts.get(i).getNickname(),readyString);
+                        }
+                    }
                     break;
                 case SPACECRAFT_TYPE:
-                    //get spacecraft with same id as sender
-                    //set type;
+                    for (int i = 0; i < allSpacecrafts.size(); i++) {
+                        if(allSpacecrafts.get(i).getID() == id){
+                            allSpacecrafts.get(i).setSpacecraftType(Integer.parseInt(message.getMessage()));
+                        }
+                    }
                     break;
                 case ADMIN:
-                    //set myadmin and hide checkbox
+                    this.myAdminIs = Integer.parseInt(message.getMessage());
+                    this.mainScreen.getStartPanel().hideCheckbox();
                     break;
             }
+
+            nodeManager.register(Configuration.class, (identifier, configuration) ->{
+                this.configuration = configuration;
+            });
 
             //code when recieve message with this packet
         });
@@ -158,6 +202,7 @@ public class TheaterMode extends JFrame implements Runnable{
     public void addSpacecraft(TheaterMode theaterMode, int ID){
         Random rd = new Random();
         Spacecraft spacecraft = new Spacecraft(theaterMode);
+        spacecraft.setNickname("Nick_"+ID);
         spacecraft.setID(ID);
         spacecraft.setReady(rd.nextBoolean());
         if(rd.nextBoolean()){
@@ -170,23 +215,46 @@ public class TheaterMode extends JFrame implements Runnable{
     }
 
     public void addRedTeam(Spacecraft spacecraft){
+        boolean newSpacecraft = true;
         for (int i = 0; i < blueTeam.size(); i++) {
             if(blueTeam.get(i).getID() == spacecraft.getID()){
+                newSpacecraft = false;
+                addNewMessage(blueTeam.get(i).getID(), blueTeam.get(i).getNickname(),"switched to BLUE TEAM");
                 blueTeam.remove(i);
             }
         }
-        spacecraft.setTeam("Red");
+        if(newSpacecraft){
+            addNewMessage(spacecraft.getID(), spacecraft.getNickname(),"added to RED TEAM");
+        }
+        spacecraft.setTeam(RED);
         redTeam.add(spacecraft);
     }
 
     public void addBlueTeam(Spacecraft spacecraft){
+        boolean newSpacecraft = true;
         for (int i = 0; i < redTeam.size(); i++) {
             if(redTeam.get(i).getID() == spacecraft.getID()){
+                newSpacecraft = false;
+                addNewMessage(redTeam.get(i).getID(), redTeam.get(i).getNickname(),"switched to BLUE TEAM");
                 redTeam.remove(i);
             }
         }
-        spacecraft.setTeam("Blue");
+        if (newSpacecraft) {
+            addNewMessage(spacecraft.getID(), spacecraft.getNickname(),"added to BLUE TEAM");
+        }
+        spacecraft.setTeam(BLUE);
         blueTeam.add(spacecraft);
+    }
+
+    public void addNewMessage(int ID, String nickname, String messageInfo){
+        String[] message = new String[1];
+        message[0] = "Player -> ID: " + ID + ", Nick: " + nickname
+                + " " +messageInfo+ "\n";
+
+            this.mainScreen.adminPanel.addMessagesToGeneralLog(message);
+
+            this.mainScreen.getClientPanel().addMessagesToGeneralLog(message);
+
     }
 
     public boolean allReady(){
@@ -205,27 +273,10 @@ public class TheaterMode extends JFrame implements Runnable{
         return allReady;
     }
 
-    public void showSpacecrafts(){
-
-        for (int i = 0; i < redTeam.size(); i++) {
-            System.out.println(redTeam.get(i).getTeam());
-            System.out.println(redTeam.get(i).getReady());
-            System.out.println(redTeam.get(i).getID());
-            System.out.println();
-        }
-
-        System.out.println("//////////////////////////////////////");
-
-        for (int i = 0; i < blueTeam.size(); i++) {
-            System.out.println(blueTeam.get(i).getTeam());
-            System.out.println(blueTeam.get(i).getReady());
-            System.out.println(blueTeam.get(i).getID());
-            System.out.println();
-        }
-    }
 
     public void startGame(){
-        //send to all teh game starts
+        //Todo see how to send to ech a diferent configuration
+        //send to all the game start
         /*for (int i = 0; i < nodes.size(); i++) {
             Message message = new Message();
             message.setMessageType("START");
@@ -253,14 +304,14 @@ public class TheaterMode extends JFrame implements Runnable{
             nodeManager.send(Integer.valueOf(nodes.get(i)),message);
         }*/
 
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 20; i++) {
             this.addSpacecraft(this ,i);
         }
 
-        this.showSpacecrafts();
 
         boolean exit = false;
         Scanner input = new Scanner(System.in);
+        this.mainScreen.adminPanel.buttonPlay.setEnabled(false);
         while (!exit){
             System.out.print("Select Action: ");
             String action = input.nextLine();
@@ -277,7 +328,6 @@ public class TheaterMode extends JFrame implements Runnable{
                             this.addBlueTeam(this.getRedTeam().get(i));
                         }
                     }
-                    showSpacecrafts();
                     break;
                 case "addred":
                     System.out.print("Insert IP to change: ");
@@ -287,7 +337,6 @@ public class TheaterMode extends JFrame implements Runnable{
                             this.addRedTeam(this.getBlueTeam().get(i));
                         }
                     }
-                    showSpacecrafts();
                     break;
                 case "allready":
                     for (int i = 0; i < this.redTeam.size(); i++) {
@@ -297,7 +346,6 @@ public class TheaterMode extends JFrame implements Runnable{
                     for (int i = 0; i < this.blueTeam.size(); i++) {
                         this.blueTeam.get(i).setReady(true);
                     }
-                    showSpacecrafts();
                     break;
 
                 case "allfalse":
@@ -308,7 +356,6 @@ public class TheaterMode extends JFrame implements Runnable{
                     for (int i = 0; i < this.blueTeam.size(); i++) {
                         this.blueTeam.get(i).setReady(false);
                     }
-                    showSpacecrafts();
                     break;
                 case "start":
                     this.sound.start();break;
@@ -316,9 +363,9 @@ public class TheaterMode extends JFrame implements Runnable{
                     this.sound.stop();break;
             }
             if(this.allReady()){
-                //this.mainScreen.adminPanel.buttonPlay.setEnabled(true);
+                this.mainScreen.adminPanel.buttonPlay.setEnabled(true);
             }else {
-                //this.mainScreen.adminPanel.buttonPlay.setEnabled(false);
+                this.mainScreen.adminPanel.buttonPlay.setEnabled(false);
             }
         }
     }

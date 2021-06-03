@@ -2,6 +2,7 @@ package eu.cifpfbmoll.graphic.component;
 
 import eu.cifpfbmoll.graphic.panels.GraphicStyle;
 import eu.cifpfbmoll.graphic.panels.AdminPanel;
+import eu.cifpfbmoll.sound.Sound;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
@@ -18,12 +19,12 @@ public class ScreenComponent extends JLabel implements MouseListener {
     private final Color COLOR_BORDER = GraphicStyle.WHITE_COLOR;
     private final Color COLOR_SCREEN_AND_CLIENT_SELECTED = Color.YELLOW;
 
-    private final String SCREEN_SELECTED_HOVER_CLIENT_SELECTED = "Quitar esta pantalla y cliente";
+    private final String SCREEN_SELECTED_HOVER_CLIENT_SELECTED = "Remove screen";
     private final String SCREEN_HOVER_CLIENT_SELECTED = "Elegir esta pantalla para el cliente";
-    private final String SCREEN_SELECTED_HOVER_CLIENT_NOT_SELECTED = "Quitar esta pantalla";
-    private final String SCREEN_HOVER_CLIENT_NOT_SELECTED = "Elegir esta pantalla";
+    private final String SCREEN_SELECTED_HOVER_CLIENT_NOT_SELECTED = "Unselect this screen";
+    private final String SCREEN_HOVER_CLIENT_NOT_SELECTED = "Select this screen";
 
-    private final String SCREEN_SELECTED_CLIENT_UNSELECTED = "Pantalla seleccionada";
+    private final String SCREEN_SELECTED_CLIENT_UNSELECTED = "Selected screen";
 
     // VARS
     private AdminPanel adminPanel;
@@ -72,7 +73,7 @@ public class ScreenComponent extends JLabel implements MouseListener {
         //
         currentColor = COLOR_SCREEN_NOT_SELECTED;
         // Add the text to the label
-        info = "<html><body>Cliente: " + id + "<br>IP: " + ip + "</body></html>";
+        info = "<html><body>Node -> ID: " + id + "<br>IP: " + ip + "</body></html>";
         //
         updateClientState();
     }
@@ -80,8 +81,10 @@ public class ScreenComponent extends JLabel implements MouseListener {
     //<editor-fold desc="SCREEN">
     private void selectScreen(){
         if (selected){
+            Sound.notice();
             disableScreen(this);
         }else{
+            Sound.soundInteractueMenu();
             enableScreen(this);
         }
     }
@@ -99,6 +102,11 @@ public class ScreenComponent extends JLabel implements MouseListener {
 
     private void disableScreen(ScreenComponent currentScreen){
         // If it has a client delete it
+        ScreenComponent screenComponent = new ScreenComponent(this.adminPanel, this.id, this.ip);
+        if(this.id != -1){
+            adminPanel.getClientPanel().add(screenComponent);
+        }
+
         this.id = -1;
         this.ip = null;
         // Unselect
@@ -106,6 +114,8 @@ public class ScreenComponent extends JLabel implements MouseListener {
         // Remove the client
         currentScreen.hasClient = false;
         // Update the screen
+
+
         currentScreen.updateScreenState();
     }
 
@@ -139,7 +149,7 @@ public class ScreenComponent extends JLabel implements MouseListener {
                 currentColor = COLOR_SCREEN_AND_CLIENT_SELECTED;
                 this.setForeground(Color.BLACK);
                 //info = "ID: " + id + "\n IP: " + ip;
-                info = "<html><body>Cliente: " + id + "<br>IP: " + ip + "</body></html>";
+                info = "<html><body>Node -> ID: " + id + "<br>IP: " + ip + "</body></html>";
             }else{
                 currentColor = COLOR_SCREEN_SELECTED;
                 info = SCREEN_SELECTED_CLIENT_UNSELECTED;
@@ -161,6 +171,7 @@ public class ScreenComponent extends JLabel implements MouseListener {
         while(!found){
             ScreenComponent screen = adminPanel.getScreenComponentList().get(i);
             if (screen.selected && !screen.hasClient){
+                Sound.soundInteractueMenu();
                 // Then the client moves to the screen
                 screen.setId(this.id);
                 screen.setIp(this.ip);
@@ -171,6 +182,7 @@ public class ScreenComponent extends JLabel implements MouseListener {
                 // Set the data
                 found = true;
             }else if (i == adminPanel.getScreenComponentList().size() - 1){
+                Sound.soundInteractueMenu();
                 found = true;
             }
             i++;
@@ -187,7 +199,7 @@ public class ScreenComponent extends JLabel implements MouseListener {
 
     private void unhoverClient(){
         currentColor = COLOR_SCREEN_NOT_SELECTED;
-        info = "<html><body>Cliente: " + id + "<br>IP: " + ip + "</body></html>";
+        info = "<html><body>Node -> ID: " + id + "<br>IP: " + ip + "</body></html>";
         updateClientState();
     }
 

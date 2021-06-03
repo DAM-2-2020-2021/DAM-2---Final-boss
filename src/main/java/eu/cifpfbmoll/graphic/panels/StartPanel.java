@@ -49,6 +49,10 @@ public class StartPanel extends CustomPanel {
         this.add(checkBoxAdmin);
     }
 
+    public void hideCheckbox(){
+        this.checkBoxAdmin.setVisible(false);
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         Sound.soundInteractueMenu();
@@ -56,7 +60,8 @@ public class StartPanel extends CustomPanel {
         //
         if (sourceButton.equals(adminButton)){
             if (checkBoxAdmin.isSelected()){
-                //parar scaner de ips
+                //Todo parar scaner de IPS
+                this.getMainScreen().theaterMode.setImAdmin(true);
                 mainScreen.changeScreen(mainScreen.getAdminPanel());
             }else{
                 mainScreen.changeScreen(mainScreen.getClientPanel());

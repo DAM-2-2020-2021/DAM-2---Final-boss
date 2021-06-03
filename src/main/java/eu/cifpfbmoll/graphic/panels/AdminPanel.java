@@ -3,7 +3,6 @@ package eu.cifpfbmoll.graphic.panels;
 
 import eu.cifpfbmoll.graphic.component.ScreenComponent;
 import eu.cifpfbmoll.graphic.objects.Spacecraft;
-import eu.cifpfbmoll.logic.TheaterMode;
 import eu.cifpfbmoll.sound.Sound;
 
 import javax.swing.*;
@@ -12,7 +11,6 @@ import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -20,18 +18,18 @@ public class AdminPanel extends CustomPanel implements Runnable{
     // CONST
     private final int PANEL_ROWS = 2, PANEL_COLUMN = 1;
     private final LayoutManager mainLayout = new GridLayout(PANEL_ROWS, PANEL_COLUMN);
-    private final String PLAY_TEXT = "JUGAR", OPTIONS_TEXT = "OPCIONES", PLAYERS_TEXT = "JUGADORES",
-            ADD_ROW_TEXT = "AÑADIR FILA", RMV_ROW_TEXT = "ELIMINAR FILA",
-            ADD_COL_TEXT = "AÑADIR COLUMNA", RMV_COL_TEXT = "ELIMINAR COLUMNA",
-            SCREEN_TEXT = "SELECCIONAR PANTALLAS";
+    private final String PLAY_TEXT = "PLAY", OPTIONS_TEXT = "OPTIONS", PLAYERS_TEXT = "PLAYERS",
+            ADD_ROW_TEXT = "ADD ROW", RMV_ROW_TEXT = "DELETE ROW",
+            ADD_COL_TEXT = "ADD COLUMN", RMV_COL_TEXT = "DELETE COLUMN",
+            SCREEN_TEXT = "SELECT SCREENS";
     private final int SCREEN_ROWS_DEFAULT = 3, SCREEN_COLUMNS_DEFAULT = 3;
-    private final int UPDATE_TEAMS_LOGS_TIME_MILIS = 3000;
+    private final int UPDATE_TEAMS_LOGS_TIME_MILIS = 1500;
 
     // VARS
     private List<ScreenComponent> clientComponentList = new ArrayList<>();  // Contains the clients components (ScreenComponent).
     private List<ScreenComponent> screenComponentList = new ArrayList<>();  // Contains the screens components (ScreenComponent). The selected and not selected.
     //Components
-    private JButton buttonPlay;
+    public JButton buttonPlay;
     private JButton buttonOptions;
     private JButton buttonPlayers;
     // Panels
@@ -42,6 +40,7 @@ public class AdminPanel extends CustomPanel implements Runnable{
     private JPanel screenPanel;
     private JScrollPane logPanel;
     private JPanel clientPanel;
+    private JTabbedPane screenDetailsPanel;
 
     // Test
     private int screenSelectionRows = SCREEN_ROWS_DEFAULT;
@@ -50,12 +49,12 @@ public class AdminPanel extends CustomPanel implements Runnable{
     private JTextArea textLog, textLogRedTeam, textLogBlueTeam;
     private JPanel redTeamPanel, blueTeamPanel;
     private final int SUBPANEL_PADDING_HEIGHT = 20, SUBPANEL_PADDING_WIDTH = 20;
-    private final String TEAM_RED_TEXT = "Equipo Rojo", TEAM_BLUE_TEXT = "Equipo azul", LOG_TEXT = "Historial del log";
-    private ArrayList<Spacecraft> redTeamPlayers = new ArrayList<>(), blueTeamPlayers = new ArrayList<>();  // temporary
-    private Map<Integer, String> clientMap = new HashMap<>();
+    private final String TEAM_RED_TEXT = "RED TEAM", TEAM_BLUE_TEXT = "BLUE TEAM", LOG_TEXT = "Historial del log";
+    private Map<Integer, String> nodes;
 
     public AdminPanel(MainScreen mainScreen, Map<Integer, String> nodes){
         super(mainScreen);
+        this.nodes = nodes;
         initPanel();    // Init the panel
     }
 
@@ -71,16 +70,12 @@ public class AdminPanel extends CustomPanel implements Runnable{
 
     @Override
     protected void addMainElements() {
-        // TEST
-        testAddClients();
-
         // Add both left and right panels
         addTopPanel();
         addBottomPanel();
 
         // TEST
-        testAddSpacecrafts();
-        testAddClientMessages();
+        addInitialConections();
     }
 
     //<editor-fold desc="GET AND ADD PANELS">
@@ -124,7 +119,7 @@ public class AdminPanel extends CustomPanel implements Runnable{
         buttonsPanel.setLayout(new GridLayout(3, 0));
 
         // Create the buttons
-        JButton buttonPlay = new JButton(PLAY_TEXT);
+        buttonPlay = new JButton(PLAY_TEXT);
         JButton buttonOptions = new JButton(OPTIONS_TEXT);
         // Add action listeners to the buttons
         buttonPlay.addActionListener(this);
@@ -267,7 +262,7 @@ public class AdminPanel extends CustomPanel implements Runnable{
 
     private JTabbedPane getScreenDetailsPanel(){
         // Config tab
-        JTabbedPane screenDetailsPanel = new JTabbedPane();
+        screenDetailsPanel = new JTabbedPane();
         JPanel configPanel = new JPanel();
         configPanel.setBackground(GraphicStyle.DANGER_COLOR);
         configPanel.add(getScreenControlPanel());
@@ -279,6 +274,13 @@ public class AdminPanel extends CustomPanel implements Runnable{
         screenDetailsPanel.addTab("Client list", clientListPanel);
 
         return screenDetailsPanel;
+    }
+
+    public void updatePCList(){
+        screenDetailsPanel.remove(1);
+        JScrollPane clientListPanel = getClientListPanel();
+        //clientListPanel.setBackground(GraphicStyle.HELPER_COLOR);
+        screenDetailsPanel.addTab("Client list", clientListPanel);
     }
 
     private JPanel getScreenControlPanel(){
@@ -318,9 +320,8 @@ public class AdminPanel extends CustomPanel implements Runnable{
                 JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         // Set the client panel scroll speed
         clientScrollPanel.getVerticalScrollBar().setUnitIncrement(7);
-        System.out.println("ee " + mainScreen.getAdminPanel());
         // Create a label with its properties and add it to the client panel
-        for (Map.Entry<Integer, String> client : clientMap.entrySet()) {
+        for (Map.Entry<Integer, String> client : nodes.entrySet()) {
             ScreenComponent clientLabel = new ScreenComponent(this, client.getKey(), client.getValue());
             // Set a border
             clientLabel.setBorder(new LineBorder(GraphicStyle.WHITE_COLOR, 5, false));
@@ -354,7 +355,7 @@ public class AdminPanel extends CustomPanel implements Runnable{
      * Adds from 0 to N messages to the general log.
      * @param newMessages
      */
-    private void addMessagesToGeneralLog(String... newMessages){
+    public void addMessagesToGeneralLog(String... newMessages){
         for (String newMessage : newMessages) {
             textLog.append(newMessage + "\n");
         }
@@ -362,24 +363,30 @@ public class AdminPanel extends CustomPanel implements Runnable{
 
     /**
      * Updates the log of both teams.
-     * @param redTeamPlayers
-     * @param blueTeamPlayers
+     * @param redTeam
+     * @param blueTeam
      */
-    private void updateTeamsLogs(ArrayList<Spacecraft> redTeamPlayers, ArrayList<Spacecraft> blueTeamPlayers){
+    private void updateTeamsLogs(ArrayList<Spacecraft> redTeam, ArrayList<Spacecraft> blueTeam){
         for (int team = 0; team < 2; team++) {
             ArrayList<Spacecraft> currentMap;
             JTextArea currentLog;
             if (team == 0){
-                currentMap = redTeamPlayers;
+                currentMap = redTeam;
                 currentLog = textLogRedTeam;
             }else{
-                currentMap = blueTeamPlayers;
+                currentMap = blueTeam;
                 currentLog = textLogBlueTeam;
             }
             currentLog.setText(""); // Clear the text
             for (Spacecraft spacecraft: currentMap){
-                currentLog.append(spacecraft.getNickname() + "\t" + spacecraft.getID()
-                        + "\t" + spacecraft.getReady() + "\n");    // Concat player + id
+                String ready;
+                if(spacecraft.getReady()){
+                    ready = "Ready";
+                }else{
+                    ready = "";
+                }
+                currentLog.append( spacecraft.getID()+ "\t" + spacecraft.getNickname()
+                        + "\t" + ready + "\n");    // Concat player + id
             }
         }
     }
@@ -395,7 +402,6 @@ public class AdminPanel extends CustomPanel implements Runnable{
                 break;
             }
             case OPTIONS_TEXT: {
-                // Todo on click "OPCIONES"
                 mainScreen.changeScreen(mainScreen.getOptionsPanel());
                 break;
             }
@@ -404,21 +410,29 @@ public class AdminPanel extends CustomPanel implements Runnable{
                 // TEST
                 testShowSelectedScreens();
                 break;
+                //reset client list
+
             case ADD_ROW_TEXT:
                 screenSelectionRows++;
+
                 changeScreenSelectionPanel();
+                updatePCList();
                 break;
             case RMV_ROW_TEXT:
                 screenSelectionRows--;
                 changeScreenSelectionPanel();
+                updatePCList();
                 break;
             case ADD_COL_TEXT:
                 screenSelectionColumns++;
+
                 changeScreenSelectionPanel();
+                updatePCList();
                 break;
             case RMV_COL_TEXT:
                 screenSelectionColumns--;
                 changeScreenSelectionPanel();
+                updatePCList();
                 break;
         }
     }
@@ -428,7 +442,7 @@ public class AdminPanel extends CustomPanel implements Runnable{
         boolean end = false;
         while(!end){
             // TEST
-            updateTeamsLogs(redTeamPlayers, blueTeamPlayers);
+            updateTeamsLogs(this.mainScreen.theaterMode.getRedTeam(), this.mainScreen.theaterMode.getBlueTeam());
             try {
                 Thread.sleep(UPDATE_TEAMS_LOGS_TIME_MILIS);
             } catch (InterruptedException e) {
@@ -452,32 +466,12 @@ public class AdminPanel extends CustomPanel implements Runnable{
     //</editor-fold>
 
     // TEST
-    private void testAddSpacecrafts(){
-        for (int i = 0; i < 10; i++) {
-            Spacecraft spacecraft = new Spacecraft(this.mainScreen.theaterMode);
-            spacecraft.setID(i);
-            spacecraft.setReady(true);
 
-            spacecraft.setNickname("PlayerRed" + i);
-            redTeamPlayers.add(spacecraft);
-
-            spacecraft.setNickname("PlayerBlue" + i);
-            blueTeamPlayers.add(spacecraft);
-        }
-    }
-
-    private void testAddClients(){
-        for (int i = 0; i < 10; i++) {
-            clientMap.put(i, "192.168.2." + i);
-        }
-    }
-
-    private void testAddClientMessages(){
-        String[] messages = new String[clientMap.size()];
+    private void addInitialConections(){
+        String[] messages = new String[nodes.size()];
         int i = 0;
-        for (Map.Entry<Integer, String> client : clientMap.entrySet()) {
-            //textLog.append("Client " + client.getKey() + ": " + "192.168.1." + client.getValue() + " joined the game.\n");
-            messages[i] = "Client " + client.getKey() + ": " + "192.168.1." + client.getValue() + " joined the game.\n";
+        for (Map.Entry<Integer, String> client : nodes.entrySet()) {
+            messages[i] = "Node -> ID: " + client.getKey() + ", IP: " + client.getValue() + " joined the game.\n";
             i++;
         }
 
@@ -495,185 +489,6 @@ public class AdminPanel extends CustomPanel implements Runnable{
             i++;
         }
     }
-
-
-
-    /*
-    //<editor-fold desc="ADDERS">
-    private void addButtonsPanel() {
-        // Create a new nested panel
-        buttonsPanel = new JPanel();
-        int padding = 80;
-        buttonsPanel.setBorder(new EmptyBorder(padding, padding, padding, padding));
-        buttonsPanel.setLayout(new GridLayout(3, 0));
-
-        // Create the buttons
-        buttonPlay = new JButton(PLAY_TEXT);
-        buttonPlay.setEnabled(false);
-        buttonOptions = new JButton(OPTIONS_TEXT);
-        buttonPlayers = new JButton(PLAYERS_TEXT);
-        // Add action listeners to the buttons
-
-        buttonPlay.addActionListener(this);
-        buttonOptions.addActionListener(this);
-        buttonPlayers.addActionListener(this);
-        // Add the buttons to the panel
-        buttonsPanel.add(buttonPlay);
-        buttonsPanel.add(buttonOptions);
-        buttonsPanel.add(buttonPlayers);
-        //buttonsPanel.setBackground(Color.black);
-        this.add(buttonsPanel);
-    }
-
-    private void addScreenPanel(int screenRows, int screenColumns){
-        // Main panel
-        rightPanel = new JPanel();
-        rightPanel.setLayout(new GridLayout(2, 0));
-
-        //
-        screenOptionsPanel = new JPanel();
-        screenOptionsPanel.setLayout(new BorderLayout());
-
-        // Add right panel - screen control
-        addScreenControlPanel();
-
-        // Add left panel - screen selection
-        addScreenSelectionPanel(screenRows, screenColumns);
-
-        rightPanel.add(screenOptionsPanel);
-
-        // Add main panel to parent
-        this.add(rightPanel);
-    }
-
-    private void addScreenControlPanel(){
-        screenControlPanel = new JPanel();
-        screenControlPanel.setLayout(new GridLayout(1, 5));
-        int padding = 20;
-        screenControlPanel.setBorder(new EmptyBorder(padding, padding, padding, padding));
-        // Right panel buttons
-        JButton screenControlAddRowButton = new JButton(ADD_ROW_TEXT);
-        JButton screenControlRemoveRowButton = new JButton(RMV_ROW_TEXT);
-        JButton screenControlAddColumnButton = new JButton(ADD_COL_TEXT);
-        JButton screenControlRemoveColumnButton = new JButton(RMV_COL_TEXT);
-
-
-
-        //aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-        nodesToString = new Vector<>();
-
-        nodesToString.add("Select a screen");
-
-        Set keys = this.nodes.keySet();
-        for (Object key: keys ) {
-            nodesToString.add(key.toString() + " - " + nodes.get(key));
-        }
-
-        nodeList = new JComboBox(nodesToString);
-        nodeList.setSelectedIndex(0);
-        nodeList.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Sound.soundInteractueMenu();
-                JComboBox cb = (JComboBox)e.getSource();
-                String myNode = (String)cb.getSelectedItem();
-                selectedNode = myNode;
-            }
-        });
-
-
-
-
-        screenControlRemoveRowButton.addActionListener(this);
-        screenControlAddColumnButton.addActionListener(this);
-        screenControlAddRowButton.addActionListener(this);
-        screenControlRemoveColumnButton.addActionListener(this);
-        screenControlPanel.add(screenControlAddRowButton);
-        screenControlPanel.add(screenControlRemoveRowButton);
-        screenControlPanel.add(screenControlAddColumnButton);
-        screenControlPanel.add(screenControlRemoveColumnButton);
-        screenControlPanel.add(nodeList);
-
-        // Finally add both panels to the main one
-        screenOptionsPanel.add(screenControlPanel, BorderLayout.PAGE_START);
-    }
-
-    public static void updateDropDown(){
-        screenControlPanel.remove(nodeList);
-
-        nodeList = new JComboBox(nodesToString);
-        nodeList.setSelectedIndex(0);
-        nodeList.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Sound.soundInteractueMenu();
-                JComboBox cb = (JComboBox)e.getSource();
-                String myNode = (String)cb.getSelectedItem();
-                selectedNode = myNode;
-            }
-        });
-
-        screenControlPanel.add(nodeList);
-    }
-
-    public void resetDropDown(){
-
-        screenControlPanel.remove(nodeList);
-        nodesToString.clear();
-
-        nodesToString.add("Select a screen");
-
-        Set keys = this.nodes.keySet();
-        for (Object key: keys ) {
-            nodesToString.add(key.toString() + " " + nodes.get(key));
-        }
-
-        nodeList = new JComboBox(nodesToString);
-        nodeList.setSelectedIndex(0);
-        nodeList.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Sound.soundInteractueMenu();
-                JComboBox cb = (JComboBox)e.getSource();
-                String myNode = (String)cb.getSelectedItem();
-                selectedNode = myNode;
-            }
-        });
-        screenControlPanel.add(nodeList);
-    }
-
-    private void addScreenSelectionPanel(int rows, int columns){
-        // Left panel - screen selection
-        screenSelectionPanel = new JPanel();
-        screenSelectionPanel.setLayout(new GridLayout(rows, columns));
-        screenSelectionPanel.setBorder(new LineBorder(Color.ORANGE, 5, false));
-        int padding = 20;
-        screenSelectionPanel.setBorder(new EmptyBorder(padding, padding, padding, padding));
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < columns; j++) {
-                ScreenComponent screenComponent = new ScreenComponent();
-
-                screenSelectionPanel.add(screenComponent);
-            }
-        }
-        screenOptionsPanel.add(screenSelectionPanel, BorderLayout.CENTER);
-    }
-
-    private void addLogPanel(){
-        Font font = new Font("Dialog", Font.BOLD + Font.ITALIC, 14);    // Font to be used
-        JTextArea textArea = new JTextArea (10,30);
-        logPanel = new JScrollPane(textArea);
-        int padding = 20;
-        logPanel.setBorder(new EmptyBorder(padding, padding, padding, padding));
-
-        // Set the font, background and font color
-        logPanel.getViewport().getView().setFont(font);
-        logPanel.getViewport().getView().setBackground(Color.black);
-        logPanel.getViewport().getView().setForeground(Color.white);
-
-        rightPanel.add(logPanel);
-    }*/
-    //</editor-fold>
 
     //<editor-fold desc="SETTERS">
     private void setBackgroundColor(Color backgroundColor){

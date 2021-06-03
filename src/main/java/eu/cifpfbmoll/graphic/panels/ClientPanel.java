@@ -1,9 +1,12 @@
 package eu.cifpfbmoll.graphic.panels;
 
+import eu.cifpfbmoll.graphic.objects.Spacecraft;
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,15 +14,14 @@ public class ClientPanel extends CustomPanel implements Runnable{
     // CONS
     private final LayoutManager MAIN_LAYOUT = new GridLayout(1, 3);
     private final int SUBPANEL_PADDING_HEIGHT = 20, SUBPANEL_PADDING_WIDTH = 20;
-    private final String TEAM_RED_TEXT = "Equipo Rojo", TEAM_BLUE_TEXT = "Equipo azul", LOG_TEXT = "Historial del log";
+    private final String TEAM_RED_TEXT = "RED TEAM", TEAM_BLUE_TEXT = "BLUE TEAM", LOG_TEXT = "Historial del log";
     private final Color TEAM_RED_PANEL_COLOR = new Color (207, 27, 27), TEAM_RED_TEXTPANEL_COLOR = Color.RED,
             TEAM_BLUE_PANEL_COLOR = new Color (27, 92, 207), TEAM_BLUE_TEXTPANEL_COLOR = Color.BLUE;
     private final Font TITLE_FONT = new Font("Verdana", Font.PLAIN, 34);
-    private final Font ANY_LOG_FONT = new Font("Verdana", Font.PLAIN, 20);
-    private final int UPDATE_TIME_MILIS = 3000;
+    private final Font ANY_LOG_FONT = new Font("Verdana", Font.PLAIN, 16);
+    private final int UPDATE_TIME_MILIS = 1500;
 
     // VARS
-    private Map<String, String> redTeamPlayers = new HashMap<>(), blueTeamPlayers = new HashMap<>();
     private int screenNumber;
     private JScrollPane logPanel, logRedTeamPanel, logBlueTeamPanel;
     private JTextArea textLog, textLogRedTeam, textLogBlueTeam;
@@ -118,33 +120,40 @@ public class ClientPanel extends CustomPanel implements Runnable{
     }
     //</editor-fold>
 
-    private void updateLogs(){
-        updateLog(textLogRedTeam);
-        updateLog(textLogBlueTeam);
-        updateLog(textLog);
-    }
 
-    private void updateLog(JTextArea currentLog){
-        if (currentLog.equals(textLog)){
-            // Todo update common log
-        }else{
-            Map<String, String> currentMap;
-            if (currentLog.equals(textLogRedTeam)){
-                currentMap = redTeamPlayers;
+
+    private void updateTeamsLogs(ArrayList<Spacecraft> redTeam, ArrayList<Spacecraft> blueTeam){
+        for (int team = 0; team < 2; team++) {
+            ArrayList<Spacecraft> currentMap;
+            JTextArea currentLog;
+            if (team == 0){
+                currentMap = redTeam;
+                currentLog = textLogRedTeam;
             }else{
-                currentMap = blueTeamPlayers;
+                currentMap = blueTeam;
+                currentLog = textLogBlueTeam;
             }
             currentLog.setText(""); // Clear the text
-            for (Map.Entry<String, String> client: currentMap.entrySet()){
-                currentLog.append(client.getKey()+ "\t" + client.getValue() + "\n");    // Concat player + id
+            for (Spacecraft spacecraft: currentMap){
+                String ready;
+                if(spacecraft.getReady()){
+                    ready = "Ready";
+                }else{
+                    ready = "";
+                }
+                currentLog.append( spacecraft.getID()+ "\t" + spacecraft.getNickname()
+                        + "\t" + ready + "\n");    // Concat player + id
             }
         }
     }
 
-    private void fetchClientList(){
-        // Todo receive a client list
-        // Update clientsDictionary
+
+    public void addMessagesToGeneralLog(String... newMessages){
+        for (String newMessage : newMessages) {
+            textLog.append(newMessage + "\n");
+        }
     }
+
 
     // INHERIT METHODS
     @Override
@@ -154,8 +163,6 @@ public class ClientPanel extends CustomPanel implements Runnable{
         addMainElements();      // Add the top elements
         new Thread(this).start();   // Start a thread to fetch and update client list values
 
-        // TEST
-        testAddPlayers();
     }
 
     @Override
@@ -174,8 +181,7 @@ public class ClientPanel extends CustomPanel implements Runnable{
     public void run() {
         boolean end = false;
         while(!end){
-            fetchClientList();
-            updateLogs();
+            updateTeamsLogs(this.mainScreen.theaterMode.getRedTeam(), this.mainScreen.theaterMode.getBlueTeam());
             try {
                 Thread.sleep(UPDATE_TIME_MILIS);
             } catch (InterruptedException e) {
@@ -184,14 +190,4 @@ public class ClientPanel extends CustomPanel implements Runnable{
         }
     }
 
-    // TEST
-    private void testAddPlayers(){
-        // Red team
-        redTeamPlayers.put("Pedro", "192.168.1.1");
-        redTeamPlayers.put("Tomas", "192.169.1.0");
-
-        // Blue team
-        blueTeamPlayers.put("Toni", "192.321.1.0");
-        blueTeamPlayers.put("Qliao", "192.200.1.0");
-    }
 }

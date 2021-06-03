@@ -55,7 +55,13 @@ public class Spacecraft extends MannedVisualObject{
         super(theaterMode);
     }
 
+    public int getSpacecraftType() {
+        return spacecraftType;
+    }
 
+    public void setSpacecraftType(int spacecraftType) {
+        this.spacecraftType = spacecraftType;
+    }
 
     public void paint(Graphics g){
 
