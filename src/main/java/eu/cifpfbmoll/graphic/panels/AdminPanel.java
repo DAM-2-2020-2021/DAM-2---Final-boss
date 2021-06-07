@@ -1,6 +1,7 @@
 package eu.cifpfbmoll.graphic.panels;
 
 
+import eu.cifpfbmoll.graphic.component.CustomButton;
 import eu.cifpfbmoll.graphic.component.ScreenComponent;
 import eu.cifpfbmoll.graphic.objects.Spacecraft;
 import eu.cifpfbmoll.sound.Sound;
@@ -30,9 +31,9 @@ public class AdminPanel extends CustomPanel implements Runnable{
     private List<ScreenComponent> screenComponentList = new ArrayList<>();  // Contains the screens components (ScreenComponent). The selected and not selected.
     // Components
     // Buttons
-    public JButton buttonPlay;
-    private JButton buttonOptions;
-    private JButton buttonPlayers;
+    public CustomButton buttonPlay;
+    private CustomButton buttonOptions;
+    private CustomButton buttonPlayers;
     // Panels
     private JPanel buttonsPanel;    // Can be converted to local
     private JPanel bottomPanel;     // Can be converted to local
@@ -104,8 +105,8 @@ public class AdminPanel extends CustomPanel implements Runnable{
         buttonsPanel.setLayout(new GridLayout(3, 0));
 
         // Create the buttons
-        buttonPlay = new JButton(PLAY_TEXT);
-        JButton buttonOptions = new JButton(OPTIONS_TEXT);
+        buttonPlay = new CustomButton(CustomButton.CustomButtonType.PRIMARY, PLAY_TEXT);
+        buttonOptions = new CustomButton(CustomButton.CustomButtonType.SECONDARY, OPTIONS_TEXT);
         // Add action listeners to the buttons
         buttonPlay.addActionListener(this);
         buttonOptions.addActionListener(this);
@@ -275,11 +276,11 @@ public class AdminPanel extends CustomPanel implements Runnable{
         int padding = 20;
         //screenControlPanel.setBorder(new EmptyBorder(padding, padding, padding, padding));
         // Right panel buttons
-        JButton screenControlAddRowButton = new JButton(ADD_ROW_TEXT);
-        JButton screenControlRemoveRowButton = new JButton(RMV_ROW_TEXT);
-        JButton screenControlAddColumnButton = new JButton(ADD_COL_TEXT);
-        JButton screenControlRemoveColumnButton = new JButton(RMV_COL_TEXT);
-        JButton screenButton = new JButton(SCREEN_TEXT);
+        CustomButton screenControlAddRowButton = new CustomButton(CustomButton.CustomButtonType.TERTIARY, ADD_ROW_TEXT);
+        CustomButton screenControlRemoveRowButton = new CustomButton(CustomButton.CustomButtonType.TERTIARY, RMV_ROW_TEXT);
+        CustomButton screenControlAddColumnButton = new CustomButton(CustomButton.CustomButtonType.TERTIARY, ADD_COL_TEXT);
+        CustomButton screenControlRemoveColumnButton = new CustomButton(CustomButton.CustomButtonType.TERTIARY, RMV_COL_TEXT);
+        CustomButton screenButton = new CustomButton(CustomButton.CustomButtonType.TERTIARY, SCREEN_TEXT);
         screenControlRemoveRowButton.addActionListener(this);
         screenControlAddColumnButton.addActionListener(this);
         screenControlAddRowButton.addActionListener(this);

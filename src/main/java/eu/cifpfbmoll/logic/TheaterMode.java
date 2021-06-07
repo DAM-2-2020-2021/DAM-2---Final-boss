@@ -12,8 +12,6 @@ import java.util.*;
 
 
 public class TheaterMode extends JFrame implements Runnable{
-
-
     //Attributes
     private ArrayList<Spacecraft> redTeam = new ArrayList<>();
     private ArrayList<Spacecraft> blueTeam = new ArrayList<>();
@@ -30,6 +28,7 @@ public class TheaterMode extends JFrame implements Runnable{
 
     private final String NICKNAME = "NICKNAME",TEAM = "TEAM", READY = "READY", SPACECRAFT_TYPE = "SPACECRAFT TYPE",
             ADMIN = "ADMIN", BLUE = "BLUE", RED = "RED", TRUE = "TRUE", FALSE = "FALSE";
+
 
     //Getters & Setters
     public ArrayList<Spacecraft> getRedTeam() {
@@ -275,7 +274,6 @@ public class TheaterMode extends JFrame implements Runnable{
         return allReady;
     }
 
-
     public void startGame(){
         //Todo see how to send to ech a diferent configuration
         //send to all the game start
@@ -292,7 +290,6 @@ public class TheaterMode extends JFrame implements Runnable{
         sound.stop();
         System.out.println("Let the games begin");
     }
-
 
     @Override
     public void run() {
@@ -314,7 +311,7 @@ public class TheaterMode extends JFrame implements Runnable{
         boolean exit = false;
         Scanner input = new Scanner(System.in);
 //        this.mainScreen.adminPanel.buttonPlay.setEnabled(false);
-        this.mainScreen.adminPanel.buttonPlay.setEnabled(true);
+        this.mainScreen.adminPanel.buttonPlay.setEnabled(false);
         while (!exit){
             System.out.print("Select Action: ");
             String action = input.nextLine();

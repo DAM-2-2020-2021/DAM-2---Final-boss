@@ -322,4 +322,5 @@ public class ScreenComponent extends JLabel implements MouseListener {
     public void setIp(String ip) {
         this.ip = ip;
     }
+    //</editor-fold>
 }
