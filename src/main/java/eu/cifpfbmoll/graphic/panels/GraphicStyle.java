@@ -16,10 +16,15 @@ public class GraphicStyle {
     public static final Color TEAM_RED_TEXTPANEL_COLOR = Color.RED;
     public static final Color TEAM_BLUE_TEXTPANEL_COLOR = Color.BLUE;
 
+    public static final Color HUD_OUTGAME_BACKGROUND_COLOR = TERTIARY_COLOR;
+    public static final Color HUD_INGAME_BACKGROUND_COLOR = WHITE_COLOR;
+
     // FONTS
     public static final Font TITLE_FONT = new Font("Verdana", Font.PLAIN, 34);
     public static final Font ANY_LOG_FONT = new Font("Verdana", Font.PLAIN, 13);
     public static final Font TEAM_LOG_FONT = new Font("Verdana", Font.PLAIN, 13);
 
-
+    public static final Font TEAM_HUD_FONT = new Font("Verdana", Font.PLAIN, 30);
+    public static final Font INFO_HUD_FONT = new Font("Verdana", Font.PLAIN, 30);
+    public static final Font INFO_INGAME_HUD_FONT = new Font("Verdana", Font.BOLD, 20);
 }

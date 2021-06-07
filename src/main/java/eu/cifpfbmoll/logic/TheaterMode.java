@@ -31,7 +31,6 @@ public class TheaterMode extends JFrame implements Runnable{
     private final String NICKNAME = "NICKNAME",TEAM = "TEAM", READY = "READY", SPACECRAFT_TYPE = "SPACECRAFT TYPE",
             ADMIN = "ADMIN", BLUE = "BLUE", RED = "RED", TRUE = "TRUE", FALSE = "FALSE";
 
-
     //Getters & Setters
     public ArrayList<Spacecraft> getRedTeam() {
         return redTeam;
@@ -92,6 +91,9 @@ public class TheaterMode extends JFrame implements Runnable{
         }*/
         NetworkInterface networkInterface = NodeManager.getInterfaceByName("eth0");
         String ip = NodeManager.getIPForInterface(networkInterface);
+        // TEST
+        ip = "192.168.1.1";
+        //
         this.myID = NodeManager.getIdForIp(ip);
 
 
@@ -311,7 +313,8 @@ public class TheaterMode extends JFrame implements Runnable{
 
         boolean exit = false;
         Scanner input = new Scanner(System.in);
-        this.mainScreen.adminPanel.buttonPlay.setEnabled(false);
+//        this.mainScreen.adminPanel.buttonPlay.setEnabled(false);
+        this.mainScreen.adminPanel.buttonPlay.setEnabled(true);
         while (!exit){
             System.out.print("Select Action: ");
             String action = input.nextLine();

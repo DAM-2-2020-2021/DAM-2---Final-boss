@@ -11,6 +11,7 @@ public class MainScreen extends JFrame implements Runnable{
     private final int FRAME_MINIMUM_HEIGHT = 600, FRAME_MINIMUM_WIDTH = 600;
 
     //VARS
+    private GameViewer gameViewer;
     private StartPanel startPanel;
     public AdminPanel adminPanel;
     private ClientPanel clientPanel;
@@ -24,7 +25,6 @@ public class MainScreen extends JFrame implements Runnable{
         initScreen();
     }
 
-
     /**
      * Changes the screen JPanel to the one inserted.
      * The param screenName is temporary. It will be a convenient interface class.
@@ -32,16 +32,16 @@ public class MainScreen extends JFrame implements Runnable{
      */
     public void changeScreen(CustomPanel panel){
         try{
-            /*if (gameViewer.equals(panel)) {
+            if (gameViewer.equals(panel)) {
                 cleanScreen();
-                this.add(gameViewer, BorderLayout.CENTER);
-            } else */
-            if (clientPanel.equals(panel)) {
+                this.add(getPanelWithHud(gameViewer, HudPanel.HudType.INGAME), BorderLayout.CENTER);
+            } else if (clientPanel.equals(panel)) {
                 cleanScreen();
                 this.add(clientPanel, BorderLayout.CENTER);
             } else if (adminPanel.equals(panel)) {
                 cleanScreen();
-                this.add(adminPanel, BorderLayout.CENTER);
+//                this.add(adminPanel, BorderLayout.CENTER);
+                this.add(getPanelWithHud(adminPanel, HudPanel.HudType.OUTGAME), BorderLayout.CENTER);
             } else if (optionsPanel.equals(panel)) {
                 cleanScreen();
                 this.add(optionsPanel, BorderLayout.CENTER);
@@ -53,13 +53,45 @@ public class MainScreen extends JFrame implements Runnable{
         }
     }
 
-    private void initScreen(){
-        initComponents();       // First initialize the components (JPanels)
-        initFrame();     // Setup and show the frame
-        addInitComponents();    // Add the initial component (adminPanel)
-        new Thread(this).start();   // Start the thread
+    /**
+     * Returns a layered panel with the panel entered and the hud.
+     * @param newPanel
+     * @param hudType
+     * @return
+     */
+    private JLayeredPane getPanelWithHud(CustomPanel newPanel, HudPanel.HudType hudType){
+        //
+        HudPanel hudPanel = new HudPanel(this, hudType);
+        //
+        newPanel.setBounds(0, 0, this.getWidth() - 15 , this.getHeight() - 35);
+        hudPanel.setBounds(0, 0, this.getWidth(), this.getHeight());
+        //
+        JLayeredPane layeredPanel = new JLayeredPane();
+        layeredPanel.add(newPanel, new Integer(1));
+        layeredPanel.add(hudPanel, new Integer(2));
+        return layeredPanel;
     }
 
+    //<editor-fold desc="COMPONENTS">
+    /**
+     * All panels must be initialized here, otherwise the panel will throw error.
+     */
+    private void initComponents(){
+        gameViewer = new GameViewer(this);
+        adminPanel = new AdminPanel(this,this.theaterMode.getNodes());
+        //gameViewer = new GameViewer(this);  // Default game viewer (pink background)
+        startPanel = new StartPanel(this);
+        clientPanel = new ClientPanel(this);
+        optionsPanel = new OptionsPanel(this,this.configuration);
+    }
+
+    private void addInitComponents(){
+        // Add components
+        this.add(startPanel, BorderLayout.CENTER);
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="FRAME">
     private void initFrame() {
         // Add frame config and show
         this.setExtendedState(JFrame.MAXIMIZED_BOTH);
@@ -69,24 +101,8 @@ public class MainScreen extends JFrame implements Runnable{
         this.revalidate();
     }
 
-    private void cleanScreen(){
-        this.getContentPane().removeAll();
-    }
-
     public void showFrame(){
         this.setVisible(true);
-    }
-
-    public void hideFrame(){
-        this.setVisible(false);
-    }
-
-    private void initComponents(){
-        adminPanel = new AdminPanel(this,this.theaterMode.getNodes());
-        //gameViewer = new GameViewer(this);  // Default game viewer (pink background)
-        startPanel = new StartPanel(this);
-        clientPanel = new ClientPanel(this);
-        optionsPanel = new OptionsPanel(this,this.configuration);
     }
 
     private void setFrame() {
@@ -97,9 +113,20 @@ public class MainScreen extends JFrame implements Runnable{
         revalidate();
     }
 
-    private void addInitComponents(){
-        // Add components
-        this.add(startPanel, BorderLayout.CENTER);
+    public void hideFrame(){
+        this.setVisible(false);
+    }
+    //</editor-fold>
+
+    private void cleanScreen(){
+        this.getContentPane().removeAll();
+    }
+
+    private void initScreen(){
+        initComponents();       // First initialize the components (JPanels)
+        initFrame();     // Setup and show the frame
+        addInitComponents();    // Add the initial component (adminPanel)
+        new Thread(this).start();   // Start the thread
     }
 
     //<editor-fold desc="GETTERS">
@@ -127,6 +154,9 @@ public class MainScreen extends JFrame implements Runnable{
         return optionsPanel;
     }
 
+    public GameViewer getGameViewer() {
+        return gameViewer;
+    }
 
     //</editor-fold>
 
@@ -146,8 +176,11 @@ public class MainScreen extends JFrame implements Runnable{
     public void setOptionsPanel(OptionsPanel optionsPanel) {
         this.optionsPanel = optionsPanel;
     }
+    //</editor-fold>
 
-
+    /**
+     *
+     */
     @Override
     public void run() {
         while(true){

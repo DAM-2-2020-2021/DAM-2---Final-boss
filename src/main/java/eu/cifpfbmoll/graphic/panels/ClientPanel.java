@@ -7,8 +7,6 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 public class ClientPanel extends CustomPanel implements Runnable{
     // CONS
@@ -120,8 +118,6 @@ public class ClientPanel extends CustomPanel implements Runnable{
     }
     //</editor-fold>
 
-
-
     private void updateTeamsLogs(ArrayList<Spacecraft> redTeam, ArrayList<Spacecraft> blueTeam){
         for (int team = 0; team < 2; team++) {
             ArrayList<Spacecraft> currentMap;
@@ -147,13 +143,11 @@ public class ClientPanel extends CustomPanel implements Runnable{
         }
     }
 
-
     public void addMessagesToGeneralLog(String... newMessages){
         for (String newMessage : newMessages) {
             textLog.append(newMessage + "\n");
         }
     }
-
 
     // INHERIT METHODS
     @Override

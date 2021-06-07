@@ -28,26 +28,31 @@ public class AdminPanel extends CustomPanel implements Runnable{
     // VARS
     private List<ScreenComponent> clientComponentList = new ArrayList<>();  // Contains the clients components (ScreenComponent).
     private List<ScreenComponent> screenComponentList = new ArrayList<>();  // Contains the screens components (ScreenComponent). The selected and not selected.
-    //Components
+    // Components
+    // Buttons
     public JButton buttonPlay;
     private JButton buttonOptions;
     private JButton buttonPlayers;
     // Panels
-    private JPanel buttonsPanel;
-    private JPanel bottomPanel;
-    private JPanel screenSelectionPanel;
-    private JPanel screenControlPanel;
+    private JPanel buttonsPanel;    // Can be converted to local
+    private JPanel bottomPanel;     // Can be converted to local
     private JPanel screenPanel;
-    private JScrollPane logPanel;
+    private JPanel screenSelectionPanel;
     private JPanel clientPanel;
     private JTabbedPane screenDetailsPanel;
+    private JPanel screenControlPanel;      // Can be converted to local
+
+    private JPanel redTeamPanel, blueTeamPanel;     // Can be converted to local
+    private JScrollPane logPanel;   // Can be converted to local
+
+    private JScrollPane logRedTeamPanel, logBlueTeamPanel;  // Can be converted to local
+
+    // Text area
+    private JTextArea textLog, textLogRedTeam, textLogBlueTeam;
 
     // Test
     private int screenSelectionRows = SCREEN_ROWS_DEFAULT;
     private int screenSelectionColumns = SCREEN_COLUMNS_DEFAULT;
-    private JScrollPane logRedTeamPanel, logBlueTeamPanel;
-    private JTextArea textLog, textLogRedTeam, textLogBlueTeam;
-    private JPanel redTeamPanel, blueTeamPanel;
     private final int SUBPANEL_PADDING_HEIGHT = 20, SUBPANEL_PADDING_WIDTH = 20;
     private final String TEAM_RED_TEXT = "RED TEAM", TEAM_BLUE_TEXT = "BLUE TEAM", LOG_TEXT = "Historial del log";
     private Map<Integer, String> nodes;
@@ -56,26 +61,6 @@ public class AdminPanel extends CustomPanel implements Runnable{
         super(mainScreen);
         this.nodes = nodes;
         initPanel();    // Init the panel
-    }
-
-    @Override
-    protected void initPanel() {
-        this.setLayout(mainLayout);
-        addMainElements();
-        this.setBackground(GraphicStyle.SECONDARY_COLOR);
-
-        // TEST
-        new Thread(this).start();
-    }
-
-    @Override
-    protected void addMainElements() {
-        // Add both left and right panels
-        addTopPanel();
-        addBottomPanel();
-
-        // TEST
-        addInitialConections();
     }
 
     //<editor-fold desc="GET AND ADD PANELS">
@@ -198,7 +183,7 @@ public class AdminPanel extends CustomPanel implements Runnable{
         logBlueTeamPanel.setBorder(new EmptyBorder(SUBPANEL_PADDING_HEIGHT, 40, SUBPANEL_PADDING_HEIGHT, 40));
 
         blueTeamPanel.add(logBlueTeamPanel);
-        blueTeamPanel.setBorder(new EmptyBorder(0, 50, 0, 50));
+        //blueTeamPanel.setBorder(new EmptyBorder(0, 50, 0, 50));
 
         JPanel extPanelBlue = new JPanel(new GridLayout(1, 1));
         extPanelBlue.setOpaque(false);
@@ -391,6 +376,31 @@ public class AdminPanel extends CustomPanel implements Runnable{
         }
     }
 
+    // INHERIT
+    @Override
+    protected void initPanel() {
+        this.setLayout(mainLayout);
+        addMainElements();
+        this.setBackground(GraphicStyle.SECONDARY_COLOR);
+
+        // TEST
+        new Thread(this).start();
+    }
+
+    @Override
+    protected void addMainElements() {
+        // Add both left and right panels
+        addTopPanel();
+        addBottomPanel();
+
+        // TEST
+        addInitialConnections();
+    }
+
+    /**
+     * Manages the button and other components actions.
+     * @param e
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
         Sound.soundInteractueMenu();
@@ -398,7 +408,7 @@ public class AdminPanel extends CustomPanel implements Runnable{
         switch (actionCommand) {
             case PLAY_TEXT: {
                 // Todo on click "JUGAR"
-//                mainScreen.changeScreen(mainScreen.getGameViewer());
+                mainScreen.changeScreen(mainScreen.getGameViewer());
                 break;
             }
             case OPTIONS_TEXT: {
@@ -406,11 +416,10 @@ public class AdminPanel extends CustomPanel implements Runnable{
                 break;
             }
             case SCREEN_TEXT:
-                // Todo on click "SELECCIONAR PANTALLAS"
                 // TEST
                 testShowSelectedScreens();
                 break;
-                //reset client list
+            //reset client list
 
             case ADD_ROW_TEXT:
                 screenSelectionRows++;
@@ -437,6 +446,7 @@ public class AdminPanel extends CustomPanel implements Runnable{
         }
     }
 
+    // Todo TEST - ideally it is not necessary
     @Override
     public void run() {
         boolean end = false;
@@ -450,6 +460,12 @@ public class AdminPanel extends CustomPanel implements Runnable{
             }
         }
     }
+
+//    @Override
+//    public void paintComponent(Graphics g){
+//        System.out.println("paint");
+//        g.drawImage(Sprite.getMenuBg(), 0, 0, null);
+//    }
 
     //<editor-fold desc="GETTERS">
     public List<ScreenComponent> getClientComponentList() {
@@ -465,9 +481,15 @@ public class AdminPanel extends CustomPanel implements Runnable{
     }
     //</editor-fold>
 
+    //<editor-fold desc="SETTERS">
+    private void setBackgroundColor(Color backgroundColor){
+        setBackground(backgroundColor);
+    }
+    //</editor-fold>
+
     // TEST
 
-    private void addInitialConections(){
+    private void addInitialConnections(){
         String[] messages = new String[nodes.size()];
         int i = 0;
         for (Map.Entry<Integer, String> client : nodes.entrySet()) {
@@ -490,12 +512,6 @@ public class AdminPanel extends CustomPanel implements Runnable{
         }
     }
 
-    //<editor-fold desc="SETTERS">
-    private void setBackgroundColor(Color backgroundColor){
-        setBackground(backgroundColor);
-    }
-    //</editor-fold>
-
     /**
      * Checks the screenComponents grid and returns a list containing the position of the selected ones.
      */
@@ -514,49 +530,5 @@ public class AdminPanel extends CustomPanel implements Runnable{
         return componentPositions;
     }
 
-
-
-    /*private void getFixedComponentPositions(){
-        // Get all components from the screenControlPanel
-        List<Component> components = new ArrayList<>(Arrays.asList(screenSelectionPanel.getComponents()));
-        System.out.println(components.size());
-        int screenSelectionRows = this.screenSelectionRows;
-        int screenSelectionColumns = this.screenSelectionColumns;
-        // First delete arrows
-        for (int row = 0; row < screenSelectionRows; row++) {
-            System.out.println("new row");
-            boolean busyRow = false;
-            for (int column = 0; column < screenSelectionColumns; column++) {
-                System.out.println("Fila "+ row +"  Columna " + column + " " + (row * screenSelectionColumns + column));
-                if(( (ScreenComponent) components.get(row * screenSelectionColumns + column)).isSelected()){
-                    busyRow = true;
-                }
-            }
-            if(!busyRow){
-                // Delete the row
-                System.out.println("buse deleted");
-                components.subList(row * screenSelectionColumns,
-                        row * screenSelectionColumns + screenSelectionColumns ).clear();
-//                components.remove(0);
-                row--;
-//                rowOffset++;
-            }
-        }
-        System.out.println(components.size());
-        // Delete columns
-        for (int i = 0; i < screenSelectionRows; i++) {
-            int emptyRow = 0;
-            for (int j = 0; j < screenSelectionColumns; j++) {
-                int pos = screenSelectionColumns * i + j;
-                if(( (ScreenComponent) components[pos]).isSelected()){
-                    emptyRow++;
-                }
-            }
-            if(emptyRow == screenSelectionColumns){
-                // The row is empty
-            }
-        }
-        return (Component[]) fixedComponents.toArray();*//*
-    }*/
 
 }
