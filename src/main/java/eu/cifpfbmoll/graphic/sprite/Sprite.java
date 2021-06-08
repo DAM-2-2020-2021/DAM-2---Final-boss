@@ -1,7 +1,5 @@
 package eu.cifpfbmoll.graphic.sprite;
 
-import eu.cifpfbmoll.main;
-
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -77,8 +75,13 @@ public class Sprite {
         return getSprite(spriteSheet, 10, 35, x, y);
     }
 
+    public static BufferedImage getBigBullet(int x, int y){
+        BufferedImage spriteSheet = getSheet("img/bullet/bulletbigsheet70x70.png");
+        return getSprite(spriteSheet, 70, 70, x, y);
+    }
+
     public static BufferedImage getExplosion(int x, int y){
-        BufferedImage spriteSheet = getSheet("img/sfx/explosionsheet100x100.png");
+        BufferedImage spriteSheet = getSheet("img/sfx/explosionbulletsheet100x100.png");
         return getSprite(spriteSheet, 100, 100, x, y);
     }
 
@@ -109,6 +112,11 @@ public class Sprite {
 
     public static BufferedImage getAsteroidSmallest(int x, int y){
         BufferedImage spriteSheet = getSheet("img/asteroid/asteroidsmallestsheet20x20.png");
+        return getSprite(spriteSheet, 20, 20, x, y);
+    }
+
+    public static BufferedImage getObjectIcons(int x, int y){
+        BufferedImage spriteSheet = getSheet("img/icons/objecticonsheet20x20.png");
         return getSprite(spriteSheet, 20, 20, x, y);
     }
 }
