@@ -90,6 +90,11 @@ public class Sprite {
         return getSprite(spriteSheet, 30, 45, x, y);
     }
 
+    public static BufferedImage getShield(int x, int y){
+        BufferedImage spriteSheet = getSheet("img/powerups/shieldsheet60x60.png");
+        return getSprite(spriteSheet, 60, 60, x, y);
+    }
+
     public static BufferedImage getMothership(int x, int y){
         BufferedImage spriteSheet = getSheet("img/mothership/mothershipsheet300x800.png");
         return getSprite(spriteSheet, 300, 800, x, y);
