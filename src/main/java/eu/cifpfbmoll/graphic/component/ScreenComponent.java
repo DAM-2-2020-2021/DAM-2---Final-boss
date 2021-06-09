@@ -16,7 +16,7 @@ public class ScreenComponent extends JLabel implements MouseListener {
     private final Color COLOR_SCREEN_NOT_SELECTED = GraphicStyle.PRIMARY_COLOR;
     private final Color COLOR_HOVER_SELECTED = GraphicStyle.DANGER_COLOR;
     private final Color COLOR_HOVER_NOT_SELECTED = GraphicStyle.SECONDARY_COLOR;
-    private final Color COLOR_BORDER = GraphicStyle.WHITE_COLOR;
+    private final Color COLOR_BORDER = GraphicStyle.GLOW_BLUE_COLOR;
     private final Color COLOR_SCREEN_AND_CLIENT_SELECTED = Color.YELLOW;
 
     private final String SCREEN_SELECTED_HOVER_CLIENT_SELECTED = "Remove screen";

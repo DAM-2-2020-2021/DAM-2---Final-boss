@@ -21,6 +21,7 @@ public class Sprite {
         BufferedImage sprite = null;
 
         try {
+            file = file.replace("%20"," ");
             sprite = ImageIO.read(new File(file));
         } catch (IOException e) {
             e.printStackTrace();

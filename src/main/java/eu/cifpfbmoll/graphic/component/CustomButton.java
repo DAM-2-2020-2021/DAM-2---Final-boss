@@ -3,6 +3,7 @@ package eu.cifpfbmoll.graphic.component;
 import eu.cifpfbmoll.graphic.panels.GraphicStyle;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -15,7 +16,6 @@ public class CustomButton extends JButton implements MouseListener{
 
     // VARS
     private CustomButtonType customButtonType;
-    private boolean enabled;
 
     /**
      * Default constructor. By default the button is enabled.
@@ -26,19 +26,21 @@ public class CustomButton extends JButton implements MouseListener{
         this.customButtonType = customButtonType;
         this.setBackground(customButtonType.getBackgroundColor());
         this.setFont(customButtonType.getFont());
-        this.setForeground(customButtonType.fontColor);
+        this.setForeground(customButtonType.getFontColor());
+        this.setBorder(customButtonType.getBorder());
         this.setText(text);
+        // By default the button is enabled
+        this.setEnabled(true);
         // Add the mouse listeners
         addMouseListener(this);
-        this.setEnabled(false);
-        this.setBorder(new LineBorder(GraphicStyle.TERTIARY_COLOR, 4, false));
     }
 
     public CustomButton(CustomButtonType customButtonType, String text, boolean enabled){
         this.customButtonType = customButtonType;
         this.setBackground(customButtonType.getBackgroundColor());
         this.setFont(customButtonType.getFont());
-        this.setForeground(customButtonType.fontColor);
+        this.setForeground(customButtonType.getFontColor());
+        this.setBorder(customButtonType.getBorder());
         this.setText(text);
         // Add the mouse listeners
         addMouseListener(this);
@@ -63,14 +65,14 @@ public class CustomButton extends JButton implements MouseListener{
 
     @Override
     public void mouseEntered(MouseEvent e) {
-        this.setBorder(new LineBorder(GraphicStyle.HELPER_COLOR, 4, false));
-        this.setBackground(GraphicStyle.BUTTON_HOVER_COLOR);
+        this.setBorder(customButtonType.getHoverBorder());
+        this.setBackground(customButtonType.getHoverColor());
     }
 
     @Override
     public void mouseExited(MouseEvent e) {
-        this.setBorder(null);
-        this.setBackground(customButtonType.backgroundColor);
+        this.setBorder(customButtonType.getBorder());
+        this.setBackground(customButtonType.getBackgroundColor());
     }
     //</editor-fold>
 
@@ -80,23 +82,35 @@ public class CustomButton extends JButton implements MouseListener{
 
     @Override
     public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
+
     }
 
     public enum CustomButtonType{
-        // CustomButtonType has backgroundColor, font, fontColor and hoverColor
-        PRIMARY(GraphicStyle.HELPER_COLOR, GraphicStyle.BUTTON_FONT_1, GraphicStyle.WHITE_COLOR),
-        SECONDARY(GraphicStyle.PRIMARY_COLOR, GraphicStyle.BUTTON_FONT_2, GraphicStyle.WHITE_COLOR),
-        TERTIARY(GraphicStyle.TERTIARY_COLOR, GraphicStyle.ANY_LOG_FONT, GraphicStyle.WHITE_COLOR),
-        DANGER(GraphicStyle.PRIMARY_COLOR, GraphicStyle.ANY_LOG_FONT, GraphicStyle.WHITE_COLOR);
+        // CustomButtonType has backgroundColor, hoverColor, font, fontColor, border, hoverBorder
+        PRIMARY(GraphicStyle.SECONDARY_COLOR, GraphicStyle.BUTTON_HOVER_COLOR, GraphicStyle.BUTTON_FONT_1,
+                GraphicStyle.TEXT_YELLOW_COLOR, new LineBorder(GraphicStyle.GLOW_BLUE_COLOR, 4, false),
+                new LineBorder(GraphicStyle.GLOW_SELECTED_COLOR, 4, false)),
+        SECONDARY(GraphicStyle.PRIMARY_COLOR, GraphicStyle.BUTTON_HOVER_COLOR, GraphicStyle.BUTTON_FONT_2,
+                GraphicStyle.TEXT_YELLOW_COLOR, new LineBorder(GraphicStyle.GLOW_BLUE_COLOR, 4, false),
+                new LineBorder(GraphicStyle.GLOW_SELECTED_COLOR, 4, false)),
+        TERTIARY(GraphicStyle.TERTIARY_COLOR, GraphicStyle.BUTTON_HOVER_COLOR, GraphicStyle.BUTTON_FONT_2,
+                GraphicStyle.TEXT_YELLOW_COLOR, new LineBorder(GraphicStyle.GLOW_BLUE_COLOR, 4, false),
+                new LineBorder(GraphicStyle.GLOW_SELECTED_COLOR, 4, false)),
+        DANGER(GraphicStyle.PRIMARY_COLOR, GraphicStyle.BUTTON_HOVER_COLOR, GraphicStyle.ANY_LOG_FONT,
+                GraphicStyle.TEXT_YELLOW_COLOR, new LineBorder(GraphicStyle.GLOW_BLUE_COLOR, 4, false),
+                new LineBorder(GraphicStyle.GLOW_SELECTED_COLOR, 4, false));
 
-        private Color backgroundColor, fontColor;
+        private Color backgroundColor, hoverColor, fontColor;
         private Font font;
+        private Border border, hoverBorder;
 
-        CustomButtonType(Color backgroundColor, Font font, Color fontColor){
+        CustomButtonType(Color backgroundColor, Color hoverColor, Font font, Color fontColor, Border border, Border hoverBorder){
             this.backgroundColor = backgroundColor;
+            this.hoverColor = hoverColor;
             this.font = font;
             this.fontColor = fontColor;
+            this.border = border;
+            this.hoverBorder = hoverBorder;
         }
 
         public Color getBackgroundColor() {
@@ -109,6 +123,18 @@ public class CustomButton extends JButton implements MouseListener{
 
         public Font getFont() {
             return font;
+        }
+
+        public Color getHoverColor() {
+            return hoverColor;
+        }
+
+        public Border getBorder() {
+            return border;
+        }
+
+        public Border getHoverBorder() {
+            return hoverBorder;
         }
     }
 }

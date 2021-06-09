@@ -4,6 +4,7 @@ package eu.cifpfbmoll.graphic.panels;
 import eu.cifpfbmoll.graphic.component.CustomButton;
 import eu.cifpfbmoll.graphic.component.ScreenComponent;
 import eu.cifpfbmoll.graphic.objects.Spacecraft;
+import eu.cifpfbmoll.graphic.sprite.Sprite;
 import eu.cifpfbmoll.sound.Sound;
 
 import javax.swing.*;
@@ -11,6 +12,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -21,8 +23,7 @@ public class AdminPanel extends CustomPanel implements Runnable{
     private final LayoutManager mainLayout = new GridLayout(PANEL_ROWS, PANEL_COLUMN);
     private final String PLAY_TEXT = "PLAY", OPTIONS_TEXT = "OPTIONS", PLAYERS_TEXT = "PLAYERS",
             ADD_ROW_TEXT = "ADD ROW", RMV_ROW_TEXT = "DELETE ROW",
-            ADD_COL_TEXT = "ADD COLUMN", RMV_COL_TEXT = "DELETE COLUMN",
-            SCREEN_TEXT = "SELECT SCREENS";
+            ADD_COL_TEXT = "ADD COLUMN", RMV_COL_TEXT = "DELETE COLUMN";
     private final int SCREEN_ROWS_DEFAULT = 3, SCREEN_COLUMNS_DEFAULT = 3;
     private final int UPDATE_TEAMS_LOGS_TIME_MILIS = 1500;
 
@@ -34,19 +35,14 @@ public class AdminPanel extends CustomPanel implements Runnable{
     public CustomButton buttonPlay;
     private CustomButton buttonOptions;
     private CustomButton buttonPlayers;
+
     // Panels
-    private JPanel buttonsPanel;    // Can be converted to local
-    private JPanel bottomPanel;     // Can be converted to local
     private JPanel screenPanel;
     private JPanel screenSelectionPanel;
     private JPanel clientPanel;
     private JTabbedPane screenDetailsPanel;
-    private JPanel screenControlPanel;      // Can be converted to local
-
-    private JPanel redTeamPanel, blueTeamPanel;     // Can be converted to local
-    private JScrollPane logPanel;   // Can be converted to local
-
-    private JScrollPane logRedTeamPanel, logBlueTeamPanel;  // Can be converted to local
+    private JPanel screenControlPanel, buttonsPanel, bottomPanel, redTeamPanel, blueTeamPanel;  // Can be converted to local
+    private JScrollPane logPanel, logRedTeamPanel, logBlueTeamPanel;                            // Can be converted to local
 
     // Text area
     private JTextArea textLog, textLogRedTeam, textLogBlueTeam;
@@ -57,6 +53,7 @@ public class AdminPanel extends CustomPanel implements Runnable{
     private final int SUBPANEL_PADDING_HEIGHT = 20, SUBPANEL_PADDING_WIDTH = 20;
     private final String TEAM_RED_TEXT = "RED TEAM", TEAM_BLUE_TEXT = "BLUE TEAM", LOG_TEXT = "Historial del log";
     private Map<Integer, String> nodes;
+    private BufferedImage backgroundImage = Sprite.getMenuBg();
 
     public AdminPanel(MainScreen mainScreen, Map<Integer, String> nodes){
         super(mainScreen);
@@ -142,18 +139,18 @@ public class AdminPanel extends CustomPanel implements Runnable{
         textLogRedTeam = new JTextArea();
         textLogRedTeam.setFont(GraphicStyle.ANY_LOG_FONT);
         textLogRedTeam.setBorder(new EmptyBorder(SUBPANEL_PADDING_HEIGHT, SUBPANEL_PADDING_WIDTH, SUBPANEL_PADDING_HEIGHT, SUBPANEL_PADDING_WIDTH));
-        textLogRedTeam.setBackground(GraphicStyle.TEAM_RED_TEXTPANEL_COLOR);
-        textLogRedTeam.setForeground(Color.WHITE);
+        //textLogRedTeam.setBorder(new LineBorder(GraphicStyle.TEAM_RED_PANEL_COLOR, 5, false));
+        textLogRedTeam.setBackground(Color.BLACK);
+        textLogRedTeam.setForeground(GraphicStyle.TEXT_YELLOW_COLOR);
         // ScrollPanel
         logRedTeamPanel = new JScrollPane(textLogRedTeam);
         logRedTeamPanel.setOpaque(false);
         logRedTeamPanel.setBorder(new EmptyBorder(SUBPANEL_PADDING_HEIGHT, 40, SUBPANEL_PADDING_HEIGHT, 40));
 
         redTeamPanel.add(logRedTeamPanel);
-        //parentPanel.add(redTeamPanel);
         JPanel extPanelRed = new JPanel(new GridLayout(1, 1));
         extPanelRed.setOpaque(false);
-        extPanelRed.setBorder(new LineBorder(GraphicStyle.WHITE_COLOR, 5, false));
+        extPanelRed.setBorder(new LineBorder(GraphicStyle.GLOW_BLUE_COLOR, 5, false));
         extPanelRed.add(redTeamPanel);
         parentPanel.add(extPanelRed);
         //</editor-fold>
@@ -176,8 +173,10 @@ public class AdminPanel extends CustomPanel implements Runnable{
         textLogBlueTeam = new JTextArea();
         textLogBlueTeam.setFont(GraphicStyle.ANY_LOG_FONT);
         textLogBlueTeam.setBorder(new EmptyBorder(SUBPANEL_PADDING_HEIGHT, SUBPANEL_PADDING_WIDTH, SUBPANEL_PADDING_HEIGHT, SUBPANEL_PADDING_WIDTH));
-        textLogBlueTeam.setBackground(GraphicStyle.TEAM_BLUE_TEXTPANEL_COLOR);
-        textLogBlueTeam.setForeground(Color.WHITE);
+//        textLogBlueTeam.setBackground(GraphicStyle.TEAM_BLUE_TEXTPANEL_COLOR);
+//        textLogBlueTeam.setForeground(Color.WHITE);
+        textLogBlueTeam.setBackground(Color.BLACK);
+        textLogBlueTeam.setForeground(GraphicStyle.TEXT_YELLOW_COLOR);
         // ScrollPanel
         logBlueTeamPanel = new JScrollPane(textLogBlueTeam);
         logBlueTeamPanel.setOpaque(false);
@@ -189,7 +188,7 @@ public class AdminPanel extends CustomPanel implements Runnable{
         JPanel extPanelBlue = new JPanel(new GridLayout(1, 1));
         extPanelBlue.setOpaque(false);
         extPanelBlue.add(blueTeamPanel);
-        extPanelBlue.setBorder(new LineBorder(GraphicStyle.WHITE_COLOR, 5, false));
+        extPanelBlue.setBorder(new LineBorder(GraphicStyle.GLOW_BLUE_COLOR, 5, false));
         parentPanel.add(extPanelBlue);
         //</editor-fold>
 
@@ -203,19 +202,19 @@ public class AdminPanel extends CustomPanel implements Runnable{
         parentPanel.setOpaque(false);
         parentPanel.setBorder(new EmptyBorder(padding, padding, padding, padding));
 
-        Font font = new Font("Dialog", Font.BOLD + Font.ITALIC, 14);    // Font to be used
+        //Font font = new Font("Dialog", Font.BOLD + Font.ITALIC, 14);    // Font to be used
 
         // Textlog and logpanel
         textLog = new JTextArea ();
         textLog.setBorder(new EmptyBorder(padding, padding, padding, padding));
         logPanel = new JScrollPane(textLog);
-        logPanel.setBorder(new LineBorder(GraphicStyle.WHITE_COLOR, 5, false));
+        logPanel.setBorder(new LineBorder(GraphicStyle.GLOW_BLUE_COLOR, 5, false));
         logPanel.setOpaque(false);
 
         // Set the font, background and font color
-        logPanel.getViewport().getView().setFont(font);
+        logPanel.getViewport().getView().setFont(GraphicStyle.ANY_LOG_FONT);
         logPanel.getViewport().getView().setBackground(Color.black);
-        logPanel.getViewport().getView().setForeground(Color.white);
+        logPanel.getViewport().getView().setForeground(GraphicStyle.TEXT_YELLOW_COLOR);
 
         parentPanel.add(logPanel);
 
@@ -262,17 +261,10 @@ public class AdminPanel extends CustomPanel implements Runnable{
         return screenDetailsPanel;
     }
 
-    public void updatePCList(){
-        screenDetailsPanel.remove(1);
-        JScrollPane clientListPanel = getClientListPanel();
-        //clientListPanel.setBackground(GraphicStyle.HELPER_COLOR);
-        screenDetailsPanel.addTab("Client list", clientListPanel);
-    }
-
     private JPanel getScreenControlPanel(){
         screenControlPanel = new JPanel();
         screenControlPanel.setOpaque(false);
-        screenControlPanel.setLayout(new GridLayout(5, 1));
+        screenControlPanel.setLayout(new GridLayout(4, 1));
         int padding = 20;
         //screenControlPanel.setBorder(new EmptyBorder(padding, padding, padding, padding));
         // Right panel buttons
@@ -280,20 +272,18 @@ public class AdminPanel extends CustomPanel implements Runnable{
         CustomButton screenControlRemoveRowButton = new CustomButton(CustomButton.CustomButtonType.TERTIARY, RMV_ROW_TEXT);
         CustomButton screenControlAddColumnButton = new CustomButton(CustomButton.CustomButtonType.TERTIARY, ADD_COL_TEXT);
         CustomButton screenControlRemoveColumnButton = new CustomButton(CustomButton.CustomButtonType.TERTIARY, RMV_COL_TEXT);
-        CustomButton screenButton = new CustomButton(CustomButton.CustomButtonType.TERTIARY, SCREEN_TEXT);
+//        CustomButton screenButton = new CustomButton(CustomButton.CustomButtonType.TERTIARY, SCREEN_TEXT);
         screenControlRemoveRowButton.addActionListener(this);
         screenControlAddColumnButton.addActionListener(this);
         screenControlAddRowButton.addActionListener(this);
         screenControlRemoveColumnButton.addActionListener(this);
-        screenButton.addActionListener(this);
+//        screenButton.addActionListener(this);
         screenControlPanel.add(screenControlAddRowButton);
         screenControlPanel.add(screenControlRemoveRowButton);
         screenControlPanel.add(screenControlAddColumnButton);
         screenControlPanel.add(screenControlRemoveColumnButton);
-        screenControlPanel.add(screenButton);
+//        screenControlPanel.add(screenButton);
 
-        // Finally add both panels to the main one
-//        screenOptionsPanel.add(screenControlPanel, BorderLayout.PAGE_START);
         return screenControlPanel;
     }
 
@@ -310,7 +300,7 @@ public class AdminPanel extends CustomPanel implements Runnable{
         for (Map.Entry<Integer, String> client : nodes.entrySet()) {
             ScreenComponent clientLabel = new ScreenComponent(this, client.getKey(), client.getValue());
             // Set a border
-            clientLabel.setBorder(new LineBorder(GraphicStyle.WHITE_COLOR, 5, false));
+            clientLabel.setBorder(new LineBorder(GraphicStyle.GLOW_BLUE_COLOR, 5, false));
             // Set visible background
             clientLabel.setOpaque(true);
             // By default the component is not selected and therefore gray colored
@@ -334,6 +324,13 @@ public class AdminPanel extends CustomPanel implements Runnable{
     private void changeScreenSelectionPanel(){
         screenPanel.remove(screenSelectionPanel);
         screenPanel.add(getScreenSelectionPanel(screenSelectionRows, screenSelectionColumns));
+    }
+
+    public void updatePCList(){
+        screenDetailsPanel.remove(1);
+        JScrollPane clientListPanel = getClientListPanel();
+        //clientListPanel.setBackground(GraphicStyle.HELPER_COLOR);
+        screenDetailsPanel.addTab("Client list", clientListPanel);
     }
     //</editor-fold>
 
@@ -383,7 +380,7 @@ public class AdminPanel extends CustomPanel implements Runnable{
         this.setLayout(mainLayout);
         addMainElements();
         this.setBackground(GraphicStyle.SECONDARY_COLOR);
-
+        this.setBorder(new EmptyBorder(20, 30, 20, 40));
         // TEST
         new Thread(this).start();
     }
@@ -416,12 +413,6 @@ public class AdminPanel extends CustomPanel implements Runnable{
                 mainScreen.changeScreen(mainScreen.getOptionsPanel());
                 break;
             }
-            case SCREEN_TEXT:
-                // TEST
-                testShowSelectedScreens();
-                break;
-            //reset client list
-
             case ADD_ROW_TEXT:
                 screenSelectionRows++;
 
@@ -447,27 +438,6 @@ public class AdminPanel extends CustomPanel implements Runnable{
         }
     }
 
-    // Todo TEST - ideally it is not necessary
-    @Override
-    public void run() {
-        boolean end = false;
-        while(!end){
-            // TEST
-            updateTeamsLogs(this.mainScreen.theaterMode.getRedTeam(), this.mainScreen.theaterMode.getBlueTeam());
-            try {
-                Thread.sleep(UPDATE_TEAMS_LOGS_TIME_MILIS);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-//    @Override
-//    public void paintComponent(Graphics g){
-//        System.out.println("paint");
-//        g.drawImage(Sprite.getMenuBg(), 0, 0, null);
-//    }
-
     //<editor-fold desc="GETTERS">
     public List<ScreenComponent> getClientComponentList() {
         return clientComponentList;
@@ -488,8 +458,7 @@ public class AdminPanel extends CustomPanel implements Runnable{
     }
     //</editor-fold>
 
-    // TEST
-
+    //<editor-fold desc="TEST">
     private void addInitialConnections(){
         String[] messages = new String[nodes.size()];
         int i = 0;
@@ -531,5 +500,24 @@ public class AdminPanel extends CustomPanel implements Runnable{
         return componentPositions;
     }
 
+    // Todo TEST - ideally it is not necessary
+    @Override
+    public void run() {
+        boolean end = false;
+        while(!end){
+            // TEST
+            updateTeamsLogs(this.mainScreen.theaterMode.getRedTeam(), this.mainScreen.theaterMode.getBlueTeam());
+            try {
+                Thread.sleep(UPDATE_TEAMS_LOGS_TIME_MILIS);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
+//    @Override
+//    public void paintComponent(Graphics g){
+//        g.drawImage(backgroundImage, 0, 0, null);
+//    }
+    //</editor-fold>
 }
