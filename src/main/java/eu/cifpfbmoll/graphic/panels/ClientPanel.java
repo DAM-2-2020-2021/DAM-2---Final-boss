@@ -4,6 +4,7 @@ import eu.cifpfbmoll.graphic.objects.Spacecraft;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
@@ -15,14 +16,9 @@ public class ClientPanel extends CustomPanel implements Runnable{
     private final LayoutManager MAIN_LAYOUT = new GridLayout(1, 3);
     private final int SUBPANEL_PADDING_HEIGHT = 20, SUBPANEL_PADDING_WIDTH = 20;
     private final String TEAM_RED_TEXT = "RED TEAM", TEAM_BLUE_TEXT = "BLUE TEAM", LOG_TEXT = "Historial del log";
-    private final Color TEAM_RED_PANEL_COLOR = new Color (207, 27, 27), TEAM_RED_TEXTPANEL_COLOR = Color.RED,
-            TEAM_BLUE_PANEL_COLOR = new Color (27, 92, 207), TEAM_BLUE_TEXTPANEL_COLOR = Color.BLUE;
-    private final Font TITLE_FONT = new Font("Verdana", Font.PLAIN, 34);
-    private final Font ANY_LOG_FONT = new Font("Verdana", Font.PLAIN, 16);
     private final int UPDATE_TIME_MILIS = 1500;
 
     // VARS
-    private int screenNumber;
     private JScrollPane logPanel, logRedTeamPanel, logBlueTeamPanel;
     private JTextArea textLog, textLogRedTeam, textLogBlueTeam;
     private JPanel redTeamPanel, blueTeamPanel;
@@ -32,94 +28,104 @@ public class ClientPanel extends CustomPanel implements Runnable{
         initPanel();
     }
 
-    //<editor-fold desc="ADDERS">
-    private void addReadTeamPanel(){
+    private void addPanels(){
+        this.add(getRedTeamPanel());
+        this.add(getBlueTeamPanel());
+        this.add(getLogPanel());
+    }
+
+    private JPanel getLogPanel(){
+        textLog = new JTextArea (10,30);
+        textLog.setBorder(new EmptyBorder(SUBPANEL_PADDING_HEIGHT, SUBPANEL_PADDING_WIDTH, SUBPANEL_PADDING_HEIGHT, SUBPANEL_PADDING_WIDTH));
+        logPanel = new JScrollPane(textLog);
+        //logPanel.setBorder(new EmptyBorder(SUBPANEL_PADDING_HEIGHT, SUBPANEL_PADDING_WIDTH, SUBPANEL_PADDING_HEIGHT, SUBPANEL_PADDING_WIDTH));
+
+        // Set the font, background and font color
+        logPanel.getViewport().getView().setFont(GraphicStyle.ANY_LOG_FONT);
+        logPanel.getViewport().getView().setBackground(Color.BLACK);
+        logPanel.getViewport().getView().setForeground(GraphicStyle.TEXT_YELLOW_COLOR);
+
+        //JPanel
+        JPanel parent = new JPanel(new GridLayout(1, 1));
+        parent.add(logPanel);
+        parent.setBorder(new LineBorder(GraphicStyle.GLOW_BLUE_COLOR, 4, false));
+        parent.setBackground(Color.BLACK);
+
+        return parent;
+    }
+
+    private JPanel getRedTeamPanel(){
         // Panel
         redTeamPanel = new JPanel();
         redTeamPanel.setLayout(new BoxLayout(redTeamPanel, BoxLayout.Y_AXIS));
-        redTeamPanel.setBackground(TEAM_RED_PANEL_COLOR);
+        redTeamPanel.setBackground(GraphicStyle.TEAM_RED_PANEL_COLOR);
 
         // Label
         JLabel redTeamLabel = new JLabel(TEAM_RED_TEXT);
         redTeamLabel.setBorder(new EmptyBorder(30, 0, 0, 0));
-        redTeamLabel.setFont(TITLE_FONT);
+        redTeamLabel.setFont(GraphicStyle.TITLE_FONT);
         redTeamLabel.setForeground(Color.WHITE);
         redTeamLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         redTeamPanel.add(redTeamLabel);
 
         // TextPanel
-        JPanel textPanelParent = new JPanel();
-        textPanelParent.setOpaque(false);
-        textPanelParent.setBorder(new EmptyBorder(SUBPANEL_PADDING_HEIGHT, 40, SUBPANEL_PADDING_HEIGHT, 40));
-        textLogRedTeam = new JTextArea (25,20);
-        textLogRedTeam.setFont(ANY_LOG_FONT);
+        textLogRedTeam = new JTextArea();
+        textLogRedTeam.setFont(GraphicStyle.ANY_LOG_FONT);
         textLogRedTeam.setBorder(new EmptyBorder(SUBPANEL_PADDING_HEIGHT, SUBPANEL_PADDING_WIDTH, SUBPANEL_PADDING_HEIGHT, SUBPANEL_PADDING_WIDTH));
-        textLogRedTeam.setBackground(TEAM_RED_TEXTPANEL_COLOR);
-        textLogRedTeam.setForeground(Color.WHITE);
-        textLogRedTeam.append("hola\nwow");
+        //textLogRedTeam.setBorder(new LineBorder(GraphicStyle.TEAM_RED_PANEL_COLOR, 5, false));
+        textLogRedTeam.setBackground(Color.BLACK);
+        textLogRedTeam.setForeground(GraphicStyle.TEXT_YELLOW_COLOR);
         // ScrollPanel
         logRedTeamPanel = new JScrollPane(textLogRedTeam);
-        textPanelParent.add(logRedTeamPanel);
+        logRedTeamPanel.setOpaque(false);
+        logRedTeamPanel.setBorder(new EmptyBorder(SUBPANEL_PADDING_HEIGHT, 40, SUBPANEL_PADDING_HEIGHT, 40));
 
-        redTeamPanel.add(textPanelParent);
+        redTeamPanel.add(logRedTeamPanel);
+        JPanel extPanelRed = new JPanel(new GridLayout(1, 1));
+        extPanelRed.setOpaque(false);
+        extPanelRed.setBorder(new LineBorder(GraphicStyle.GLOW_BLUE_COLOR, 5, false));
+        extPanelRed.add(redTeamPanel);
 
-        JPanel extPanel = new JPanel();
-        //extPanel.setBorder(new EmptyBorder(0, 0, 0, 0));
-        extPanel.add(redTeamPanel);
-
-        this.add(extPanel);
+        return extPanelRed;
     }
 
-    private void addBlueTeamPanel(){
+    private JPanel getBlueTeamPanel(){
         // Panel
         blueTeamPanel = new JPanel();
         blueTeamPanel.setLayout(new BoxLayout(blueTeamPanel, BoxLayout.Y_AXIS));
-        blueTeamPanel.setBackground(TEAM_BLUE_PANEL_COLOR);
+        blueTeamPanel.setBackground(GraphicStyle.TEAM_BLUE_PANEL_COLOR);
 
         // Label
         JLabel blueTeamLabel = new JLabel(TEAM_BLUE_TEXT);
         blueTeamLabel.setBorder(new EmptyBorder(30, 0, 0, 0));
-        blueTeamLabel.setFont(TITLE_FONT);
+        blueTeamLabel.setFont(GraphicStyle.TITLE_FONT);
         blueTeamLabel.setForeground(Color.WHITE);
         blueTeamLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         blueTeamPanel.add(blueTeamLabel);
 
         // TextPanel
-        JPanel textPanelParent = new JPanel();
-        textPanelParent.setOpaque(false);
-        textPanelParent.setBorder(new EmptyBorder(SUBPANEL_PADDING_HEIGHT, 40, SUBPANEL_PADDING_HEIGHT, 40));
-        textLogBlueTeam = new JTextArea (25,20);
-        textLogBlueTeam.setFont(ANY_LOG_FONT);
+        textLogBlueTeam = new JTextArea();
+        textLogBlueTeam.setFont(GraphicStyle.ANY_LOG_FONT);
         textLogBlueTeam.setBorder(new EmptyBorder(SUBPANEL_PADDING_HEIGHT, SUBPANEL_PADDING_WIDTH, SUBPANEL_PADDING_HEIGHT, SUBPANEL_PADDING_WIDTH));
-        textLogBlueTeam.setBackground(TEAM_BLUE_TEXTPANEL_COLOR);
-        textLogBlueTeam.setForeground(Color.WHITE);
+//        textLogBlueTeam.setBackground(GraphicStyle.TEAM_BLUE_TEXTPANEL_COLOR);
+//        textLogBlueTeam.setForeground(Color.WHITE);
+        textLogBlueTeam.setBackground(Color.BLACK);
+        textLogBlueTeam.setForeground(GraphicStyle.TEXT_YELLOW_COLOR);
         // ScrollPanel
         logBlueTeamPanel = new JScrollPane(textLogBlueTeam);
-        textPanelParent.add(logBlueTeamPanel);
+        logBlueTeamPanel.setOpaque(false);
+        logBlueTeamPanel.setBorder(new EmptyBorder(SUBPANEL_PADDING_HEIGHT, 40, SUBPANEL_PADDING_HEIGHT, 40));
 
-        blueTeamPanel.add(textPanelParent);
+        blueTeamPanel.add(logBlueTeamPanel);
+        //blueTeamPanel.setBorder(new EmptyBorder(0, 50, 0, 50));
 
-        JPanel extPanel = new JPanel();
-        //extPanel.setBorder(new EmptyBorder(0, 0, 0, 0));
-        extPanel.add(blueTeamPanel);
+        JPanel extPanelBlue = new JPanel(new GridLayout(1, 1));
+        extPanelBlue.setOpaque(false);
+        extPanelBlue.add(blueTeamPanel);
+        extPanelBlue.setBorder(new LineBorder(GraphicStyle.GLOW_BLUE_COLOR, 5, false));
 
-        this.add(extPanel);
+        return extPanelBlue;
     }
-
-    private void addLogPanel(){
-        textLog = new JTextArea (10,30);
-        logPanel = new JScrollPane(textLog);
-        logPanel.setBorder(new EmptyBorder(SUBPANEL_PADDING_HEIGHT, SUBPANEL_PADDING_WIDTH, SUBPANEL_PADDING_HEIGHT, SUBPANEL_PADDING_WIDTH));
-
-        // Set the font, background and font color
-        logPanel.getViewport().getView().setFont(ANY_LOG_FONT);
-        logPanel.getViewport().getView().setBackground(Color.black);
-        logPanel.getViewport().getView().setForeground(Color.white);
-
-        this.add(logPanel);
-    }
-    //</editor-fold>
-
 
 
     private void updateTeamsLogs(ArrayList<Spacecraft> redTeam, ArrayList<Spacecraft> blueTeam){
@@ -160,6 +166,7 @@ public class ClientPanel extends CustomPanel implements Runnable{
     protected void initPanel() {
         this.setLayout(MAIN_LAYOUT);    // Set the main layout
         this.setPaddingSize(40, 40);
+        this.setBackground(GraphicStyle.SECONDARY_COLOR);
         addMainElements();      // Add the top elements
         new Thread(this).start();   // Start a thread to fetch and update client list values
 
@@ -167,9 +174,7 @@ public class ClientPanel extends CustomPanel implements Runnable{
 
     @Override
     protected void addMainElements() {
-        addReadTeamPanel();
-        addBlueTeamPanel();
-        addLogPanel();
+        addPanels();
     }
 
     @Override

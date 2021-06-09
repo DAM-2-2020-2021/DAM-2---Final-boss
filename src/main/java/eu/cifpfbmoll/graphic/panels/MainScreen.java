@@ -8,7 +8,6 @@ import java.awt.*;
 
 public class MainScreen extends JFrame implements Runnable{
     // CONST
-    private final int FRAME_MINIMUM_HEIGHT = 600, FRAME_MINIMUM_WIDTH = 600;
 
     //VARS
     private StartPanel startPanel;
@@ -32,41 +31,68 @@ public class MainScreen extends JFrame implements Runnable{
      */
     public void changeScreen(CustomPanel panel){
         try{
-            /*if (gameViewer.equals(panel)) {
-                cleanScreen();
-                this.add(gameViewer, BorderLayout.CENTER);
-            } else */
-            if (clientPanel.equals(panel)) {
-                cleanScreen();
-                this.add(clientPanel, BorderLayout.CENTER);
-            } else if (adminPanel.equals(panel)) {
-                cleanScreen();
-                this.add(adminPanel, BorderLayout.CENTER);
-            } else if (optionsPanel.equals(panel)) {
-                cleanScreen();
-                this.add(optionsPanel, BorderLayout.CENTER);
-            } else {
-                throw new Exception("There is no screen panel " + panel);   // The screen panel does not exist. Throws error
-            }
+            HudPanel.HudType hudType;
+
+                hudType = HudPanel.HudType.OUTGAME;
+
+            // Clean the screen of any panel
+            cleanScreen();
+            // Add the provided panel
+            this.add(getPanelWithHud(panel, hudType), BorderLayout.CENTER);
         }catch(Exception e){
             System.out.println(e.getMessage());
         }
     }
 
-    private void initScreen(){
-        initComponents();       // First initialize the components (JPanels)
-        initFrame();     // Setup and show the frame
-        addInitComponents();    // Add the initial component (adminPanel)
-        new Thread(this).start();   // Start the thread
+    /**
+     * Returns a layered panel with the panel entered and the hud.
+     * @param newPanel
+     * @param hudType
+     * @return
+     */
+    private JLayeredPane getPanelWithHud(CustomPanel newPanel, HudPanel.HudType hudType){
+        Dimension scrnSize = Toolkit.getDefaultToolkit().getScreenSize();
+        Rectangle winSize = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
+
+        int taskBarHeight = scrnSize.height - winSize.height - 1;
+
+        //
+        HudPanel hudPanel = new HudPanel(this, hudType);
+        //
+        newPanel.setBounds(0, 0, this.getWidth() , this.getHeight() - taskBarHeight);
+        hudPanel.setBounds(0, 0, this.getWidth(), this.getHeight());
+        //
+        JLayeredPane layeredPanel = new JLayeredPane();
+        layeredPanel.add(newPanel, new Integer(1));
+        layeredPanel.add(hudPanel, new Integer(2));
+        return layeredPanel;
+    }
+
+
+    private void initComponents(){
+        adminPanel = new AdminPanel(this,this.theaterMode.getPcList());
+        startPanel = new StartPanel(this);
+        clientPanel = new ClientPanel(this);
+        optionsPanel = new OptionsPanel(this,this.configuration);
+    }
+
+    private void addInitComponents(){
+        // Add components
+        cleanScreen();
+        this.add(getPanelWithHud(startPanel, HudPanel.HudType.OUTGAME), BorderLayout.CENTER);
+        //this.add(startPanel, BorderLayout.CENTER);
     }
 
     private void initFrame() {
         // Add frame config and show
+        this.setName("DAMN: The Official Game");
         this.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        this.setExtendedState( this.getExtendedState()|JFrame.MAXIMIZED_BOTH );
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setLayout(new BorderLayout());
-        this.setMinimumSize(new Dimension(FRAME_MINIMUM_WIDTH, FRAME_MINIMUM_HEIGHT));
+        //this.setResizable(false);
         this.revalidate();
+        this.pack();
     }
 
     private void cleanScreen(){
@@ -81,11 +107,12 @@ public class MainScreen extends JFrame implements Runnable{
         this.setVisible(false);
     }
 
-    private void initComponents(){
-        adminPanel = new AdminPanel(this,this.theaterMode.getPcList());
-        startPanel = new StartPanel(this);
-        clientPanel = new ClientPanel(this);
-        optionsPanel = new OptionsPanel(this,this.configuration);
+    private void initScreen(){
+        initComponents();       // First initialize the components (JPanels)
+        initFrame();     // Setup and show the frame
+        this.showFrame();
+        addInitComponents();    // Add the initial component (adminPanel)
+        new Thread(this).start();   // Start the thread
     }
 
     private void setFrame() {
@@ -96,19 +123,7 @@ public class MainScreen extends JFrame implements Runnable{
         revalidate();
     }
 
-    private void addInitComponents(){
-        // Add components
-        this.add(startPanel, BorderLayout.CENTER);
-    }
 
-    //<editor-fold desc="GETTERS">
-    public int getFRAME_MINIMUM_HEIGHT() {
-        return FRAME_MINIMUM_HEIGHT;
-    }
-
-    public int getFRAME_MINIMUM_WIDTH() {
-        return FRAME_MINIMUM_WIDTH;
-    }
 
     public StartPanel getStartPanel() {
         return startPanel;

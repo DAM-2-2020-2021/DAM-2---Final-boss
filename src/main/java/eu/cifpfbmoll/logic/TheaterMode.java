@@ -27,7 +27,7 @@ public class TheaterMode extends JFrame implements Runnable{
     private Clip sound;
     private Map<Integer, String> nodes;
     private Map<Integer, String> pcList = new HashMap();
-    private NodeManager nodeManager;
+    public NodeManager nodeManager;
     private int myID;
     private int myAdminIs = 0;
     private boolean imAdmin = false;
@@ -189,6 +189,7 @@ public class TheaterMode extends JFrame implements Runnable{
             nodeManager.addNode(i,"192.168.1."+i);
         }
 
+        this.pcList = nodeManager.getNodes();
         this.nodes = nodeManager.getNodes();
         this.mainScreen = new MainScreen(this, this.configuration);
         mainScreen.showFrame();
@@ -277,14 +278,7 @@ public class TheaterMode extends JFrame implements Runnable{
 
 
     public void startGame(){
-        //Todo see how to send to ech a diferent configuration
-        //send to all the game start
-        /*for (int i = 0; i < nodes.size(); i++) {
-            Message message = new Message();
-            message.setMessageType("START");
-            message.setMessage("");
-            nodeManager.send(Integer.valueOf(nodes.get(i)),message);
-        }*/
+        nodeManager.stopScan();
         //GameMode gameMode = new GameMode(nodeManager, redTeam, blueTeam,configuration);
         sound.stop();
         System.out.println("Let the games begin");
