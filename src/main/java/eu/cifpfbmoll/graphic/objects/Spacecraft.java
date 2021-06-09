@@ -9,9 +9,9 @@ public class Spacecraft extends MannedVisualObject{
 
     private String nickname;
     private int ID;
-    private String team;
-    private Boolean ready;
-    private int spacecraftType;
+    private String team = "RED";
+    private Boolean ready = false;
+    private int spacecraftType = 0;
     public final int TYPE_O = 0;
     public final int TYPE_1 = 1;
     public final int TYPE_2 = 2;

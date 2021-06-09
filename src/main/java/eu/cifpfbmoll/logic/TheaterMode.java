@@ -7,7 +7,9 @@ import eu.cifpfbmoll.sound.Sound;
 
 import javax.sound.sampled.Clip;
 import javax.swing.*;
+import java.net.InetAddress;
 import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.util.*;
 
 
@@ -90,7 +92,7 @@ public class TheaterMode extends JFrame implements Runnable{
         } catch (SocketException e) {
             e.printStackTrace();
         }*/
-        NetworkInterface networkInterface = NodeManager.getInterfaceByName("eth0");
+        NetworkInterface networkInterface = NodeManager.getInterfaceByName("eth6");
         String ip = NodeManager.getIPForInterface(networkInterface);
         this.myID = NodeManager.getIdForIp(ip);
 
@@ -158,7 +160,6 @@ public class TheaterMode extends JFrame implements Runnable{
                 this.configuration = configuration;
             });
 
-            //code when recieve message with this packet
         });
 
         for (int i = 0; i < 15; i++) {
