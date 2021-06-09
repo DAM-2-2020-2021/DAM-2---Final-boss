@@ -24,6 +24,16 @@ public class Configuration {
     @PacketAttribute
     private int left = 0;
 
+    private int screenID;
+
+    public int getScreenID() {
+        return screenID;
+    }
+
+    public void setScreenID(int screenID) {
+        this.screenID = screenID;
+    }
+
     public int getMeteorQuantity() {
         return meteorQuantity;
     }

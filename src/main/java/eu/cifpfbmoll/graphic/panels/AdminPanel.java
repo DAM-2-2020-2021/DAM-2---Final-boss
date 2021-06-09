@@ -3,6 +3,7 @@ package eu.cifpfbmoll.graphic.panels;
 
 import eu.cifpfbmoll.graphic.component.ScreenComponent;
 import eu.cifpfbmoll.graphic.objects.Spacecraft;
+import eu.cifpfbmoll.logic.Configuration;
 import eu.cifpfbmoll.sound.Sound;
 
 import javax.swing.*;
@@ -51,6 +52,15 @@ public class AdminPanel extends CustomPanel implements Runnable{
     private final int SUBPANEL_PADDING_HEIGHT = 20, SUBPANEL_PADDING_WIDTH = 20;
     private final String TEAM_RED_TEXT = "RED TEAM", TEAM_BLUE_TEXT = "BLUE TEAM", LOG_TEXT = "Historial del log";
     private Map<Integer, String> nodes;
+    private Configuration[][] configurationList;
+
+    public Configuration[][] getConfigurationList() {
+        return configurationList;
+    }
+
+    public void setConfigurationList(Configuration[][] configurationList) {
+        this.configurationList = configurationList;
+    }
 
     public AdminPanel(MainScreen mainScreen, Map<Integer, String> nodes){
         super(mainScreen);
@@ -247,6 +257,7 @@ public class AdminPanel extends CustomPanel implements Runnable{
         screenSelectionPanel.setLayout(new GridLayout(rows, columns));
         int padding = 20;
         screenSelectionPanel.setBorder(new EmptyBorder(padding, padding, padding, padding));
+        screenComponentList.clear();
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++) {
                 ScreenComponent screenComponent = new ScreenComponent(this);
@@ -415,11 +426,16 @@ public class AdminPanel extends CustomPanel implements Runnable{
             case ADD_ROW_TEXT:
                 screenSelectionRows++;
 
+
                 changeScreenSelectionPanel();
                 updatePCList();
                 break;
             case RMV_ROW_TEXT:
                 screenSelectionRows--;
+                if(screenSelectionRows <= 0){
+                    screenSelectionRows++;
+                    Sound.notice();
+                }
                 changeScreenSelectionPanel();
                 updatePCList();
                 break;
@@ -431,6 +447,10 @@ public class AdminPanel extends CustomPanel implements Runnable{
                 break;
             case RMV_COL_TEXT:
                 screenSelectionColumns--;
+                if(screenSelectionColumns <= 0){
+                    screenSelectionColumns++;
+                    Sound.notice();
+                }
                 changeScreenSelectionPanel();
                 updatePCList();
                 break;
@@ -479,7 +499,9 @@ public class AdminPanel extends CustomPanel implements Runnable{
     }
 
     private void testShowSelectedScreens(){
-        int i = 0;
+        /*int i = 0;
+        System.out.println(screenSelectionRows);
+        System.out.println(screenSelectionColumns);
         for (ScreenComponent screen: screenComponentList){
             if (screen.hasClient()){
                 System.out.println("Pos " + i + ". Client: " + screen.getId() + " Id: " + screen.getIp());
@@ -487,6 +509,44 @@ public class AdminPanel extends CustomPanel implements Runnable{
                 System.out.println("Pos " + i + ". Not a selected screen");
             }
             i++;
+        }*/
+        getScreenComponentPositions();
+        setConfigurationPositions();
+
+
+        System.out.println();
+        System.out.println();
+        for (int i = 0; i < configurationList.length; i++) {
+            for (int j = 0; j < configurationList[0].length; j++) {
+                if(configurationList[i][j] != null){
+                    System.out.println("Position: " + i + " " + j);
+                    System.out.println("Screen Id: " + configurationList[i][j].getScreenID());
+                    System.out.println("Right: " + configurationList[i][j].getRight() + " Left: " + configurationList[i][j].getLeft());
+                    System.out.println("Up: " + configurationList[i][j].getUp() + " Down: " + configurationList[i][j].getDown());
+                }else{
+                    System.out.println("Position: " + i + " " + j);
+                    System.out.println("Is empty");
+                }
+            }
+        }
+    }
+
+    private void setConfigurationPositions(){
+        for (int i = 0; i < configurationList.length; i++) {
+            for (int j = 1; j < configurationList[0].length; j++) {
+                if(configurationList[i][j] != null && configurationList[i][j-1] != null){
+                    configurationList[i][j].setLeft(configurationList[i][j-1].getScreenID());
+                    configurationList[i][j-1].setRight(configurationList[i][j].getScreenID());
+                }
+            }
+        }
+        for (int i = 1; i < configurationList.length; i++) {
+            for (int j = 0; j < configurationList[0].length; j++) {
+                if(configurationList[i][j] != null && configurationList[i-1][j] != null){
+                    configurationList[i][j].setUp(configurationList[i-1][j].getScreenID());
+                    configurationList[i-1][j].setDown(configurationList[i][j].getScreenID());
+                }
+            }
         }
     }
 
@@ -499,10 +559,10 @@ public class AdminPanel extends CustomPanel implements Runnable{
     /**
      * Checks the screenComponents grid and returns a list containing the position of the selected ones.
      */
-    private List<Integer> getScreenComponentPositions(){
+    private void getScreenComponentPositions(){
         // Todo return array containing screens positions on click "SELECCIONAR PANTALLAS"
         // Get all components from the screenControlPanel
-        Component[] components = screenSelectionPanel.getComponents();
+        /*Component[] components = screenSelectionPanel.getComponents();
         List<Integer> componentPositions = new ArrayList();
         int j = 0;
         for (int componentIndex = 0; componentIndex < components.length; componentIndex++) {
@@ -511,7 +571,21 @@ public class AdminPanel extends CustomPanel implements Runnable{
                 j++;
             }
         }
-        return componentPositions;
+        return componentPositions;*/
+        configurationList = new Configuration[screenSelectionRows][screenSelectionColumns];
+        int i = 0,j = 0;
+        for (ScreenComponent screen: screenComponentList){
+            if (screen.hasClient()){
+                Configuration conf = new Configuration();
+                conf.setScreenID(screen.getId());
+                configurationList[i][j] = conf;
+            }
+            j++;
+            if(j == screenSelectionColumns){
+                j = 0;
+                i++;
+            }
+        }
     }
 
 

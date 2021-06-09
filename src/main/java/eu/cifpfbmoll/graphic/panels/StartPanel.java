@@ -50,6 +50,7 @@ public class StartPanel extends CustomPanel {
     }
 
     public void hideCheckbox(){
+        this.checkBoxAdmin.setSelected(false);
         this.checkBoxAdmin.setVisible(false);
     }
 
@@ -61,10 +62,16 @@ public class StartPanel extends CustomPanel {
         if (sourceButton.equals(adminButton)){
             if (checkBoxAdmin.isSelected()){
                 //Todo parar scaner de IPS
-                this.getMainScreen().theaterMode.setImAdmin(true);
+
                 mainScreen.changeScreen(mainScreen.getAdminPanel());
             }else{
                 mainScreen.changeScreen(mainScreen.getClientPanel());
+            }
+        }else if(sourceButton.equals(checkBoxAdmin)){
+            if (checkBoxAdmin.isSelected()){
+                this.getMainScreen().theaterMode.setImAdmin(true);
+            }else{
+                this.getMainScreen().theaterMode.setImAdmin(false);
             }
         }
     }
