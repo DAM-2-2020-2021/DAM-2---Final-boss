@@ -422,20 +422,24 @@ public class AdminPanel extends CustomPanel implements Runnable{
         final String actionCommand = e.getActionCommand();
         switch (actionCommand) {
             case PLAY_TEXT: {
-                // Todo on click "JUGAR"
-                if(this.buttonPlay.isEnabled()){
-                    System.out.println("ejejeje");
-                }else {
-                    System.out.println("noioooo");
+                getScreenComponentPositions();
+                setConfigurationPositions();
+
+                for (int i = 0; i < configurationList.length; i++) {
+                    for (int j = 0; j < configurationList[0].length; j++) {
+                        if(configurationList[i][j] != null){
+                            mainScreen.theaterMode.nodeManager.send(configurationList[i][j].getScreenID(), configurationList[i][j]);
+                        }
+                    }
                 }
-//                mainScreen.changeScreen(mainScreen.getGameViewer());
-               /* for (int i = 0; i < nodes.size(); i++) {
-                    Message message = new Message();
-                    message.setMessageType("START");
-                    message.setMessage("");
-                    mainScreen.theaterMode.nodeManager.send(Integer.valueOf(nodes.get(i)),message);
-                }
-                mainScreen.theaterMode.startGame();*/
+                Message message = new Message();
+                message.setMessageType("START");
+                message.setMessage("");
+                mainScreen.theaterMode.nodeManager.broadcast(message);
+
+                //mainScreen.theaterMode.startGame();
+
+
                 break;
             }
             case OPTIONS_TEXT: {
@@ -590,6 +594,7 @@ public class AdminPanel extends CustomPanel implements Runnable{
         boolean end = false;
         while(!end){
             // TEST
+            updatePCList();
             updateTeamsLogs(this.mainScreen.theaterMode.getRedTeam(), this.mainScreen.theaterMode.getBlueTeam());
             try {
                 Thread.sleep(UPDATE_TEAMS_LOGS_TIME_MILIS);
