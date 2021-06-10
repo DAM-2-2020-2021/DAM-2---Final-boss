@@ -91,7 +91,7 @@ public class TheaterMode extends JFrame implements Runnable{
         this.sound.start();
 
         //Para ver las interfaces
-        try {
+        /*try {
             for (NetworkInterface netint : Collections.list(NetworkInterface.getNetworkInterfaces())) {
                 System.out.println(netint.getName());
                 System.out.println(netint.getDisplayName());
@@ -101,7 +101,7 @@ public class TheaterMode extends JFrame implements Runnable{
             }
         } catch (SocketException e) {
             e.printStackTrace();
-        }
+        }*/
         NetworkInterface networkInterface = NodeManager.getInterfaceByName("eth6");
         String ip = NodeManager.getIPForInterface(networkInterface);
         this.myID = NodeManager.getIdForIp(ip);
@@ -185,9 +185,9 @@ public class TheaterMode extends JFrame implements Runnable{
 
         });
 
-        for (int i = 0; i < 15; i++) {
+        /*for (int i = 0; i < 15; i++) {
             nodeManager.addNode(i,"192.168.1."+i);
-        }
+        }*/
 
         this.pcList = nodeManager.getNodes();
         this.nodes = nodeManager.getNodes();
