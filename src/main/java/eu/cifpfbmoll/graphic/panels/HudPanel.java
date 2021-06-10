@@ -22,8 +22,8 @@ public class HudPanel extends CustomPanel  {
     public HudPanel(MainScreen mainScreen, HudType hudType){
         super(mainScreen);
         this.hudType = hudType;
-        this.clientId = "UNKNOWN";
-        this.clientIp = "UNKNOWN";
+        this.clientId = Integer.toString(mainScreen.theaterMode.getMyID());
+        this.clientIp = mainScreen.theaterMode.getIP();
         initPanel();
     }
 

@@ -16,6 +16,7 @@ public class CustomButton extends JButton implements MouseListener{
 
     // VARS
     private CustomButtonType customButtonType;
+    private boolean enabled ;
 
     /**
      * Default constructor. By default the button is enabled.
@@ -82,7 +83,7 @@ public class CustomButton extends JButton implements MouseListener{
 
     @Override
     public void setEnabled(boolean enabled) {
-
+        this.enabled = enabled;
     }
 
     public enum CustomButtonType{

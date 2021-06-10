@@ -32,9 +32,7 @@ public class MainScreen extends JFrame implements Runnable{
     public void changeScreen(CustomPanel panel){
         try{
             HudPanel.HudType hudType;
-
-                hudType = HudPanel.HudType.OUTGAME;
-
+            hudType = HudPanel.HudType.OUTGAME;
             // Clean the screen of any panel
             cleanScreen();
             // Add the provided panel

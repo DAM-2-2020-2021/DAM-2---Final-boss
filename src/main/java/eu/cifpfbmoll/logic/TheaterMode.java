@@ -30,10 +30,12 @@ public class TheaterMode extends JFrame implements Runnable{
     public NodeManager nodeManager;
     private int myID;
     private int myAdminIs = 0;
+    private String IP;
     private boolean imAdmin = false;
 
     private final String NICKNAME = "NICKNAME",TEAM = "TEAM", READY = "READY", SPACECRAFT_TYPE = "SPACECRAFT TYPE",
-            ADMIN = "ADMIN", BLUE = "BLUE", RED = "RED", TRUE = "TRUE", FALSE = "FALSE", DISCOVER = "DISCOVER", START = "START";
+            ADMIN = "ADMIN", BLUE = "BLUE", RED = "RED", TRUE = "TRUE", FALSE = "FALSE", DISCOVER = "DISCOVER", START = "START",
+            NICKNAMEACK = "NICKNAMEACK";
 
 
     //Getters & Setters
@@ -85,11 +87,27 @@ public class TheaterMode extends JFrame implements Runnable{
         this.imAdmin = imAdmin;
     }
 
+    public int getMyID() {
+        return myID;
+    }
+
+    public void setMyID(int myID) {
+        this.myID = myID;
+    }
+
+
+    public String getIP() {
+        return IP;
+    }
+
+    public void setIP(String IP) {
+        this.IP = IP;
+    }
+
     public TheaterMode(){
         this.configuration = new Configuration();
         this.sound = Sound.clipSoundMenu();
         this.sound.start();
-
         //Para ver las interfaces
         /*try {
             for (NetworkInterface netint : Collections.list(NetworkInterface.getNetworkInterfaces())) {
@@ -105,6 +123,7 @@ public class TheaterMode extends JFrame implements Runnable{
         NetworkInterface networkInterface = NodeManager.getInterfaceByName("eth6");
         String ip = NodeManager.getIPForInterface(networkInterface);
         this.myID = NodeManager.getIdForIp(ip);
+        this.IP = ip;
 
 
         nodeManager = new NodeManager(ip);
@@ -122,6 +141,10 @@ public class TheaterMode extends JFrame implements Runnable{
                     spacecraft.setNickname(message.getMessage());
                     this.allSpacecrafts.add(spacecraft);
                     addNewMessage(id, spacecraft.getNickname(), "joined the game");
+                    Message messageACK = new Message();
+                    messageACK.setMessageType(NICKNAMEACK);
+                    message.setMessage("");
+                    nodeManager.send(id,messageACK);
                     //??¿?¿?¿?¿?¿check if nickname exists
                     break;
                 case TEAM:
@@ -179,15 +202,17 @@ public class TheaterMode extends JFrame implements Runnable{
                     break;
             }
 
+            //todo esto hace que pete pete
             nodeManager.register(Configuration.class, (identifier, configuration) ->{
                 this.configuration = configuration;
             });
 
         });
 
-        /*for (int i = 0; i < 15; i++) {
+        for (int i = 0; i < 15; i++) {
             nodeManager.addNode(i,"192.168.1."+i);
-        }*/
+        }
+
 
         this.pcList = nodeManager.getNodes();
         this.nodes = nodeManager.getNodes();
@@ -203,11 +228,12 @@ public class TheaterMode extends JFrame implements Runnable{
     }
 
     public void addSpacecraft(TheaterMode theaterMode, int ID){
-        Random rd = new Random();
+
         Spacecraft spacecraft = new Spacecraft(theaterMode);
         spacecraft.setNickname("Nick_"+ID);
         spacecraft.setID(ID);
-        spacecraft.setReady(rd.nextBoolean());
+        Random rd = new Random();
+        spacecraft.setReady(false);
         if(rd.nextBoolean()){
             spacecraft.setTeam("Red");
             addRedTeam(spacecraft);
@@ -287,11 +313,14 @@ public class TheaterMode extends JFrame implements Runnable{
 
     @Override
     public void run() {
+        for (int i = 0; i < 15; i++) {
+            addSpacecraft(this, i);
+        }
         boolean theaterActive = true;
-        this.mainScreen.adminPanel.buttonPlay.setEnabled(false);
         while (theaterActive){
             try{
                 if(imAdmin){
+                    //Todo los nodos no se actualizan
                     this.nodes = nodeManager.getNodes();
                     for (Map.Entry<Integer, String> node: nodes.entrySet()) {
                         Message message = new Message();
@@ -299,10 +328,10 @@ public class TheaterMode extends JFrame implements Runnable{
                         message.setMessage(Integer.toString(myID));
                         nodeManager.send(node.getKey(), message);
                     }
-                    if(this.allReady()){
-                        this.mainScreen.adminPanel.buttonPlay.setEnabled(true);
-                    }else {
-                        this.mainScreen.adminPanel.buttonPlay.setEnabled(false);
+                    if(allReady()){
+                        this.mainScreen.adminPanel.getButtonPlay().setEnabled(true);
+                    }else{
+                        this.mainScreen.adminPanel.getButtonPlay().setEnabled(false);
                     }
                 }
                 Thread.sleep(1000);

@@ -33,7 +33,7 @@ public class AdminPanel extends CustomPanel implements Runnable{
     private List<ScreenComponent> clientComponentList = new ArrayList<>();  // Contains the clients components (ScreenComponent).
     private List<ScreenComponent> screenComponentList = new ArrayList<>();  // Contains the screens components (ScreenComponent). The selected and not selected.
     //Components
-    public JButton buttonPlay;
+    private JButton buttonPlay;
     private JButton buttonOptions;
     private JButton buttonPlayers;
     // Panels
@@ -62,6 +62,10 @@ public class AdminPanel extends CustomPanel implements Runnable{
 
     public void setConfigurationList(Configuration[][] configurationList) {
         this.configurationList = configurationList;
+    }
+
+    public JButton getButtonPlay() {
+        return buttonPlay;
     }
 
     public AdminPanel(MainScreen mainScreen, Map<Integer, String> nodes){
@@ -419,14 +423,19 @@ public class AdminPanel extends CustomPanel implements Runnable{
         switch (actionCommand) {
             case PLAY_TEXT: {
                 // Todo on click "JUGAR"
+                if(this.buttonPlay.isEnabled()){
+                    System.out.println("ejejeje");
+                }else {
+                    System.out.println("noioooo");
+                }
 //                mainScreen.changeScreen(mainScreen.getGameViewer());
-                for (int i = 0; i < nodes.size(); i++) {
+               /* for (int i = 0; i < nodes.size(); i++) {
                     Message message = new Message();
                     message.setMessageType("START");
                     message.setMessage("");
                     mainScreen.theaterMode.nodeManager.send(Integer.valueOf(nodes.get(i)),message);
                 }
-                mainScreen.theaterMode.startGame();
+                mainScreen.theaterMode.startGame();*/
                 break;
             }
             case OPTIONS_TEXT: {
