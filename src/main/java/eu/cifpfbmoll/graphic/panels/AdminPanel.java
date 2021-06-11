@@ -27,7 +27,7 @@ public class AdminPanel extends CustomPanel implements Runnable{
             ADD_ROW_TEXT = "ADD ROW", RMV_ROW_TEXT = "DELETE ROW",
             ADD_COL_TEXT = "ADD COLUMN", RMV_COL_TEXT = "DELETE COLUMN";
     private final int SCREEN_ROWS_DEFAULT = 3, SCREEN_COLUMNS_DEFAULT = 3;
-    private final int UPDATE_TEAMS_LOGS_TIME_MILIS = 1500;
+    private final int UPDATE_TEAMS_LOGS_TIME_MILIS = 2000;
 
     // VARS
     private List<ScreenComponent> clientComponentList = new ArrayList<>();  // Contains the clients components (ScreenComponent).
@@ -52,9 +52,10 @@ public class AdminPanel extends CustomPanel implements Runnable{
     private int screenSelectionColumns = SCREEN_COLUMNS_DEFAULT;
     private final int SUBPANEL_PADDING_HEIGHT = 20, SUBPANEL_PADDING_WIDTH = 20;
     private final String TEAM_RED_TEXT = "RED TEAM", TEAM_BLUE_TEXT = "BLUE TEAM", LOG_TEXT = "Historial del log";
-    private Map<Integer, String> nodes;
+    private Map<Integer, String> pcList;
     private BufferedImage backgroundImage = Sprite.getMenuBg();
     private Configuration[][] configurationList;
+    private JScrollPane clientListPanel;
 
     public Configuration[][] getConfigurationList() {
         return configurationList;
@@ -68,9 +69,9 @@ public class AdminPanel extends CustomPanel implements Runnable{
         return buttonPlay;
     }
 
-    public AdminPanel(MainScreen mainScreen, Map<Integer, String> nodes){
+    public AdminPanel(MainScreen mainScreen, Map<Integer, String> pcList){
         super(mainScreen);
-        this.nodes = nodes;
+        this.pcList = pcList;
         initPanel();    // Init the panel
     }
 
@@ -268,7 +269,7 @@ public class AdminPanel extends CustomPanel implements Runnable{
         screenDetailsPanel.addTab("Configuration", getScreenControlPanel());
 
         // Client list tab
-        JScrollPane clientListPanel = getClientListPanel();
+        clientListPanel = getClientListPanel();
         //clientListPanel.setBackground(GraphicStyle.HELPER_COLOR);
         screenDetailsPanel.addTab("Client list", clientListPanel);
 
@@ -311,30 +312,41 @@ public class AdminPanel extends CustomPanel implements Runnable{
         // Set the client panel scroll speed
         clientScrollPanel.getVerticalScrollBar().setUnitIncrement(7);
         // Create a label with its properties and add it to the client panel
-        for (Map.Entry<Integer, String> client : nodes.entrySet()) {
-            ScreenComponent clientLabel = new ScreenComponent(this, client.getKey(), client.getValue());
-            // Set a border
-            clientLabel.setBorder(new LineBorder(GraphicStyle.GLOW_BLUE_COLOR, 5, false));
-            // Set visible background
-            clientLabel.setOpaque(true);
-            // By default the component is not selected and therefore gray colored
-            //clientLabel.setBackground(GraphicStyle.TERTIARY_COLOR);
-            // Set font style and color
-            clientLabel.setFont(GraphicStyle.ANY_LOG_FONT);
-            clientLabel.setForeground(Color.white);
-            // Set the height (the width does not change)
-            //clientLabel.setPreferredSize(new Dimension(300, 100));
-            clientLabel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 200));
-            // Add the label to the panel
-            clientPanel.add(clientLabel);
-            // Add a separator
-            clientPanel.add(new JSeparator());
-            clientComponentList.add(clientLabel);
+        for (Map.Entry<Integer, String> client : this.mainScreen.theaterMode.getPcList().entrySet()) {
+            if(!nodeIsSelected(client)){
+                ScreenComponent clientLabel = new ScreenComponent(this, client.getKey(), client.getValue());
+                // Set a border
+                clientLabel.setBorder(new LineBorder(GraphicStyle.GLOW_BLUE_COLOR, 5, false));
+                // Set visible background
+                clientLabel.setOpaque(true);
+                // By default the component is not selected and therefore gray colored
+                //clientLabel.setBackground(GraphicStyle.TERTIARY_COLOR);
+                // Set font style and color
+                clientLabel.setFont(GraphicStyle.ANY_LOG_FONT);
+                clientLabel.setForeground(Color.white);
+                // Set the height (the width does not change)
+                //clientLabel.setPreferredSize(new Dimension(300, 100));
+                clientLabel.setMaximumSize(new Dimension(Integer.MAX_VALUE, 200));
+                // Add the label to the panel
+                clientPanel.add(clientLabel);
+                // Add a separator
+                clientPanel.add(new JSeparator());
+                clientComponentList.add(clientLabel);
+            }
         }
 
         return clientScrollPanel;
     }
 
+    private boolean nodeIsSelected(Map.Entry<Integer, String> client){
+        boolean exists = false;
+        for (ScreenComponent screen: screenComponentList) {
+            if(screen.hasClient() && screen.getId() == client.getKey()){
+                exists = true;
+            }
+        }
+        return exists;
+    }
 
 
     private void changeScreenSelectionPanel(){
@@ -343,10 +355,13 @@ public class AdminPanel extends CustomPanel implements Runnable{
     }
 
     public void updatePCList(){
+        int selected = screenDetailsPanel.getSelectedIndex();
         screenDetailsPanel.remove(1);
-        JScrollPane clientListPanel = getClientListPanel();
+
+        clientListPanel = getClientListPanel();
         //clientListPanel.setBackground(GraphicStyle.HELPER_COLOR);
         screenDetailsPanel.addTab("Client list", clientListPanel);
+        screenDetailsPanel.setSelectedIndex(selected);
     }
 
 
@@ -449,8 +464,6 @@ public class AdminPanel extends CustomPanel implements Runnable{
 
             case ADD_ROW_TEXT:
                 screenSelectionRows++;
-
-
                 changeScreenSelectionPanel();
                 updatePCList();
                 break;
@@ -499,9 +512,9 @@ public class AdminPanel extends CustomPanel implements Runnable{
     // TEST
 
     private void addInitialConections(){
-        String[] messages = new String[nodes.size()];
+        String[] messages = new String[this.mainScreen.theaterMode.getPcList().size()];
         int i = 0;
-        for (Map.Entry<Integer, String> client : nodes.entrySet()) {
+        for (Map.Entry<Integer, String> client : this.mainScreen.theaterMode.getPcList().entrySet()) {
             messages[i] = "Node -> ID: " + client.getKey() + ", IP: " + client.getValue() + " joined the game.\n";
             i++;
         }

@@ -146,7 +146,7 @@ public class TheaterMode extends JFrame implements Runnable{
                     addNewMessage(id, spacecraft.getNickname(), "joined the game");
                     Message messageACK = new Message();
                     messageACK.setMessageType(NICKNAMEACK);
-                    message.setMessage("");
+                    messageACK.setMessage("");
                     nodeManager.send(id,messageACK);
                     //??¿?¿?¿?¿?¿check if nickname exists
                     break;
@@ -190,18 +190,22 @@ public class TheaterMode extends JFrame implements Runnable{
                     }
                     break;
                 case DISCOVER:
-                    pcList.put(id, message.getMessage());
+                    if(pcList.get(id) == null){
+                        pcList.put(id, message.getMessage());
+                    }
                     break;
                 case START:
                     startGame();
                     break;
                 case ADMIN:
-                    this.myAdminIs = Integer.parseInt(message.getMessage());
-                    this.mainScreen.getStartPanel().hideCheckbox();
-                    Message message1 = new Message();
-                    message1.setMessageType(DISCOVER);
-                    message.setMessage(ip);
-                    nodeManager.send(id,message1);
+                    if(!imAdmin){
+                        this.myAdminIs = Integer.parseInt(message.getMessage());
+                        this.mainScreen.getStartPanel().hideCheckbox();
+                        Message message1 = new Message();
+                        message1.setMessageType(DISCOVER);
+                        message1.setMessage(ip);
+                        nodeManager.send(this.myAdminIs, message1);
+                    }
                     break;
             }
         });
@@ -215,9 +219,7 @@ public class TheaterMode extends JFrame implements Runnable{
         }*/
 
 
-        this.pcList = nodeManager.getNodes();
         this.pcList.put(myID, ip);
-        this.nodes = nodeManager.getNodes();
         this.mainScreen = new MainScreen(this, this.configuration);
         mainScreen.showFrame();
         logicThread = new Thread(this);
@@ -254,11 +256,20 @@ public class TheaterMode extends JFrame implements Runnable{
                 blueTeam.remove(i);
             }
         }
-        if(newSpacecraft){
+        boolean exist = false;
+        for (int i = 0; i < redTeam.size(); i++) {
+            if(redTeam.get(i).getID() == spacecraft.getID()){
+                exist = true;
+            }
+        }
+        if(newSpacecraft && !exist){
             addNewMessage(spacecraft.getID(), spacecraft.getNickname(),"added to RED TEAM");
         }
-        spacecraft.setTeam(RED);
-        redTeam.add(spacecraft);
+        if(!exist){
+            spacecraft.setTeam(RED);
+            redTeam.add(spacecraft);
+        }
+
     }
 
     public void addBlueTeam(Spacecraft spacecraft){
@@ -270,11 +281,20 @@ public class TheaterMode extends JFrame implements Runnable{
                 redTeam.remove(i);
             }
         }
-        if (newSpacecraft) {
+        boolean exist = false;
+        for (int i = 0; i < blueTeam.size(); i++) {
+            if(blueTeam.get(i).getID() == spacecraft.getID()){
+                exist = true;
+            }
+        }
+        if (newSpacecraft && !exist) {
             addNewMessage(spacecraft.getID(), spacecraft.getNickname(),"added to BLUE TEAM");
         }
-        spacecraft.setTeam(BLUE);
-        blueTeam.add(spacecraft);
+        if(!exist){
+            spacecraft.setTeam(BLUE);
+            blueTeam.add(spacecraft);
+        }
+
     }
 
     public void addNewMessage(int ID, String nickname, String messageInfo){
@@ -308,8 +328,6 @@ public class TheaterMode extends JFrame implements Runnable{
     public void startGame(){
         theaterActive = false;
         nodeManager.stopScan();
-        nodeManager.unregister(Message.class);
-        nodeManager.unregister(Configuration.class);
         //GameMode gameMode = new GameMode(nodeManager, redTeam, blueTeam,configuration);
         sound.stop();
         System.out.println("Let the games begin");
@@ -318,9 +336,6 @@ public class TheaterMode extends JFrame implements Runnable{
 
     @Override
     public void run() {
-        /*for (int i = 0; i < 15; i++) {
-            addSpacecraft(this, i);
-        }*/
 
         while (theaterActive){
             try{
