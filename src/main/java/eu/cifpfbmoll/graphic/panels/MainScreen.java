@@ -1,5 +1,6 @@
 package eu.cifpfbmoll.graphic.panels;
 
+import eu.cifpfbmoll.graphic.component.AnimatedComponent;
 import eu.cifpfbmoll.logic.Configuration;
 import eu.cifpfbmoll.logic.TheaterMode;
 

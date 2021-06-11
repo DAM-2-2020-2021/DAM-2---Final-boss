@@ -53,7 +53,7 @@ public class AdminPanel extends CustomPanel implements Runnable{
     private final int SUBPANEL_PADDING_HEIGHT = 20, SUBPANEL_PADDING_WIDTH = 20;
     private final String TEAM_RED_TEXT = "RED TEAM", TEAM_BLUE_TEXT = "BLUE TEAM", LOG_TEXT = "Historial del log";
     private Map<Integer, String> nodes;
-    private BufferedImage backgroundImage = Sprite.getMenuBg();
+//    private BufferedImage backgroundImage = Sprite.getMenuBg();
 
     public AdminPanel(MainScreen mainScreen, Map<Integer, String> nodes){
         super(mainScreen);
@@ -402,11 +402,14 @@ public class AdminPanel extends CustomPanel implements Runnable{
     @Override
     public void actionPerformed(ActionEvent e) {
         Sound.soundInteractueMenu();
+        final CustomButton button = (CustomButton) e.getSource();
         final String actionCommand = e.getActionCommand();
         switch (actionCommand) {
             case PLAY_TEXT: {
-                // Todo on click "JUGAR"
-                mainScreen.changeScreen(mainScreen.getGameViewer());
+                if (button.isSelected()){
+                    mainScreen.changeScreen(mainScreen.getGameViewer());
+                }
+
                 break;
             }
             case OPTIONS_TEXT: {
