@@ -12,8 +12,7 @@ public class HudPanel extends CustomPanel  {
 
     // VARS
     private Hud hud;
-    //    private JPanel hudPanel, parentPanel;
-    private HudType hudType;
+
     private String clientId, clientIp;
     private int blueScore, redScore;
     private int meteorAmount, blackHoleAmount, powerupAmount;
@@ -21,16 +20,16 @@ public class HudPanel extends CustomPanel  {
 
     public HudPanel(MainScreen mainScreen, HudType hudType){
         super(mainScreen);
-        this.hudType = hudType;
         this.clientId = Integer.toString(mainScreen.theaterMode.getMyID());
         this.clientIp = mainScreen.theaterMode.getIP();
+        hud = new Hud(hudType);
         initPanel();
     }
 
-    public HudPanel(MainScreen mainScreen, HudType hudType, String clientId, String clientIp){
+    public HudPanel(MainScreen mainScreen, HudType hudType, int clientId, String clientIp){
         super(mainScreen);
-        this.hudType = hudType;
-        this.clientId = clientId;
+        this.hud.setHudType(hudType);
+        this.clientId = Integer.toString(clientId);
         this.clientIp = clientIp;
         initPanel();
     }
@@ -40,8 +39,8 @@ public class HudPanel extends CustomPanel  {
         gbCons.anchor = GridBagConstraints.NORTHWEST;
         gbCons.weightx = 1;
         gbCons.weighty = 1;
-        gbCons.ipadx = hudType.getWidth();
-        gbCons.ipady = hudType.getHeight();
+        gbCons.ipadx = hud.getHudType().getWidth();
+        gbCons.ipady = hud.getHudType().getHeight();
         gbCons.insets = new Insets(PADDING_TOP, PADDING_LEFT, 0, 0);
     }
 
@@ -60,15 +59,7 @@ public class HudPanel extends CustomPanel  {
     }
 
     private void initComponents(){
-        hud = new Hud();
         this.add(hud, gbCons);
-//        hud.setSize(300, 300);
-//        parentPanel = new JPanel(new GridLayout(1,1));
-//        parentPanel.setOpaque(false);
-//        parentPanel.add(hud);
-//        Graphics g2 = hudPanel.getGraphics();
-//        g2.setColor(Color.white);
-//        g2.drawLine(0, 0, 200, 200);
     }
 
     //<editor-fold desc="GETTERS">
@@ -136,7 +127,8 @@ public class HudPanel extends CustomPanel  {
      */
     public enum HudType{
         INGAME(200, 300, 50),
-        OUTGAME(50, 50, 100);
+        OUTGAME(50, 50, 100),
+        RETURN(50,50,100);
 
         private int height, width;
         private int opacity;
@@ -163,10 +155,13 @@ public class HudPanel extends CustomPanel  {
     /**
      *
      */
-    public class Hud extends JPanel implements MouseListener {
+    protected class Hud extends JPanel implements MouseListener {
         private boolean hovered = false;
+        private HudType hudType;
+        private float opacity = 1;
 
-        public Hud(){
+        public Hud(HudType hudType){
+            this.hudType = hudType;
             this.setOpaque(true);
             this.setBackground(GraphicStyle.SECONDARY_COLOR);
             setHudPanel();
@@ -182,7 +177,7 @@ public class HudPanel extends CustomPanel  {
         protected void paintComponent(Graphics g) {
             if(hovered){
                 Graphics2D graphics2d = (Graphics2D) g;
-                graphics2d.setComposite(AlphaComposite.SrcOver.derive(0.2f));
+                graphics2d.setComposite(AlphaComposite.SrcOver.derive(this.opacity));
                 graphics2d.fillRect(0, 0, getWidth(), getHeight());
             }
         }
@@ -281,6 +276,46 @@ public class HudPanel extends CustomPanel  {
             return hudPanel;
         }
 
+        private void hover(){
+            this.hovered = true;
+            this.timer.start();
+        }
+
+        private void unhover(){
+            this.hovered = false;
+            this.timer.start();
+        }
+
+        private Timer timer = new Timer (8, e -> {
+            if (this.isHovered()){
+                if (this.opacity > 0.05){
+                    this.opacity -= 0.10;
+                }else{
+                    this.opacity = 0.1f;
+                    this.timer.stop();
+                }
+            }else {
+                if (this.opacity < 0.90){
+                    this.opacity += 0.10;
+                }else{
+                    this.opacity = 1;
+                    this.timer.stop();
+                }
+            }
+        });
+
+        public boolean isHovered() {
+            return hovered;
+        }
+
+        public HudType getHudType() {
+            return hudType;
+        }
+
+        public void setHudType(HudType hudType) {
+            this.hudType = hudType;
+        }
+
         //<editor-fold desc="MOUSE METHODS">
         @Override
         public void mouseClicked(MouseEvent e) {
@@ -299,14 +334,12 @@ public class HudPanel extends CustomPanel  {
 
         @Override
         public void mouseEntered(MouseEvent e) {
-            System.out.println("entered");
-            hovered = true;
+            hover();
         }
 
         @Override
         public void mouseExited(MouseEvent e) {
-            System.out.println("exit");
-            hovered = false;
+            unhover();
         }
         //</editor-fold>
     }

@@ -237,7 +237,7 @@ public class TheaterMode extends JFrame implements Runnable{
         spacecraft.setNickname("Nick_"+ID);
         spacecraft.setID(ID);
         Random rd = new Random();
-        spacecraft.setReady(false);
+        spacecraft.setReady(true);
         if(rd.nextBoolean()){
             spacecraft.setTeam("Red");
             addRedTeam(spacecraft);
@@ -337,6 +337,9 @@ public class TheaterMode extends JFrame implements Runnable{
     @Override
     public void run() {
 
+        for (int i = 0; i < 20; i++) {
+            addSpacecraft(this, i);
+        }
         while (theaterActive){
             try{
                 if(imAdmin){
@@ -345,6 +348,7 @@ public class TheaterMode extends JFrame implements Runnable{
                     message.setMessage(Integer.toString(myID));
                     nodeManager.broadcast(message);
 
+                    System.out.println(this.mainScreen.adminPanel.getButtonPlay().isEnabled());
                     if(allReady()){
                         this.mainScreen.adminPanel.getButtonPlay().setEnabled(true);
                     }else{

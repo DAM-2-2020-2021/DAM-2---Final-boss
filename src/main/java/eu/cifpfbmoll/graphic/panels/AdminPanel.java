@@ -33,7 +33,7 @@ public class AdminPanel extends CustomPanel implements Runnable{
     private List<ScreenComponent> clientComponentList = new ArrayList<>();  // Contains the clients components (ScreenComponent).
     private List<ScreenComponent> screenComponentList = new ArrayList<>();  // Contains the screens components (ScreenComponent). The selected and not selected.
     //Components
-    private JButton buttonPlay;
+    private CustomButton buttonPlay;
     private JButton buttonOptions;
     private JButton buttonPlayers;
     // Panels
@@ -65,7 +65,7 @@ public class AdminPanel extends CustomPanel implements Runnable{
         this.configurationList = configurationList;
     }
 
-    public JButton getButtonPlay() {
+    public CustomButton getButtonPlay() {
         return buttonPlay;
     }
 
@@ -434,23 +434,30 @@ public class AdminPanel extends CustomPanel implements Runnable{
     @Override
     public void actionPerformed(ActionEvent e) {
         Sound.soundInteractueMenu();
+        final CustomButton button = (CustomButton) e.getSource();
         final String actionCommand = e.getActionCommand();
         switch (actionCommand) {
             case PLAY_TEXT: {
-                getScreenComponentPositions();
-                setConfigurationPositions();
+                if(button.isSelected()){
+                   /* getScreenComponentPositions();
+                    setConfigurationPositions();
 
-                for (int i = 0; i < configurationList.length; i++) {
-                    for (int j = 0; j < configurationList[0].length; j++) {
-                        if(configurationList[i][j] != null){
-                            mainScreen.theaterMode.nodeManager.send(configurationList[i][j].getScreenID(), configurationList[i][j]);
+                    for (int i = 0; i < configurationList.length; i++) {
+                        for (int j = 0; j < configurationList[0].length; j++) {
+                            if(configurationList[i][j] != null){
+                                mainScreen.theaterMode.nodeManager.send(configurationList[i][j].getScreenID(), configurationList[i][j]);
+                            }
                         }
                     }
+                    Message message = new Message();
+                    message.setMessageType("START");
+                    message.setMessage("");
+                    mainScreen.theaterMode.nodeManager.broadcast(message);*/
+                    System.out.println("ejejejej");
+                }else{
+                    System.out.println("jajaja");
                 }
-                Message message = new Message();
-                message.setMessageType("START");
-                message.setMessage("");
-                mainScreen.theaterMode.nodeManager.broadcast(message);
+
 
                 //mainScreen.theaterMode.startGame();
 

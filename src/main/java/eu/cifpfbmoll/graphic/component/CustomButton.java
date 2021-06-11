@@ -16,7 +16,7 @@ public class CustomButton extends JButton implements MouseListener{
 
     // VARS
     private CustomButtonType customButtonType;
-    private boolean enabled ;
+    private boolean enabled;
 
     /**
      * Default constructor. By default the button is enabled.
@@ -25,26 +25,14 @@ public class CustomButton extends JButton implements MouseListener{
      */
     public CustomButton(CustomButtonType customButtonType, String text){
         this.customButtonType = customButtonType;
-        this.setBackground(customButtonType.getBackgroundColor());
-        this.setFont(customButtonType.getFont());
-        this.setForeground(customButtonType.getFontColor());
-        this.setBorder(customButtonType.getBorder());
         this.setText(text);
         // By default the button is enabled
         this.setEnabled(true);
-        // Add the mouse listeners
-        addMouseListener(this);
     }
 
     public CustomButton(CustomButtonType customButtonType, String text, boolean enabled){
         this.customButtonType = customButtonType;
-        this.setBackground(customButtonType.getBackgroundColor());
-        this.setFont(customButtonType.getFont());
-        this.setForeground(customButtonType.getFontColor());
-        this.setBorder(customButtonType.getBorder());
         this.setText(text);
-        // Add the mouse listeners
-        addMouseListener(this);
         this.setEnabled(enabled);
     }
 
@@ -83,7 +71,29 @@ public class CustomButton extends JButton implements MouseListener{
 
     @Override
     public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
+        if(enabled == true){
+            // Add the mouse listener
+            addMouseListener(this);
+            this.enabled = true;
+            this.setBackground(customButtonType.getBackgroundColor());
+            this.setFont(customButtonType.getFont());
+            this.setForeground(customButtonType.getFontColor());
+            this.setBorder(customButtonType.getBorder());
+        }else{
+            System.out.println("disabled");
+            // Remove the mouse listener
+            removeMouseListener(this);
+            this.enabled = false;
+            this.setBackground(Color.GRAY);
+            this.setFont(customButtonType.getFont());
+            this.setForeground(Color.BLACK);
+            this.setBorder(null);
+        }
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return enabled;
     }
 
     public enum CustomButtonType{

@@ -3,6 +3,8 @@ package eu.cifpfbmoll.graphic.panels;
 import eu.cifpfbmoll.graphic.component.CustomButton;
 import eu.cifpfbmoll.graphic.sprite.Sprite;
 import eu.cifpfbmoll.sound.Sound;
+import eu.cifpfbmoll.graphic.component.AnimatedComponent;
+import eu.cifpfbmoll.graphic.component.AnimatedComponent.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -35,6 +37,8 @@ public class StartPanel extends CustomPanel {
         titleLabel.setFont(GraphicStyle.TITLE_GAME_FONT);
         titleLabel.setForeground(GraphicStyle.TEXT_YELLOW_COLOR);
 
+        AnimatedComponent animatedComponent = new AnimatedComponent(titleLabel, AnimatedComponentType.FADE_IN, 0);
+
         // Buttons Panel
         adminButton = new CustomButton(CustomButton.CustomButtonType.PRIMARY, MAIN_PANEL_TEXT);
         adminButton.setPreferredSize(new Dimension(500, 200));
@@ -45,12 +49,13 @@ public class StartPanel extends CustomPanel {
         checkBoxAdmin = new JCheckBox(CHECKBOX_ADMIN_TEXT);
         checkBoxAdmin.addActionListener(this);
 
+        checkBoxAdmin.setLocation(new Point(5, 6));
         gbCons = new GridBagConstraints();
         gbCons.weightx = 1;
         gbCons.weighty = 1;
         gbCons.gridx = 0;
         gbCons.gridy = 0;
-        this.add(titleLabel, gbCons);
+        this.add(animatedComponent, gbCons);
         gbCons.gridy = 1;
         this.add(adminButton, gbCons);
         gbCons.gridy = 2;
@@ -93,21 +98,27 @@ public class StartPanel extends CustomPanel {
     @Override
     public void actionPerformed(ActionEvent e) {
         Sound.soundInteractueMenu();
-        Object sourceButton = e.getSource();
-        //
-        if (sourceButton.equals(adminButton)){
-            if (checkBoxAdmin.isSelected()){
-                mainScreen.changeScreen(mainScreen.getAdminPanel());
-            }else{
-                mainScreen.changeScreen(mainScreen.getClientPanel());
-            }
-        }else if(sourceButton.equals(checkBoxAdmin)){
+
+        Object sourceButton2 = e.getSource();
+        if(sourceButton2.equals(checkBoxAdmin)){
             if (checkBoxAdmin.isSelected()){
                 this.getMainScreen().theaterMode.setImAdmin(true);
             }else{
                 this.getMainScreen().theaterMode.setImAdmin(false);
             }
+        }else{
+            CustomButton sourceButton = (CustomButton)e.getSource();
+            if (sourceButton.equals(adminButton)){
+                if (checkBoxAdmin.isSelected()){
+                    mainScreen.changeScreen(mainScreen.getAdminPanel());
+                }else{
+                    mainScreen.changeScreen(mainScreen.getClientPanel());
+                }
+            }
         }
+        //
+
+
     }
 
     public void setBackgroundImage(BufferedImage backgroundImage) {

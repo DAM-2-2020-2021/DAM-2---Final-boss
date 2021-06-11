@@ -2,6 +2,7 @@ package eu.cifpfbmoll.graphic.panels;
 
 import eu.cifpfbmoll.logic.Configuration;
 import eu.cifpfbmoll.logic.TheaterMode;
+import eu.cifpfbmoll.graphic.component.AnimatedComponent;
 
 import javax.swing.*;
 import java.awt.*;
