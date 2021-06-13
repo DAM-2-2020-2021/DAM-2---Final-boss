@@ -348,7 +348,6 @@ public class TheaterMode extends JFrame implements Runnable{
                     message.setMessage(Integer.toString(myID));
                     nodeManager.broadcast(message);
 
-                    System.out.println(this.mainScreen.adminPanel.getButtonPlay().isEnabled());
                     if(allReady()){
                         this.mainScreen.adminPanel.getButtonPlay().setEnabled(true);
                     }else{

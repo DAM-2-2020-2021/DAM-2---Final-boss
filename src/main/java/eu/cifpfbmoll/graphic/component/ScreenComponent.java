@@ -300,6 +300,11 @@ public class ScreenComponent extends JLabel implements MouseListener {
     public boolean hasClient() {
         return hasClient;
     }
+
+    public void setHasClient(boolean hasClient) {
+        this.hasClient = hasClient;
+    }
+
     //</editor-fold>
 
     //<editor-fold desc="SETTERS">

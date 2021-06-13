@@ -348,6 +348,12 @@ public class AdminPanel extends CustomPanel implements Runnable{
         return exists;
     }
 
+    private void resetScreenSelection(){
+        for (ScreenComponent screen: screenComponentList) {
+            screen.setHasClient(false);
+        }
+    }
+
 
     private void changeScreenSelectionPanel(){
         screenPanel.remove(screenSelectionPanel);
@@ -472,6 +478,7 @@ public class AdminPanel extends CustomPanel implements Runnable{
             case ADD_ROW_TEXT:
                 screenSelectionRows++;
                 changeScreenSelectionPanel();
+                resetScreenSelection();
                 updatePCList();
                 break;
             case RMV_ROW_TEXT:
@@ -481,12 +488,14 @@ public class AdminPanel extends CustomPanel implements Runnable{
                     Sound.notice();
                 }
                 changeScreenSelectionPanel();
+                resetScreenSelection();
                 updatePCList();
                 break;
             case ADD_COL_TEXT:
                 screenSelectionColumns++;
 
                 changeScreenSelectionPanel();
+                resetScreenSelection();
                 updatePCList();
                 break;
             case RMV_COL_TEXT:
@@ -496,6 +505,7 @@ public class AdminPanel extends CustomPanel implements Runnable{
                     Sound.notice();
                 }
                 changeScreenSelectionPanel();
+                resetScreenSelection();
                 updatePCList();
                 break;
         }
