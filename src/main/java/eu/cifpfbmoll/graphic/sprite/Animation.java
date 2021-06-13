@@ -1,104 +1,103 @@
 package eu.cifpfbmoll.graphic.sprite;
 
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.awt.image.BufferedImage;
 import java.util.List;
 
-
+/**
+ * Animations are arrays of frames, which are images, and those simulate movement (or not)
+ */
 public class Animation {
 
-    private int frameCount;                 // Counts ticks for change
-    private int frameDelay;                 // frame delay 1-12 (You will have to play around with this)
-    private int currentFrame;               // animations current frame
-    private int animationDirection;         // animation direction (i.e counting forward or backward)
-    private int totalFrames;                // total amount of frames for your animation
+    private int cont; //Counter to check when the frame has to change
+    private int delay; //How many repaints of the main program has to wait until the next frame
+    private int currentFrame;
+    private boolean stopped; //If its stopped, it won't do anything until it starts again.
 
-    private boolean stopped;                // has animations stopped
+    private List<Frame> frames = new ArrayList<>(); //List of frames/images
 
-    private List<Frame> frames = new ArrayList<Frame>();    // Arraylist of frames
-
-    public Animation(BufferedImage[] frames, int frameDelay) {
-        this.frameDelay = frameDelay;
-        this.stopped = true;
+    /**
+     * Checks that the delay is enough and then fills the frame list with the images provided. And Initializes.
+     * @param frames
+     * @param delay
+     */
+    public Animation(BufferedImage[] frames, int delay) {
+        if (delay <= 0){
+            this.delay = 1;
+        }else {
+            this.delay = delay;
+        }
 
         for (int i = 0; i < frames.length; i++) {
-            addFrame(frames[i], frameDelay);
+            addFrame(frames[i]);
         }
 
-        this.frameCount = 0;
-        this.frameDelay = frameDelay;
+        //Initializes the variables
+        this.cont = 0;
+        this.delay = delay;
         this.currentFrame = 0;
-        this.animationDirection = 1;
-        this.totalFrames = this.frames.size();
-
-    }
-
-    public void start() {
-        if (!stopped) {
-            return;
-        }
-
-        if (frames.size() == 0) {
-            return;
-        }
-
-        stopped = false;
-    }
-
-    public void stop() {
-        if (frames.size() == 0) {
-            return;
-        }
-
-        stopped = true;
-    }
-
-    public void restart() {
-        if (frames.size() == 0) {
-            return;
-        }
-
-        stopped = false;
-        currentFrame = 0;
-    }
-
-    public void reset() {
         this.stopped = true;
-        this.frameCount = 0;
-        this.currentFrame = 0;
     }
 
-    private void addFrame(BufferedImage frame, int duration) {
-        if (duration <= 0) {
-            System.err.println("Invalid duration: " + duration);
-            throw new RuntimeException("Invalid duration: " + duration);
+    /**
+     * Starts the animation
+     */
+    public void start() {
+        if (stopped && frames.size() != 0) {
+            stopped = false;
         }
-
-        frames.add(new Frame(frame, duration));
-        currentFrame = 0;
     }
 
+    /**
+     * Stops the animation
+     */
+    public void stop() {
+        if (frames.size() != 0) {
+            stopped = true;
+        }
+    }
+
+    /**
+     * Starts the animation but to the frame 0
+     */
+    public void restart() {
+        if (frames.size() != 0) {
+            currentFrame = 0;
+            this.start();
+        }
+    }
+
+    /**
+     * Adds frame to the list and resets the animation.
+     * @param frame
+     */
+    private void addFrame(BufferedImage frame) {
+            frames.add(new Frame(frame));
+            currentFrame = 0;
+    }
+
+    /**
+     * This returns the image of the animation, its what's used in the paint method.
+     * @return
+     */
     public BufferedImage getSprite() {
         return frames.get(currentFrame).getFrame();
     }
 
+    /**
+     * This goes to the refresh method in the main program, it will keep the animation going.
+     */
     public void update() {
         if (!stopped) {
-            frameCount++;
-
-            if (frameCount > frameDelay) {
-                frameCount = 0;
-                currentFrame += animationDirection;
-
-                if (currentFrame > totalFrames - 1) {
+            cont++;
+            if (cont > delay) {
+                cont = 0;
+                currentFrame += 1;
+                if (currentFrame > this.frames.size() - 1) {
                     currentFrame = 0;
-                }
-                else if (currentFrame < 0) {
-                    currentFrame = totalFrames - 1;
                 }
             }
         }
-
     }
 
 }

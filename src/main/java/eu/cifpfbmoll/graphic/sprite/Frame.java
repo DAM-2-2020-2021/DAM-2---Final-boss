@@ -2,30 +2,19 @@ package eu.cifpfbmoll.graphic.sprite;
 
 import java.awt.image.BufferedImage;
 
+/**
+ * An animation is formed by these, the frames, they are just buffered images
+ */
 public class Frame {
 
     private BufferedImage frame;
-    private int duration;
 
-    public Frame(BufferedImage frame, int duration) {
+    public Frame(BufferedImage frame) {
         this.frame = frame;
-        this.duration = duration;
     }
 
     public BufferedImage getFrame() {
         return frame;
-    }
-
-    public void setFrame(BufferedImage frame) {
-        this.frame = frame;
-    }
-
-    public int getDuration() {
-        return duration;
-    }
-
-    public void setDuration(int duration) {
-        this.duration = duration;
     }
 
 }
