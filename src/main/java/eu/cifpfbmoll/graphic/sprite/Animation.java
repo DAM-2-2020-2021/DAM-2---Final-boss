@@ -1,7 +1,7 @@
 package eu.cifpfbmoll.graphic.sprite;
 
-import java.util.ArrayList;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -18,13 +18,14 @@ public class Animation {
 
     /**
      * Checks that the delay is enough and then fills the frame list with the images provided. And Initializes.
+     *
      * @param frames
      * @param delay
      */
     public Animation(BufferedImage[] frames, int delay) {
-        if (delay <= 0){
+        if (delay <= 0) {
             this.delay = 1;
-        }else {
+        } else {
             this.delay = delay;
         }
 
@@ -69,15 +70,17 @@ public class Animation {
 
     /**
      * Adds frame to the list and resets the animation.
+     *
      * @param frame
      */
     private void addFrame(BufferedImage frame) {
-            frames.add(new Frame(frame));
-            currentFrame = 0;
+        frames.add(new Frame(frame));
+        currentFrame = 0;
     }
 
     /**
      * This returns the image of the animation, its what's used in the paint method.
+     *
      * @return
      */
     public BufferedImage getSprite() {
