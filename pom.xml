@@ -16,6 +16,7 @@
         <junit-jupiter.version>5.7.1</junit-jupiter.version>
         <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
         <slf4j-api.version>1.7.30</slf4j-api.version>
+        <netlib.version>0.9</netlib.version>
     </properties>
 
     <dependencies>
@@ -49,7 +50,7 @@
         <dependency>
             <groupId>eu.cifpfbmoll</groupId>
             <artifactId>netlib</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>${netlib.version}</version>
         </dependency>
     </dependencies>
 
