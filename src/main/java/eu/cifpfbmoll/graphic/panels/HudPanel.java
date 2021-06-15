@@ -172,11 +172,6 @@ public class HudPanel extends CustomPanel  {
             this.addMouseListener(this);
         }
 
-//        @Override
-//        public Dimension getPreferredSize() {
-//            return new Dimension(200, 100);
-//        }
-
         @Override
         protected void paintComponent(Graphics g) {
 //            if(hovered){

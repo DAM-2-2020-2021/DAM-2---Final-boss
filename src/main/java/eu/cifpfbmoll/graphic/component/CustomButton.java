@@ -54,14 +54,12 @@ public class CustomButton extends JButton implements MouseListener{
 
     @Override
     public void mouseEntered(MouseEvent e) {
-        System.out.println("entered");
         this.setBorder(customButtonType.getHoverBorder());
         this.setBackground(customButtonType.getHoverColor());
     }
 
     @Override
     public void mouseExited(MouseEvent e) {
-        System.out.println("exited");
         this.setBorder(customButtonType.getBorder());
         this.setBackground(customButtonType.getBackgroundColor());
     }
@@ -76,7 +74,6 @@ public class CustomButton extends JButton implements MouseListener{
         if(enabled){
             // Add the mouse listener
             addMouseListener(this);
-            System.out.println("enabled");
             this.enabled = true;
             this.setBackground(customButtonType.getBackgroundColor());
             this.setFont(customButtonType.getFont());

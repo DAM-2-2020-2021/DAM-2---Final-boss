@@ -25,10 +25,9 @@ public class OptionsPanel extends CustomPanel {
     private JLabel[] optionLabels = new JLabel[3];
     private CustomButton[][] optionButtons = new CustomButton[3][2];
 
-    private JButton saveChanges;
-    private JRadioButton lowGeneration;
-    private JRadioButton mediumGeneration;
-    private JRadioButton highGeneration;
+    private CustomButton firstModePanel;
+    private CustomButton secondModePanel;
+    private CustomButton returnButton;
 
     public OptionsPanel(MainScreen mainScreen, Configuration configuration){
         super(mainScreen);
@@ -40,8 +39,25 @@ public class OptionsPanel extends CustomPanel {
     }
 
     private void addPanels(){
-        this.add(getLeftPanel());
-        this.add(getRightPanel());
+        Dimension scrnSize = Toolkit.getDefaultToolkit().getScreenSize();
+        Rectangle winSize = GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
+
+        int taskBarHeight = scrnSize.height - winSize.height + 10;
+
+        JPanel mainPanel = new JPanel(new GridLayout(PANEL_ROWS, 2));
+        mainPanel.setOpaque(false);
+        mainPanel.add(getLeftPanel());
+        mainPanel.add(getRightPanel());
+        mainPanel.setBounds(0, 0, 1920 , 1080 - taskBarHeight);
+
+        JPanel returnPanel = getReturnPanel();
+        returnPanel.setBounds(0, 0, 1920 , 1080 - taskBarHeight);
+
+        JLayeredPane layeredPanel = new JLayeredPane();
+        layeredPanel.add(mainPanel, new Integer(1));
+        layeredPanel.add(returnPanel, new Integer(2));
+
+        this.add(layeredPanel, BorderLayout.CENTER);
     }
 
     private JPanel getRightPanel(){
@@ -51,17 +67,54 @@ public class OptionsPanel extends CustomPanel {
         rightPanel.setBorder(new EmptyBorder(20, 20, 20, 20));
 
         // First mode
-        JPanel firstModePanel = new JPanel(new GridBagLayout());
+        firstModePanel = new CustomButton(CustomButton.CustomButtonType.PRIMARY, null, true);
+        firstModePanel.setLayout(new GridBagLayout());
+        firstModePanel.addActionListener(this);
         firstModePanel.setBackground(Color.BLACK);
+        JLabel j = new JLabel();
+        j.setPreferredSize(new Dimension(400, 450 * 2));
         CustomIcon firstModeIcon = new CustomIcon(Sprite.getMothership(0,0), 400, 450 * 2, true);
+        j.add(firstModeIcon);
+        firstModePanel.add(j);
 
-        firstModePanel.add(firstModeIcon);
+        JLabel firstTitle = new JLabel("MODE 1");
+        firstTitle.setFont(GraphicStyle.TITLE_FONT);
+        firstTitle.setForeground(GraphicStyle.TEXT_YELLOW_COLOR);
+        firstTitle.setPreferredSize(new Dimension(400, 50));
+        firstTitle.setHorizontalAlignment(SwingConstants.CENTER);
+        // Layout construction
+        GridBagConstraints gbCons = new GridBagConstraints();
+        gbCons.gridx = 0;
+        gbCons.gridwidth = gbCons.gridheight = 1;
+        gbCons.anchor = GridBagConstraints.NORTH;
+        gbCons.weightx = 200;
+        gbCons.weighty = 20;
+        firstModePanel.add(firstTitle, gbCons);
 
         // Second mode
-        JPanel secondModePanel = new JPanel(new GridBagLayout());
+        secondModePanel = new CustomButton(CustomButton.CustomButtonType.PRIMARY, null, true);
+        secondModePanel.setLayout(new GridBagLayout());
+        secondModePanel.addActionListener(this);
         secondModePanel.setBackground(Color.RED);
+        j = new JLabel();
+        j.setPreferredSize(new Dimension(400, 450 * 2));
         CustomIcon secondModeIcon = new CustomIcon(Sprite.getMothership(2,0), 400, 450 * 2, true);
-        secondModePanel.add(secondModeIcon);
+        j.add(secondModeIcon);
+        secondModePanel.add(j);
+
+        JLabel secondTitle = new JLabel("MODE 2");
+        secondTitle.setFont(GraphicStyle.TITLE_FONT);
+        secondTitle.setForeground(GraphicStyle.TEXT_YELLOW_COLOR);
+        secondTitle.setPreferredSize(new Dimension(400, 50));
+        secondTitle.setHorizontalAlignment(SwingConstants.CENTER);
+        // Layout construction
+        gbCons = new GridBagConstraints();
+        gbCons.gridx = 0;
+        gbCons.gridwidth = gbCons.gridheight = 1;
+        gbCons.anchor = GridBagConstraints.NORTH;
+        gbCons.weightx = 200;
+        gbCons.weighty = 20;
+        secondModePanel.add(secondTitle, gbCons);
 
         rightPanel.add(firstModePanel);
         rightPanel.add(secondModePanel);
@@ -147,10 +200,26 @@ public class OptionsPanel extends CustomPanel {
         return leftPanel;
     }
 
+    private JPanel getReturnPanel(){
+        JPanel mainPanel = new JPanel(new GridBagLayout());
+        mainPanel.setOpaque(false);
+        returnButton = new CustomButton(CustomButton.CustomButtonType.TERTIARY, "Back to admin", true);
+        returnButton.addActionListener(this);
+        GridBagConstraints gbCons = new GridBagConstraints();
+        gbCons.anchor = GridBagConstraints.SOUTHWEST;
+        gbCons.weightx = 1;
+        gbCons.weighty = 1;
+        gbCons.ipadx = 50;
+        gbCons.ipady = 30;
+        gbCons.insets = new Insets(0, 20, 20, 0);
+        mainPanel.add(returnButton, gbCons);
+        return mainPanel;
+    }
+
     @Override
     protected void initPanel() {
         this.setBackground(GraphicStyle.PRIMARY_COLOR);
-        this.setLayout(mainLayout);
+        this.setLayout(new BorderLayout());
         addMainElements();
     }
 
@@ -164,28 +233,35 @@ public class OptionsPanel extends CustomPanel {
         Sound.soundInteractueMenu();
         Object sourceButton = e.getSource();
 
-        // Get the button position
-        boolean end = false;
-        int i = 0;
-        while(!end){
-            for (int j = 0; j < 2; j++) {
-                if (sourceButton.equals(optionButtons[i][j])){
-                    if (j == 0){
-                        // Previous button
-                        if (optionCount[i] > 0){
-                            optionCount[i] --;
+        if (sourceButton.equals(firstModePanel) || sourceButton.equals(secondModePanel)){
+            // Todo when mode is clicked
+        }else if (sourceButton.equals(returnButton)){
+            // Return to admin
+            mainScreen.changeScreen(MainScreen.PanelType.OPTIONS, MainScreen.PanelType.ADMIN);
+        }else{
+            // Get the button position
+            boolean end = false;
+            int i = 0;
+            while(!end){
+                for (int j = 0; j < 2; j++) {
+                    if (sourceButton.equals(optionButtons[i][j])){
+                        if (j == 0){
+                            // Previous button
+                            if (optionCount[i] > 0){
+                                optionCount[i] --;
+                            }
+                        }else{
+                            // Next button
+                            if (optionCount[i] < 5){
+                                optionCount[i] ++;
+                            }
                         }
-                    }else{
-                        // Next button
-                        if (optionCount[i] < 5){
-                            optionCount[i] ++;
-                        }
+                        optionLabels[i].setText(String.valueOf(optionCount[i]));
+                        end = true;
                     }
-                    optionLabels[i].setText(String.valueOf(optionCount[i]));
-                    end = true;
                 }
+                i ++;
             }
-            i ++;
         }
     }
 
