@@ -3,6 +3,8 @@ package eu.cifpfbmoll.graphic.panels;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
@@ -10,9 +12,9 @@ public class HudPanel extends CustomPanel  {
     // CONS
     private int PADDING_TOP = 30, PADDING_LEFT = 40;
 
+
     // VARS
     private Hud hud;
-
     private String clientId, clientIp;
     private int blueScore, redScore;
     private int meteorAmount, blackHoleAmount, powerupAmount;
@@ -23,14 +25,16 @@ public class HudPanel extends CustomPanel  {
         this.clientId = Integer.toString(mainScreen.theaterMode.getMyID());
         this.clientIp = mainScreen.theaterMode.getIP();
         hud = new Hud(hudType);
+
         initPanel();
     }
 
-    public HudPanel(MainScreen mainScreen, HudType hudType, int clientId, String clientIp){
+    public HudPanel(MainScreen mainScreen, HudType hudType, String clientId, String clientIp){
         super(mainScreen);
-        this.hud.setHudType(hudType);
-        this.clientId = Integer.toString(clientId);
+        this.clientId = clientId;
         this.clientIp = clientIp;
+        hud = new Hud(hudType);
+
         initPanel();
     }
 
@@ -127,7 +131,7 @@ public class HudPanel extends CustomPanel  {
      */
     public enum HudType{
         INGAME(200, 300, 50),
-        OUTGAME(50, 50, 100),
+        OUTGAME(10, 50, 100),
         RETURN(50,50,100);
 
         private int height, width;
@@ -169,17 +173,12 @@ public class HudPanel extends CustomPanel  {
         }
 
         @Override
-        public Dimension getPreferredSize() {
-            return new Dimension(200, 200);
-        }
-
-        @Override
         protected void paintComponent(Graphics g) {
-            if(hovered){
-                Graphics2D graphics2d = (Graphics2D) g;
-                graphics2d.setComposite(AlphaComposite.SrcOver.derive(this.opacity));
-                graphics2d.fillRect(0, 0, getWidth(), getHeight());
-            }
+//            if(hovered){
+            Graphics2D graphics2d = (Graphics2D) g;
+            graphics2d.setComposite(AlphaComposite.SrcOver.derive(this.opacity));
+            graphics2d.fillRect(0, 0, getWidth(), getHeight());
+//            }
         }
 
         public JPanel setHudPanel(){
@@ -288,7 +287,7 @@ public class HudPanel extends CustomPanel  {
 
         private Timer timer = new Timer (8, e -> {
             if (this.isHovered()){
-                if (this.opacity > 0.05){
+                if (this.opacity > 0.10){
                     this.opacity -= 0.10;
                 }else{
                     this.opacity = 0.1f;

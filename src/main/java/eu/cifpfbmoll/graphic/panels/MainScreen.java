@@ -31,6 +31,7 @@ public class MainScreen extends JFrame implements Runnable{
      * @param panel
      */
     public void changeScreen(CustomPanel panel){
+
         try{
             HudPanel.HudType hudType;
             hudType = HudPanel.HudType.OUTGAME;

@@ -444,7 +444,7 @@ public class AdminPanel extends CustomPanel implements Runnable{
         final String actionCommand = e.getActionCommand();
         switch (actionCommand) {
             case PLAY_TEXT: {
-                if(button.isSelected()){
+                if(button.isEnabled()){
                     getScreenComponentPositions();
                     setConfigurationPositions();
 
@@ -459,11 +459,10 @@ public class AdminPanel extends CustomPanel implements Runnable{
                     message.setMessageType("START");
                     message.setMessage("");
                     mainScreen.theaterMode.nodeManager.broadcast(message);
+                    mainScreen.theaterMode.startGame();
+                }else{
+                    System.out.println("no selected");
                 }
-
-
-                mainScreen.theaterMode.startGame();
-
 
                 break;
             }
