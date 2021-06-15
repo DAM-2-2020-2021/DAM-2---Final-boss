@@ -100,7 +100,7 @@ public class Sound extends Thread{
         finished = true;
     }
 
-    public static Clip clipSoundMenu(){
+    public static Clip clipSoundMenu(int volumen){
         File file = new File("src/main/resources/Sonidos/Menu/musicaMenu.wav");
         Clip clip = null;
         try{
@@ -109,13 +109,15 @@ public class Sound extends Thread{
             DataLine.Info info = new DataLine.Info(Clip.class, format);
             clip = (Clip)AudioSystem.getLine(info);
             clip.open(stream);
+            FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
+            gainControl.setValue(-volumen+.0f);
             clip.loop(99);
             return clip;
         } catch (Exception e){ }
         return clip;
     }
 
-    public static Clip clipSoundGame(){
+    public static Clip clipSoundGame(int volumen){
         int random = 1 + (int) (Math.random()*7);
         File file = new File("src/main/resources/Sonidos/Partida/Musica/Partida/"+ random + ".wav");
         Clip clip = null;
@@ -125,13 +127,15 @@ public class Sound extends Thread{
             DataLine.Info info = new DataLine.Info(Clip.class, format);
             clip = (Clip)AudioSystem.getLine(info);
             clip.open(stream);
+            FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
+            gainControl.setValue(-volumen+.0f);
             clip.loop(99);
             return clip;
         } catch (Exception e){ }
         return clip;
     }
 
-    public static Clip clipSoundLastMinute(){
+    public static Clip clipSoundLastMinute(int volumen){
         int random = 1 + (int) (Math.random()*2);
         File file = new File("src/main/resources/Sonidos/Partida/Musica/Final/final"+random+".wav");
         Clip clip = null;
@@ -141,6 +145,8 @@ public class Sound extends Thread{
             DataLine.Info info = new DataLine.Info(Clip.class, format);
             clip = (Clip)AudioSystem.getLine(info);
             clip.open(stream);
+            FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
+            gainControl.setValue(-volumen+.0f);
             clip.loop(99);
             return clip;
         } catch (Exception e){ }

@@ -445,7 +445,7 @@ public class AdminPanel extends CustomPanel implements Runnable{
         switch (actionCommand) {
             case PLAY_TEXT: {
                 if(button.isSelected()){
-                   /* getScreenComponentPositions();
+                    getScreenComponentPositions();
                     setConfigurationPositions();
 
                     for (int i = 0; i < configurationList.length; i++) {
@@ -458,14 +458,11 @@ public class AdminPanel extends CustomPanel implements Runnable{
                     Message message = new Message();
                     message.setMessageType("START");
                     message.setMessage("");
-                    mainScreen.theaterMode.nodeManager.broadcast(message);*/
-                    System.out.println("ejejejej");
-                }else{
-                    System.out.println("jajaja");
+                    mainScreen.theaterMode.nodeManager.broadcast(message);
                 }
 
 
-                //mainScreen.theaterMode.startGame();
+                mainScreen.theaterMode.startGame();
 
 
                 break;

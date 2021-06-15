@@ -4,6 +4,7 @@ import eu.cifpfbmoll.logic.Configuration;
 import eu.cifpfbmoll.sound.Sound;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 
@@ -45,6 +46,7 @@ public class OptionsPanel extends CustomPanel {
     protected void initPanel() {
         this.setLayout(mainLayout);
         addMainElements();
+        this.setBorder(new EmptyBorder(30, 40, 50, 40));
     }
 
     @Override

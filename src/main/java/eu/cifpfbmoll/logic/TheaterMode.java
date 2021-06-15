@@ -107,7 +107,7 @@ public class TheaterMode extends JFrame implements Runnable{
 
     public TheaterMode(){
         this.configuration = new Configuration();
-        this.sound = Sound.clipSoundMenu();
+        this.sound = Sound.clipSoundMenu(15);
         this.sound.start();
         //Para ver las interfaces
         /*try {
