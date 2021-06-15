@@ -10,6 +10,7 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.image.BufferedImage;
 
 public class OptionsPanel extends CustomPanel {
     // CONS
@@ -126,9 +127,10 @@ public class OptionsPanel extends CustomPanel {
         //
         leftPanel = new JPanel(new GridLayout(3,1));
         leftPanel.setOpaque(false);
-        String[] messages = {"METEORS", "BLACK HOLES", "ITEM"};
+        String[] messages = {"METEORS", "BLACK HOLES", "ITEM GEN."};
+        BufferedImage[] images = {Sprite.getObjectIcons(0, 0), Sprite.getObjectIcons(2, 0),
+                Sprite.getObjectIcons(1, 0)};
 
-        int imagePos = 0;
         for (int i = 0; i < 3; i++) {
             // Main panel
             JPanel leftPosPanel = new JPanel(new GridLayout(1,2));
@@ -137,7 +139,7 @@ public class OptionsPanel extends CustomPanel {
             // Icon and option label
             JPanel optionPanel = new JPanel(new GridBagLayout());
             optionPanel.setOpaque(false);
-            CustomIcon ci = new CustomIcon(Sprite.getObjectIcons(imagePos, 0), 150, 150, false);
+            CustomIcon ci = new CustomIcon(images[i], 150, 150, false);
             JLabel optionLabel = new JLabel(messages[i]);
             optionLabel.setFont(new Font(Font.DIALOG_INPUT, Font.PLAIN, 40));
             optionLabel.setForeground(GraphicStyle.TEXT_YELLOW_COLOR);
@@ -194,7 +196,6 @@ public class OptionsPanel extends CustomPanel {
 
             leftPosPanel.add(meteorSelector);
             leftPanel.add(leftPosPanel);
-            imagePos += 1;
         }
 
         return leftPanel;
@@ -251,9 +252,16 @@ public class OptionsPanel extends CustomPanel {
                                 optionCount[i] --;
                             }
                         }else{
-                            // Next button
-                            if (optionCount[i] < 5){
-                                optionCount[i] ++;
+                            if (i == 2){
+                                // Next button
+                                if (optionCount[i] < 3){
+                                    optionCount[i] ++;
+                                }
+                            }else{
+                                // Next button
+                                if (optionCount[i] < 5){
+                                    optionCount[i] ++;
+                                }
                             }
                         }
                         optionLabels[i].setText(String.valueOf(optionCount[i]));
