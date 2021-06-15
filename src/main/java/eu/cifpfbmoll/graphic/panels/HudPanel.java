@@ -12,6 +12,7 @@ public class HudPanel extends CustomPanel  {
     // CONS
     private int PADDING_TOP = 30, PADDING_LEFT = 40;
 
+
     // VARS
     private Hud hud;
     private String clientId, clientIp;
@@ -21,17 +22,19 @@ public class HudPanel extends CustomPanel  {
 
     public HudPanel(MainScreen mainScreen, HudType hudType){
         super(mainScreen);
-        hud = new Hud(hudType);
         this.clientId = "UNKNOWN";
         this.clientIp = "UNKNOWN";
+        hud = new Hud(hudType);
+
         initPanel();
     }
 
     public HudPanel(MainScreen mainScreen, HudType hudType, String clientId, String clientIp){
         super(mainScreen);
-        this.hud.setHudType(hudType);
         this.clientId = clientId;
         this.clientIp = clientIp;
+        hud = new Hud(hudType);
+
         initPanel();
     }
 
@@ -128,7 +131,7 @@ public class HudPanel extends CustomPanel  {
      */
     public enum HudType{
         INGAME(200, 300, 50),
-        OUTGAME(50, 50, 100),
+        OUTGAME(10, 50, 100),
         RETURN(50,50,100);
 
         private int height, width;
@@ -169,10 +172,10 @@ public class HudPanel extends CustomPanel  {
             this.addMouseListener(this);
         }
 
-        @Override
-        public Dimension getPreferredSize() {
-            return new Dimension(200, 200);
-        }
+//        @Override
+//        public Dimension getPreferredSize() {
+//            return new Dimension(200, 100);
+//        }
 
         @Override
         protected void paintComponent(Graphics g) {
@@ -289,7 +292,7 @@ public class HudPanel extends CustomPanel  {
 
         private Timer timer = new Timer (8, e -> {
             if (this.isHovered()){
-                if (this.opacity > 0.05){
+                if (this.opacity > 0.10){
                     this.opacity -= 0.10;
                 }else{
                     this.opacity = 0.1f;

@@ -28,20 +28,20 @@ public class MainScreen extends JFrame implements Runnable{
     /**
      * Changes the screen JPanel to the one inserted.
      * The param screenName is temporary. It will be a convenient interface class.
-     * @param panel
+     * @param newPanel
      */
-    public void changeScreen(CustomPanel panel){
+    public void changeScreen(PanelType oldPanel, PanelType newPanel){
         try{
             HudPanel.HudType hudType;
-            if (panel.equals(gameViewer)){
+            if (newPanel == PanelType.GAME){
                 hudType = HudPanel.HudType.INGAME;
             }else{
                 hudType = HudPanel.HudType.OUTGAME;
             }
-            // Clean the screen of any panel
-            cleanScreen();
             // Add the provided panel
-            this.add(getPanelWithHud(panel, hudType), BorderLayout.CENTER);
+            this.add(getPanelWithHud(getNewPanel(newPanel), hudType), BorderLayout.CENTER);
+            // Null the old panel
+            nullPanel(oldPanel);
         }catch(Exception e){
             System.out.println(e.getMessage());
         }
@@ -60,7 +60,7 @@ public class MainScreen extends JFrame implements Runnable{
         int taskBarHeight = scrnSize.height - winSize.height - 1;
 
         //
-        HudPanel hudPanel = new HudPanel(this, hudType);
+        HudPanel hudPanel = new HudPanel(this, hudType, "23", "192.168.1.32");
         //
         newPanel.setBounds(0, 0, this.getWidth() , this.getHeight() - taskBarHeight);
         hudPanel.setBounds(0, 0, this.getWidth(), this.getHeight());
@@ -76,19 +76,14 @@ public class MainScreen extends JFrame implements Runnable{
      * All panels must be initialized here, otherwise the panel will throw error.
      */
     private void initComponents(){
-        gameViewer = new GameViewer(this);
-        adminPanel = new AdminPanel(this, this.theaterMode.getNodes());
-        //gameViewer = new GameViewer(this);  // Default game viewer (pink background)
-        startPanel = new StartPanel(this);
-        clientPanel = new ClientPanel(this);
-        optionsPanel = new OptionsPanel(this,this.configuration);
+
     }
 
     private void addInitComponents(){
         // Add components
         cleanScreen();
-        this.add(getPanelWithHud(startPanel, HudPanel.HudType.OUTGAME), BorderLayout.CENTER);
-        //this.add(startPanel, BorderLayout.CENTER);
+//        this.add(startPanel, BorderLayout.CENTER);
+        changeScreen(null, PanelType.START);
     }
     //</editor-fold>
 
@@ -113,6 +108,41 @@ public class MainScreen extends JFrame implements Runnable{
         this.setVisible(false);
     }
     //</editor-fold>
+
+    private CustomPanel getNewPanel(PanelType newPanel){
+        CustomPanel panel = null;
+        // Clean the screen of any panel
+        cleanScreen();
+        // Init the panel
+        if (newPanel == PanelType.START){
+            panel = new StartPanel(this);
+        }else if (newPanel == PanelType.ADMIN){
+            panel = new AdminPanel(this, this.theaterMode.getNodes());
+        }else if (newPanel == PanelType.CLIENT){
+            panel = new ClientPanel(this);
+        }else if (newPanel == PanelType.OPTIONS){
+            panel = new OptionsPanel(this, this.configuration);
+        }else if (newPanel == PanelType.GAME){
+            panel = new GameViewer(this);
+        }
+
+        return panel;
+    }
+
+    private void nullPanel(PanelType oldPanel){
+        // Init the panel
+        if (oldPanel == PanelType.START){
+            startPanel = null;
+        }else if (oldPanel == PanelType.ADMIN){
+            adminPanel = null;
+        }else if (oldPanel == PanelType.CLIENT){
+            clientPanel = null;
+        }else if (oldPanel == PanelType.OPTIONS){
+            optionsPanel = null;
+        }else if (oldPanel == PanelType.GAME){
+            gameViewer = null;
+        }
+    }
 
     private void cleanScreen(){
         this.getContentPane().removeAll();
@@ -176,5 +206,13 @@ public class MainScreen extends JFrame implements Runnable{
             this.validate();
             this.repaint();
         }
+    }
+
+    public enum PanelType{
+        START,
+        ADMIN,
+        CLIENT,
+        OPTIONS,
+        GAME;
     }
 }

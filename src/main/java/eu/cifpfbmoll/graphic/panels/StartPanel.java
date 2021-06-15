@@ -105,9 +105,9 @@ public class StartPanel extends CustomPanel {
             if (checkBoxAdmin.isSelected()){
                 //Todo parar scaner de IPS
                 this.getMainScreen().theaterMode.setImAdmin(true);
-                mainScreen.changeScreen(mainScreen.getAdminPanel());
+                mainScreen.changeScreen(MainScreen.PanelType.ADMIN, MainScreen.PanelType.ADMIN);
             }else{
-                mainScreen.changeScreen(mainScreen.getClientPanel());
+                mainScreen.changeScreen(MainScreen.PanelType.ADMIN, MainScreen.PanelType.CLIENT);
             }
         }
     }

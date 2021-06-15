@@ -311,7 +311,7 @@ public class TheaterMode extends JFrame implements Runnable{
         boolean exit = false;
         Scanner input = new Scanner(System.in);
 //        this.mainScreen.adminPanel.buttonPlay.setEnabled(false);
-        this.mainScreen.adminPanel.buttonPlay.setEnabled(false);
+//        this.mainScreen.adminPanel.buttonPlay.setEnabled(false);
         while (!exit){
             System.out.print("Select Action: ");
             String action = input.nextLine();
@@ -363,9 +363,9 @@ public class TheaterMode extends JFrame implements Runnable{
                     this.sound.stop();break;
             }
             if(this.allReady()){
-                this.mainScreen.adminPanel.buttonPlay.setEnabled(true);
+//                this.mainScreen.adminPanel.buttonPlay.setEnabled(true);
             }else {
-                this.mainScreen.adminPanel.buttonPlay.setEnabled(false);
+//                this.mainScreen.adminPanel.buttonPlay.setEnabled(false);
             }
         }
     }

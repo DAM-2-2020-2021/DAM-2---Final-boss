@@ -102,15 +102,14 @@ public class AdminPanel extends CustomPanel implements Runnable{
         buttonsPanel.setLayout(new GridLayout(3, 0));
 
         // Create the buttons
-        buttonPlay = new CustomButton(CustomButton.CustomButtonType.PRIMARY, PLAY_TEXT);
-        buttonOptions = new CustomButton(CustomButton.CustomButtonType.SECONDARY, OPTIONS_TEXT);
+        buttonPlay = new CustomButton(CustomButton.CustomButtonType.PRIMARY, PLAY_TEXT, true);
+        buttonOptions = new CustomButton(CustomButton.CustomButtonType.SECONDARY, OPTIONS_TEXT, true);
         // Add action listeners to the buttons
         buttonPlay.addActionListener(this);
         buttonOptions.addActionListener(this);
         // Add the buttons to the panel
         buttonsPanel.add(buttonPlay);
         buttonsPanel.add(buttonOptions);
-        //buttonsPanel.setBackground(Color.black);
 
         return buttonsPanel;
     }
@@ -405,17 +404,14 @@ public class AdminPanel extends CustomPanel implements Runnable{
         final CustomButton button = (CustomButton) e.getSource();
         final String actionCommand = e.getActionCommand();
         switch (actionCommand) {
-            case PLAY_TEXT: {
-                if (button.isSelected()){
-                    mainScreen.changeScreen(mainScreen.getGameViewer());
-                }
-
+            case PLAY_TEXT:
+//                if (button.isSelected()){
+                    mainScreen.changeScreen(MainScreen.PanelType.ADMIN, MainScreen.PanelType.GAME);
+//                }
                 break;
-            }
-            case OPTIONS_TEXT: {
-                mainScreen.changeScreen(mainScreen.getOptionsPanel());
+            case OPTIONS_TEXT:
+                mainScreen.changeScreen(MainScreen.PanelType.ADMIN, MainScreen.PanelType.OPTIONS);
                 break;
-            }
             case ADD_ROW_TEXT:
                 screenSelectionRows++;
 
