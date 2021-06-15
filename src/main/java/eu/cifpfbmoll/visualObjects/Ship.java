@@ -2,6 +2,7 @@ package eu.cifpfbmoll.visualObjects;
 
 
 import eu.cifpfbmoll.graphic.canvas.Assets;
+import eu.cifpfbmoll.logic.Constants;
 import eu.cifpfbmoll.logic.LogicController;
 import eu.cifpfbmoll.logic.Message;
 import eu.cifpfbmoll.math.Vector2D;

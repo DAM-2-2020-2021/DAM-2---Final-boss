@@ -2,6 +2,7 @@ package eu.cifpfbmoll.visualObjects;
 
 
 import eu.cifpfbmoll.graphic.canvas.Assets;
+import eu.cifpfbmoll.graphic.objects.Spacecraft;
 import eu.cifpfbmoll.logic.Beans.BulletPacket;
 import eu.cifpfbmoll.logic.Beans.MeteroritePacket;
 import eu.cifpfbmoll.logic.Beans.ShipPacket;
@@ -13,6 +14,7 @@ import eu.cifpfbmoll.math.Vector2D;
 import eu.cifpfbmoll.sound.Sound;
 
 import java.awt.image.BufferedImage;
+import java.security.PublicKey;
 import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -298,7 +300,6 @@ public class Utilities {
         }
         if (from.equals(Constants.UP) || from.equals(Constants.DOWN)){
             if (position.getX()>logicController.getViewer().getWidth()){
-                System.out.println("heererererererre");
                 position.setX(logicController.getViewer().getWidth()-texture.getWidth());
             }
         }else{

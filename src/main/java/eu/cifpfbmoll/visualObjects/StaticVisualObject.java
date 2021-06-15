@@ -5,6 +5,7 @@ import eu.cifpfbmoll.logic.LogicController;
 import eu.cifpfbmoll.math.Vector2D;
 
 import java.awt.*;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
 public abstract class StaticVisualObject extends VisualObject{

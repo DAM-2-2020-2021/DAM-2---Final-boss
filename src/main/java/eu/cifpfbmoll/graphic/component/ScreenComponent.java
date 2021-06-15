@@ -1,7 +1,7 @@
 package eu.cifpfbmoll.graphic.component;
 
-import eu.cifpfbmoll.graphic.panels.AdminPanel;
 import eu.cifpfbmoll.graphic.panels.GraphicStyle;
+import eu.cifpfbmoll.graphic.panels.AdminPanel;
 import eu.cifpfbmoll.sound.Sound;
 
 import javax.swing.*;

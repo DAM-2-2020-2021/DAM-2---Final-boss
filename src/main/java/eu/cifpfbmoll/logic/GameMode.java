@@ -1,8 +1,11 @@
 package eu.cifpfbmoll.logic;
 
 
+import eu.cifpfbmoll.graphic.canvas.Assets;
 import eu.cifpfbmoll.graphic.canvas.Viewer;
 import eu.cifpfbmoll.graphic.objects.Spacecraft;
+import eu.cifpfbmoll.logic.Beans.ShipPacket;
+import eu.cifpfbmoll.logic.LogicController;
 import eu.cifpfbmoll.netlib.node.NodeManager;
 import eu.cifpfbmoll.visualObjects.DynamicVisualObject;
 import eu.cifpfbmoll.visualObjects.Ship;

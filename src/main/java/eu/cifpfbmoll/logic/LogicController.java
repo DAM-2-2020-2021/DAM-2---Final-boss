@@ -65,7 +65,7 @@ public class LogicController implements Runnable {
         }
         addThreadPowerUpGenerator(this,timeSleepPowerUp);
         System.out.println("size de ships" + ships.size());
-        escucharMensajes();
+        addListenerMessage();
         this.initTheard();
     }
 
@@ -186,7 +186,7 @@ public class LogicController implements Runnable {
         }
     }
 
-    public void escucharMensajes(){
+    public void addListenerMessage(){
         this.nodeManager.unregister("INFO");
         this.nodeManager.register(Message.class, (id, serverMessage) -> {
             Ship ship = getShipToPerformAction(id);
@@ -202,6 +202,12 @@ public class LogicController implements Runnable {
                     break;
                 case Ship.SHOOT:
                     ship.shoot();
+                    break;
+                case "SCORE":
+                    if (serverMessage.getMessage().equals(Ship.team1)){
+                        puntosEquipoRojo++;
+                        sendScore(false, false);
+                    }
                     break;
             }
         });
@@ -240,12 +246,22 @@ public class LogicController implements Runnable {
         return null;
     }
 
-    public void sendScore(){
+    public void sendScore(Boolean red, Boolean sendToAdmin){
         String score = Integer.toString(puntosEquipoRojo)+":"+Integer.toString(puntosEquipoAzul);
         System.out.println(score);
         Message message = new Message();
         message.setMessageType("SCORE");
         message.setMessage(score);
+        if (sendToAdmin){
+            Message messageScore = new Message();
+            messageScore.setMessageType("SCORE");
+            if (red){
+                messageScore.setMessage(Ship.team1);
+            }else{
+                messageScore.setMessage(Ship.team2);
+            }
+            nodeManager.send(this.adminId,messageScore);
+        }
         for (int i = 0; i < this.dynamicVisualObjects.size(); i++) {
             if (this.dynamicVisualObjects.get(i) instanceof Ship){
                 Ship ship = (Ship) dynamicVisualObjects.get(i);
@@ -412,10 +428,10 @@ public class LogicController implements Runnable {
                             ((Ship) b).destroy();
                             if (((Bullet) a).getEquipo().equals(Ship.team1)) {
                                 this.puntosEquipoRojo++;
-                                sendScore();
+                                sendScore(true,false);
                             } else {
                                 this.puntosEquipoAzul++;
-                                sendScore();
+                                sendScore(false,false);
                             }
                         }else{
                             ((Ship) b).setPowerUp(PowerUp.NO_POWER_UP);
@@ -530,17 +546,16 @@ public class LogicController implements Runnable {
         boolean alive = true;
         while (alive){
             if (puntosEquipoRojo>=70 || puntosEquipoAzul>=70){
-                System.out.println("cagaste");
                 alive=false;
             }
             if (timepassed<10){
-                sendScore();
-            }else if (timepassed==10){
+
+            }else if (timepassed==240){
                 musica.close();
                 musica = Sound.clipSoundLastMinute(15);
-            }else if (timepassed<25){
+            }else if (timepassed<240){
 
-            }else if (timepassed==120){
+            }else if (timepassed==300){
                 alive=false;
             }
             try {

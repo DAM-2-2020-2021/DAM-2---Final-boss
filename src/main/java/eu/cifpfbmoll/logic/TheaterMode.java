@@ -1,11 +1,11 @@
 package eu.cifpfbmoll.logic;
 
+import com.sun.org.apache.xml.internal.security.algorithms.MessageDigestAlgorithm;
 import eu.cifpfbmoll.graphic.canvas.Assets;
-import eu.cifpfbmoll.graphic.objects.Spacecraft;
-import eu.cifpfbmoll.graphic.panels.MainScreen;
+import eu.cifpfbmoll.graphic.panels.*;
+import eu.cifpfbmoll.graphic.objects.*;
 import eu.cifpfbmoll.netlib.node.NodeManager;
 import eu.cifpfbmoll.sound.Sound;
-
 
 import javax.sound.sampled.Clip;
 import javax.swing.*;
@@ -119,7 +119,7 @@ public class TheaterMode extends JFrame implements Runnable {
         this.sound.start();
         Assets.init();
         //Para ver las interfaces
-        try {
+       /* try {
             for (NetworkInterface netint : Collections.list(NetworkInterface.getNetworkInterfaces())) {
                 System.out.println(netint.getName());
                 System.out.println(netint.getDisplayName());
@@ -129,7 +129,7 @@ public class TheaterMode extends JFrame implements Runnable {
             }
         } catch (SocketException e) {
             e.printStackTrace();
-        }
+        }*/
         NetworkInterface networkInterface = NodeManager.getInterfaceByName("eth5");
         String ip = NodeManager.getIPForInterface(networkInterface);
         this.myID = NodeManager.getIdForIp(ip);

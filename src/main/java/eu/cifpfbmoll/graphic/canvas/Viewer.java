@@ -19,8 +19,6 @@ public class Viewer extends Canvas implements Runnable{
     int indexBackgroud = Utilities.getRandom(0,5);
     private ArrayList<StaticVisualObject> staticVisualObjects;
     private ArrayList<DynamicVisualObject> dynamicVisualObjects;
-    private BufferedImage motherShipRed = Assets.motherShip;
-    private BufferedImage motherShipBlue = Assets.motherShip2;
     public Viewer(ArrayList<StaticVisualObject> staticVisualObjects, ArrayList<DynamicVisualObject> dynamicVisualObjects){
         this.thread = new Thread(this);
         this.staticVisualObjects = staticVisualObjects;

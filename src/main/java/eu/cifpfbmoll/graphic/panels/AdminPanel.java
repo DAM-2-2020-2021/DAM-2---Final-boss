@@ -422,31 +422,29 @@ public class AdminPanel extends CustomPanel implements Runnable {
     public void actionPerformed(ActionEvent e) {
         Sound.soundInteractueMenu();
         final String actionCommand = e.getActionCommand();
+        final CustomButton button = (CustomButton) e.getSource();
         switch (actionCommand) {
             case PLAY_TEXT: {
                 // Todo on click "JUGAR"
-               getScreenComponentPositions();
-                setConfigurationPositions();
-                if(this.buttonPlay.isEnabled()){
-                    System.out.println("ejejeje");
-                }else {
-                    System.out.println("noioooo");
-                }
+                if (button.isEnabled()){
+                    getScreenComponentPositions();
+                    setConfigurationPositions();
 //                mainScreen.changeScreen(mainScreen.getGameViewer());
-                //para mas de un pc
-                for (int i = 0; i < configurationList.length; i++) {
-                    for (int j = 0; j < configurationList[0].length; j++) {
-                        if(configurationList[i][j] != null){
-                            mainScreen.theaterMode.nodeManager.send(configurationList[i][j].getScreenID(), configurationList[i][j]);
+                    //para mas de un pc
+                    for (int i = 0; i < configurationList.length; i++) {
+                        for (int j = 0; j < configurationList[0].length; j++) {
+                            if(configurationList[i][j] != null){
+                                mainScreen.theaterMode.nodeManager.send(configurationList[i][j].getScreenID(), configurationList[i][j]);
+                            }
                         }
                     }
-                }
-                Message message = new Message();
-                message.setMessageType("START");
-                message.setMessage("");
-                mainScreen.theaterMode.startGame();
-                for (int i = 0; i < 5; i++) {
-                    mainScreen.theaterMode.nodeManager.broadcast(message);
+                    Message message = new Message();
+                    message.setMessageType("START");
+                    message.setMessage("");
+                    mainScreen.theaterMode.startGame();
+                    for (int i = 0; i < 5; i++) {
+                        mainScreen.theaterMode.nodeManager.broadcast(message);
+                    }
                 }
                 break;
             }

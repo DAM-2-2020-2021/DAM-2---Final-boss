@@ -1,9 +1,10 @@
 package eu.cifpfbmoll.graphic.sprite;
 
-import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+
+import javax.imageio.ImageIO;
 
 /**
  * Class focused on storing all the paths of the images and methods to simplify the use of sprites for the game

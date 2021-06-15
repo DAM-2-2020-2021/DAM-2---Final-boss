@@ -49,7 +49,6 @@ public class PowerUp extends StaticVisualObject implements Runnable{
                     try {
                         Thread.sleep(10000);
                         ship.setPowerUp(PowerUp.NO_POWER_UP);
-                        System.out.println("te he quitado el power up puto");
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
