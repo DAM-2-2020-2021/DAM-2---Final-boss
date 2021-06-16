@@ -16,7 +16,11 @@
         <junit-jupiter.version>5.7.1</junit-jupiter.version>
         <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
         <slf4j-api.version>1.7.30</slf4j-api.version>
+<<<<<<< HEAD
         <netlib.version>0.3-SNAPSHOT</netlib.version>
+=======
+        <netlib.version>0.9</netlib.version>
+>>>>>>> juangi
     </properties>
 
     <dependencies>
